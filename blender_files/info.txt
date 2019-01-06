@@ -1,0 +1,1 @@
+directory with blender files and output graphic files generated from blender 
