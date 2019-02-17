@@ -2,7 +2,7 @@
 Concept:
 Main idea behind project was create device which will gather 
 temperature data from three sensors and display it on LCD. Selected
-tempeture source value will be stored in FRAM memory. 
+temperature source value will be stored in FRAM memory. 
 
 Device will be used also as clock so near temperature on main 
 window will be display curent hour. Device will be use WiFi 
@@ -11,7 +11,7 @@ interface to data synchronization(time and temperature measurement).
 Project phases:
 1. I created PC driver which use FTDI chips and emulate interfaces of 
 microntroller like GPIO, I2C, SPI and UART. I chosed LPC111X as target
-microcontroller. I planed build final project on LPC1115.
+microcontroller. I planed build final project on LPC1115 microcontroller.
 
 2. Using emulated microcontroller interfaces I wrote drivers for LCD 
 with ILI9325 controller, driver for touch screen with ADS7843 controller,
