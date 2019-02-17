@@ -51,3 +51,9 @@ bitmap in uGui. Add monochrome bitmap in GUI code. Add Options
 fields in bitmap.
 
 Second release of code and first official release of HW.
+
+License of code project:
+  Below drivers is licensed under BSD 3-claus license:
+
+  Below files is licensed under GPL license:
+
