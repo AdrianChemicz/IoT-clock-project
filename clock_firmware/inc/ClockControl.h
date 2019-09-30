@@ -27,11 +27,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>. */
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "FRAM_Driver.h"
-#include "GUI_Clock.h"
-#include "LCD.h"
-#include "TouchPanel.h"
-#include "chip.h"
 
 void ClockChangeFrequency(void);
 bool ClockStateLoader(uint16_t address);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Adrian Chemicz
+ * Copyright (c) 2018, 2019, Adrian Chemicz
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,14 +51,6 @@
 
 #define USE_LPC111x_SERIES 0
 #define USE_LPC11E6x_SERIES 1
-
-#if USE_LPC111x_SERIES
-#include "LPC11xx.h"
-#endif
-
-#if USE_LPC11E6x_SERIES
-#include "chip.h"
-#endif
 
 #ifdef __cplusplus
 extern "C" {

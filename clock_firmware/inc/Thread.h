@@ -32,6 +32,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>. */
 #include "TemperatureSensor.h"
 #include "TouchPanel.h"
 #include "BuzzerControl.h"
+#include "WIFI_InteractionLayer.h"
 #include <core_cm0plus.h>
 #include <crc_11u6x.h>
 #include <error.h>
@@ -40,19 +41,19 @@ along with this program. If not, see <http://www.gnu.org/licenses/>. */
 #include <syscon_11u6x.h>
 #include <timer_11u6x.h>
 
-#define ONE_SECONDS 50
-#define RESET_BUTTON_GPIO_PORT 2
-#define RESET_BUTTON_GPIO_PIN 4
-#define CLEAR_BLOCK_SIZE 100
+#define ONE_SECONDS 						50
+#define RESET_BUTTON_GPIO_PORT 				2
+#define RESET_BUTTON_GPIO_PIN 				4
+#define CLEAR_BLOCK_SIZE 					100
 #define MAX_INDEX (FRAM_MEASUREMENT_DATA_BEGIN/CLEAR_BLOCK_SIZE)
-#define TRANSACTION_NOT_DEFINED 0
-#define TRANSACTION_COPY_TO_BACKUP 1
-#define TRANSACTION_COPY_TO_DEDICATED_AREA 2
-#define SEARCH_RADIUS 6
-#define LENGHT_OF_SOUND_ALARM_TABLE 20
-#define LENGHT_OF_INCREMENT_SOUND_STEP 3
+#define TRANSACTION_NOT_DEFINED 			0
+#define TRANSACTION_COPY_TO_BACKUP 			1
+#define TRANSACTION_COPY_TO_DEDICATED_AREA 	2
+#define SEARCH_RADIUS 						6
+#define LENGHT_OF_SOUND_ALARM_TABLE 		20
+#define LENGHT_OF_INCREMENT_SOUND_STEP 		3
 
-void Thread_Init();
-void Thread_Call();
+void Thread_Init(void);
+void Thread_Call(void);
 
 #endif /* _THREAD_H_ */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Adrian Chemicz
+ * Copyright (c) 2018, 2019, Adrian Chemicz
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -66,8 +66,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "chip.h"
-
 #define UART_BUFFER_SIZE 	16
 #define UART_DEVICES 		 5
 
@@ -100,42 +98,45 @@ typedef enum PARITY
 
 typedef struct
 {
-	uint32_t RDR : 1; //Receiver Data Ready - set when RX fifo contain unread character
-	uint32_t OE : 1; /*Overrun Error - set when RX FIFO can't read character because limit is exceded.
+	uint32_t RDR : 	1; //Receiver Data Ready - set when RX fifo contain unread character
+	uint32_t OE : 	1; /*Overrun Error - set when RX FIFO can't read character because limit is exceded.
 	This error is clear after read Line Status register.*/
-	uint32_t PE : 1; /*Parity Error - set when byte on top of RX FIFO cotain this error.
+	uint32_t PE : 	1; /*Parity Error - set when byte on top of RX FIFO cotain this error.
 	This error is clear after read Line Status register even if byte on top of RX FIFO contain this error.
 	Error occur when parity bit is different than excepted. */
-	uint32_t FE : 1; /*Framing Error - error which occur when stop bits of received character is equal
+	uint32_t FE : 	1; /*Framing Error - error which occur when stop bits of received character is equal
 	logic 1. Set when byte on top of RX FIFO cotain this error. This error is clear after read Line Status
 	register even if byte on top of RX FIFO contain this error.*/
-	uint32_t BI : 1; /*Break Interrupt - error which occur when all bit inside frame(start, data, parity)
+	uint32_t BI : 	1; /*Break Interrupt - error which occur when all bit inside frame(start, data, parity)
 	contain zeros(spacing state). Set when byte on top of RX FIFO cotain this error. This error is clear
 	after read Line Status register even if byte on top of RX FIFO contain this error. */
 	uint32_t THRE : 1; //Transmitter Holding Register Empty - set when TX FIFO is empty
 	uint32_t TEMT : 1; //Transmitter Empty - set when UART trasmit shift  register is empty
 	uint32_t RXFE : 1; /*Error in RX FIFO - set when one or more byte in RX FIFO contain error like PE, FE, BI.
 	Overrun error don't set this bit. This error will clear when broken byte in RX buffer will read. */
-	uint32_t Reserved : 24;
+	uint32_t Reserved : 	24;
 }UART_Status;
 
 typedef struct
 {
-	uint8_t PE : 1;
-	uint8_t FE : 1;
-	uint8_t BI : 1;
-	uint8_t Error : 1;
-	uint8_t Reserved : 4;
+	uint8_t PE : 		1;
+	uint8_t FE : 		1;
+	uint8_t BI : 		1;
+	uint8_t Error : 	1;
+	uint8_t Reserved : 	4;
 }ReadByteErrors;
 
 #define ENABLE_DIVISOR_LATCH 		0x80
 #define DISABLE_DIVISOR_LATCH 		0x7F
 #define ENABLE_AND_RESET_FIFO 		 0x7
+#define SET_RX_TRIGGER_LEVEL_AS_3 (3<<6)
 
 void UART_DriverInit(uint8_t portNumber, uint32_t baudrate, WORD_LENGTH length, STOP_BITS stopBits, PARITY parity);
 void UART_PutByteToTransmitter(uint8_t portNumber, uint8_t byte);
 uint8_t UART_ReadByteFromTrasmitter(uint8_t portNumber);
 UART_Status UART_ReturnStatusRegister(uint8_t portNumber);
+void UART_EnableInterrupts(uint8_t portNumber);
+void UART_DisableInterrupts(uint8_t portNumber);
 
 #ifdef __cplusplus
 }

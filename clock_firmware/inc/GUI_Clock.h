@@ -27,21 +27,15 @@ along with this program. If not, see <http://www.gnu.org/licenses/>. */
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include "ugui.h"
 #include "ugui_config.h"
 #include "image.h"
-#include "LCD.h"
-#include "GPIO_Driver.h"
-#include "BacklightControl.h"
-#include "TouchPanel.h"
-#include "ClockControl.h"
-#include "Thread.h"
+#include "ESP_Layer.h"
 
 #define MAX_OBJECTS 17
 #define MAX_OBJECTS_SETTINGS 18
 #define MAX_OBJECTS_WIFI_SETTINGS 17
-#define MAX_OBJECTS_KEYBOARD_WINDOW 45
+#define MAX_OBJECTS_KEYBOARD_WINDOW 46
 
 #define DEFAULT_GUI_BACKGROUND_COLOR C_WHITE_SMOKE
 
@@ -129,11 +123,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>. */
 #define FIVETH_LINE_OF_APN_BEGIN_WSW 175
 #define APN_LIST_LINE_HEIGH_WSW 20
 #define APN_NAME_BEGIN 1
-#define APN_NAME_END 205
-#define APN_CONNECT_BUTTON_BEGIN 210 
+#define APN_NAME_END 190
+#define APN_CONNECT_BUTTON_BEGIN 195
 #define APN_CONNECT_BUTTON_END 290
 #define APN_SLIDER_BEGIN 295
 #define APN_SLIDER_END 310
+#define NUMBER_OF_WIFI_DISPLAY_NETWORKS 5
+#define TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN TXB_ID_3
+#define BUTTON_WIFI_DISPLAY_NETWORK_BEGIN BTN_ID_2
 
 //parameters for WiFi keyboard window
 #define ROW_HEIGH_WKW 37
@@ -169,14 +166,23 @@ along with this program. If not, see <http://www.gnu.org/licenses/>. */
 #define BUTTON_COLUMN_END_WKW 300
 #define BUTTON_LENGTH_WKW 22
 
+#define BUTTON_WIFI_KEYBOARD_BEGIN 				BTN_ID_1
+#define SHIFT_KEY_OFFSET_WKW 					21
+#define BACKSPACE_KEY_OFFSET_WKW 				31
+#define LETTER_OR_SPECIAL_CHAR_KEY_OFFSET_WKW 	32
+#define ENTER_KEY_OFFSET_WKW 					38
+#define NUMBER_OF_KEY_ON_KEYBOARD 				39
+#define MAX_APN_PASSWORD_LENGTH 				64
+
 //FRAM unique ID names
-#define FRAM_ID_NOP 0
-#define FRAM_ID_CLOCKSTATE 1
-#define FRAM_ID_FACTORY_RESET 2
-#define FRAM_ID_MOVE_TEMPERATURE_OUTSIDE 3
-#define FRAM_ID_MOVE_TEMPERATURE_INSIDE 4
-#define FRAM_ID_MOVE_TEMPERATURE_FURNACE 5
-#define FRAM_ID_READ_TEMPERATURE 6
+#define FRAM_ID_NOP 						0
+#define FRAM_ID_CLOCKSTATE 					1
+#define FRAM_ID_FACTORY_RESET 				2
+#define FRAM_ID_MOVE_TEMPERATURE_OUTSIDE 	3
+#define FRAM_ID_MOVE_TEMPERATURE_INSIDE 	4
+#define FRAM_ID_MOVE_TEMPERATURE_FURNACE 	5
+#define FRAM_ID_READ_TEMPERATURE 			6
+#define FRAM_ID_SEARCH_TEMPERATURE 			7
 
 #define MAX_TEMP_RECORD_PER_DAY 96
 #define MAX_RECORD_IN_FRAM ((0x7FFF - FRAM_MEASUREMENT_DATA_BEGIN)/(sizeof(TemperatureSingleDayRecordType)))
@@ -223,6 +229,20 @@ extern "C" {
 		REFRESH = 1,
 		REFRESH_PERFORMED = 2
 	}REFRESH_GUI;
+
+	typedef enum WIFI_GUI_STATUS_TYPE//connected to: , active, inactive, WiFi damaged
+	{
+		WIFI_INACTIVE = 0,
+		WIFI_ACTIVE = 1,
+		WIFI_CONNECTED = 2
+	}WIFI_GUI_STATUS;
+
+	typedef enum KEYBOARD_SIGNS_TYPE
+	{
+		SMALL_LETTER = 0,
+		BIG_LETTER = 1,
+		SPECIAL_CHARACTER = 2
+	}KEYBOARD_SIGNS;
 
 	typedef struct
 	{
@@ -293,13 +313,20 @@ extern "C" {
 		//piezo
 		uint16_t alarmSoundAnimationStep;
 
-		//Wifi
-
 		//LCD calibration parameter
 		uint16_t x1RawCalibrationValue;
 		uint16_t x2RawCalibrationValue;
 		uint16_t y1RawCalibrationValue;
 		uint16_t y2RawCalibrationValue;
+
+		//WiFi
+		bool wifiReady;
+		bool wifiConnected;
+		bool wifiApnReceived;
+		bool wifiStartDisconnect;
+		uint8_t ssidOfAssignedApn[SSID_STRING_LENGTH];
+		uint8_t passwordToAssignedApn[MAX_APN_PASSWORD_LENGTH];
+		uint8_t ipAddressAssignedToDevice[4];
 #ifdef MICROCONTROLLER
 		uint16_t CRC16Value  __attribute__((aligned(32)));
 	}ClockStateType __attribute__((aligned(32)));
@@ -325,6 +352,9 @@ extern "C" {
 		uint8_t labelBrightnessValue[5];
 		uint8_t labelUpTime[26];
 		uint8_t labelGraphStep[10];
+		uint8_t labelWifiStatus[50];
+		uint8_t labelAssignedIpAdress[24];
+		uint8_t labelApnPassword[MAX_APN_PASSWORD_LENGTH];
 	}WidgetsStringsType;
 
 	typedef struct
@@ -383,23 +413,26 @@ extern "C" {
 	extern UG_GUI gui;
 	extern UG_WINDOW clockSettingsWindow;
 	extern UG_WINDOW temperatureWindow;
+	extern UG_WINDOW wifiSettingsWindow;
 	extern ReadFramTempBufferType ReadFramTempBufferTable[READ_TEMP_FRAM_BUFFER_SIZE];
 	extern BufferCursorType BufferCursor;
 	extern TemperatureFramReadTransactionPackageType TemperatureFramReadTransaction;
 
-	void GUI_ClockInit();
-	void GUI_UpdateTemperature();
-	void GUI_UpdateTime();
+	void GUI_ClockInit(void);
+	void GUI_UpdateTemperature(void);
+	void GUI_UpdateTime(void);
 	void GUI_IncrementDay(uint8_t *day, uint8_t *month, uint8_t *year);
 	void GUI_DecrementDay(uint8_t *day, uint8_t *month, uint8_t *year);
-	uint16_t GUI_ReturnNewFramIndex();
+	uint16_t GUI_ReturnNewFramIndex(void);
 	void GUI_InitTemperaureStructure(uint8_t source, uint8_t day, uint8_t month, uint8_t year, TemperatureSingleDayRecordType *pointerToStructure);
-	void GUI_ProcessTemperatureWindow();
-	void GUI_ProcessAlarmAnimation();
+	void GUI_ProcessTemperatureWindow(void);
+	void GUI_ProcessAlarmAnimation(void);
 	uint16_t GUI_GetIncrementedFramIndex(uint16_t value);
 	uint16_t GUI_GetDecrementedFramIndex(uint16_t value);
 	uint16_t returnFramIndexValue(uint8_t numOfFlag);
-	void GUI_IncrementSecond();
+	void GUI_IncrementSecond(void);
+	void GUI_RefreshWifiWindow(void);
+	uint8_t GUI_ReturnMaxDayInMonth(uint8_t month, uint8_t year);
 
 #ifdef __cplusplus
 }

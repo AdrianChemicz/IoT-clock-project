@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Adrian Chemicz
+ * Copyright (c) 2018, 2019, Adrian Chemicz
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,8 +27,6 @@
 #ifndef _TEMPERATURE_SENSOR_H_
 #define _TEMPERATURE_SENSOR_H_
 
-#include "I2C_Driver.h"
-#include "GPIO_Driver.h"
 #include <stdint.h>
 #include <stdbool.h>
 

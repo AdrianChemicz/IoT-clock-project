@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Adrian Chemicz
+ * Copyright (c) 2018, 2019, Adrian Chemicz
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,8 +56,6 @@
 
 #include <stdint.h>
 #include <string.h>
-
-#include "chip.h"
 
 #define NUMBER_OF_I2C_PERIPHERALS 1U
 #define READ_WRITE_BUFFER_SIZE 32U

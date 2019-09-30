@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Adrian Chemicz
+ * Copyright (c) 2018, 2019, Adrian Chemicz
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,8 +47,6 @@
  */
 
 #include <stdint.h>
-#include "GPIO_Driver.h"
-#include "SPI_Driver.h"
 
 #define ROTATE_SCREEN 				 1//Rotate about 180 degrees
 #define MAX_SCREEN_X 			0x013F

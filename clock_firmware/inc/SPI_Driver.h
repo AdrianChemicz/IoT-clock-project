@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Adrian Chemicz
+ * Copyright (c) 2018, 2019, Adrian Chemicz
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,7 +65,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "chip.h"
 
 #define SPI_BUFFER_SIZE 		8
 #define STANDARD_FRAME_LENGTH 	7U

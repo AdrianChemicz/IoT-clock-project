@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Adrian Chemicz
+ * Copyright (c) 2018, 2019, Adrian Chemicz
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,8 +29,6 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "GPIO_Driver.h"
-#include "SPI_Driver.h"
 
 /*
  * This module handle FM25W256(256 Kbit FRAM memory). To communicate with module SPI port is used.
