@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Adrian Chemicz
+ * Copyright (c) 2018, 2019, Adrian Chemicz
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,6 +25,14 @@
  */
 
 #include "GPIO_Driver.h"
+
+#if USE_LPC111x_SERIES
+#include "LPC11xx.h"
+#endif
+
+#if USE_LPC11E6x_SERIES
+#include "chip.h"
+#endif
 
 static uint32_t* GPIO_GetBaseAddress(uint8_t portNumber)
 {

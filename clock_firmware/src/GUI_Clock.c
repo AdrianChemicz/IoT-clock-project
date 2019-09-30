@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>. */
 
 #include "GUI_Clock.h"
+#include "Thread.h"
+#include "LCD.h"
 
 ClockStateType ClockState;
 WidgetsStringsType WidgetsStrings;
@@ -134,27 +136,22 @@ static UG_TEXTBOX textBoxCalendar;
 
 //wifi Settings window
 static UG_TEXTBOX textBoxWifiStatus;
-static UG_TEXTBOX textBoxApnLabel;
+static UG_TEXTBOX textBoxApnListLabel;
+static UG_TEXTBOX textBoxAssignedIpAddress;
 
-static UG_TEXTBOX textBoxNetwork0;
-static UG_TEXTBOX textBoxNetwork1;
-static UG_TEXTBOX textBoxNetwork2;
-static UG_TEXTBOX textBoxNetwork3;
-static UG_TEXTBOX textBoxNetwork4;
+static UG_TEXTBOX textBoxNetwork[NUMBER_OF_WIFI_DISPLAY_NETWORKS];
+static UG_BUTTON buttonNetwork[NUMBER_OF_WIFI_DISPLAY_NETWORKS];
 
 static UG_BUTTON buttonCloseWifiSettingsWindow;
-static UG_BUTTON buttonControlPower;
 static UG_BUTTON buttonControlConnection;
 static UG_BUTTON buttonUpNetworkList;
 static UG_BUTTON buttonDownNetworkList;
 
-static UG_BUTTON buttonNetwork0;
-static UG_BUTTON buttonNetwork1;
-static UG_BUTTON buttonNetwork2;
-static UG_BUTTON buttonNetwork3;
-static UG_BUTTON buttonNetwork4;
+uint8_t wifiListCursorPosition;
+static bool refreshWifiList;
 
 //wifi Keyboard window
+static UG_TEXTBOX textBoxApnLabel;
 static UG_TEXTBOX textBoxChosenApnLabel;
 static UG_TEXTBOX textBoxPApnPasswordLabel;
 static UG_TEXTBOX textBoxPApnPasswordContent;
@@ -210,6 +207,20 @@ static UG_OBJECT temperatureWindowObjects[MAX_OBJECTS];
 static UG_OBJECT settingsWindowObjects[MAX_OBJECTS_SETTINGS];
 static UG_OBJECT wifiSettingsObjects[MAX_OBJECTS_WIFI_SETTINGS];
 static UG_OBJECT wifiKeyboardObjects[MAX_OBJECTS_KEYBOARD_WINDOW];
+
+KEYBOARD_SIGNS KeyboardSignsGlobalState;
+
+uint8_t sellectedWifiNetworkName[33];
+uint8_t passwordToApnBuffer[MAX_APN_PASSWORD_LENGTH];
+
+const uint8_t KeyboardCodeTable[NUMBER_OF_KEY_ON_KEYBOARD][6] = { { 'q', 0, 'Q', 0, '1', 0 }, { 'w', 0, 'W', 0, '2', 0 }, { 'e', 0, 'E', 0, '3', 0 }, { 'r', 0, 'R', 0, '4', 0 },
+{ 't', 0, 'T', 0, '5', 0 }, { 'y', 0, 'Y', 0, '6', 0 }, { 'u', 0, 'U', 0, '7', 0 }, { 'i', 0, 'I', 0, '8', 0 }, { 'o', 0, 'O', 0, '9', 0 }, { 'p', 0, 'P', 0, '0', 0 },
+{ '`', 0, '`', 0, '~', 0 }, { 'a', 0, 'A', 0, '@', 0 }, { 's', 0, 'S', 0, '#', 0 }, { 'd', 0, 'D', 0, '$', 0 }, { 'f', 0, 'F', 0, '_', 0 }, { 'g', 0, 'G', 0, '&', 0 },
+{ 'h', 0, 'H', 0, '-', 0 }, { 'j', 0, 'J', 0, '+', 0 }, { 'k', 0, 'K', 0, '*', 0 }, { 'l', 0, 'L', 0, '!', 0 }, { '}', 0, '}', 0, ']', 0 },
+{ 0, 0, 0, 0, 0, 0 }, { 'z', 0, 'Z', 0, '\'', 0 }, { 'x', 0, 'X', 0, '"', 0 }, { 'c', 0, 'C', 0, '?', 0 }, { 'v', 0, 'V', 0, '=', 0 }, { 'b', 0, 'B', 0, '\\', 0 },
+{ 'n', 0, 'N', 0, '%', 0 }, { 'm', 0, 'M', 0, '/', 0 }, { '{', 0, '{', 0, '[', 0 }, { '^', 0, '^', 0, '|', 0 }, { 0, 0, 0, 0, 0, 0 },
+{ 0, 0, 0, 0, 0, 0 }, { '.', 0, '.', 0, ':', 0 }, { ',', 0, ',', 0, ';', 0 }, { ' ', 0, ' ', 0, ' ', 0 }, { '(', 0, '(', 0, '<', 0 }, { ')', 0, ')', 0, '>', 0 },
+{ 0, 0, 0, 0, 0, 0 } };
 
 static void changeHourValue(uint8_t* variableAdress, TYPE_OF_OPERATION typeOfOperation)
 {
@@ -288,7 +299,7 @@ static void calculateTemperatureString(uint8_t* labelTemperature, uint16_t tempe
 	}
 }
 
-static void calculateTitleStringInTemperatureWindow()
+static void calculateTitleStringInTemperatureWindow(void)
 {
 	uint8_t numberTmp[10] = { '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0' };
 
@@ -313,6 +324,7 @@ static void calculateTitleStringInTemperatureWindow()
 
 	calculateTemperatureString(numberTmp, ClockState.TemperatureSensorTable[ClockState.temperatureTypeInWindow].temperatureValue,
 		true);
+
 	strcat(WidgetsStrings.labelTemperatureInTitleOfWindow, numberTmp);
 }
 
@@ -324,7 +336,7 @@ static void setRecordCheckboxInTemperatureWindow(bool state)
 		UG_CheckboxSetCheched(&temperatureWindow, CHB_ID_1, CHB_STATE_RELEASED);
 }
 
-static void calculateTemperatureOffsetString()
+static void calculateTemperatureOffsetString(void)
 {
 	uint8_t numberTmp[5] = { '\0', '\0', '\0', '\0', '\0'};
 
@@ -334,7 +346,7 @@ static void calculateTemperatureOffsetString()
 	strcat(WidgetsStrings.labelTemperatureFurnaceOffset, "\xF8\C");
 }
 
-static void calculateTemperatureAlarmString()
+static void calculateTemperatureAlarmString(void)
 {
 	uint8_t numberTmp[5] = { '\0', '\0', '\0', '\0', '\0' };
 
@@ -375,7 +387,7 @@ static void calculateGraphStepValueString(uint8_t value)
 	strcat(WidgetsStrings.labelGraphStep, numberTmp);
 }
 
-static void calculateUpTimeString()
+static void calculateUpTimeString(void)
 {
 	uint8_t numberTmp[10] = { '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0' };
 
@@ -422,7 +434,7 @@ static void setCalendarModification(bool status)
 	}
 }
 
-static uint8_t returnMaxDayInMonth(uint8_t month, uint8_t year)
+uint8_t GUI_ReturnMaxDayInMonth(uint8_t month, uint8_t year)
 {
 	switch (month)
 	{
@@ -516,13 +528,66 @@ static void initValueOperation(uint8_t *valuePointer)
 	}
 }
 
-static void validMaxDayCalendar()
+static void validMaxDayCalendar(void)
 {
-	if (CalendarValueInSettings.day > returnMaxDayInMonth(CalendarValueInSettings.month,
+	if (CalendarValueInSettings.day > GUI_ReturnMaxDayInMonth(CalendarValueInSettings.month,
 		CalendarValueInSettings.year))
 	{
-		CalendarValueInSettings.day = returnMaxDayInMonth(CalendarValueInSettings.month,
+		CalendarValueInSettings.day = GUI_ReturnMaxDayInMonth(CalendarValueInSettings.month,
 			CalendarValueInSettings.year);
+	}
+}
+
+static void setKeyboardButtons(KEYBOARD_SIGNS KeyboardSigns)
+{
+	for (int i = 0; i < NUMBER_OF_KEY_ON_KEYBOARD; i++)
+	{
+		if (strlen(KeyboardCodeTable[i]) != 0)
+		{
+			switch (KeyboardSigns)
+			{
+			case SMALL_LETTER:
+				UG_ButtonSetText(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + i), KeyboardCodeTable[i]);
+				break;
+
+			case BIG_LETTER:
+				UG_ButtonSetText(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + i), &KeyboardCodeTable[i][2]);
+				break;
+
+			case SPECIAL_CHARACTER:
+				UG_ButtonSetText(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + i), &KeyboardCodeTable[i][4]);
+				break;
+
+			default:
+				break;
+			}
+			UG_ButtonSetFont(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + i), &FONT_8X12);
+		}
+
+		UG_ButtonSetStyle(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + i), BTN_STYLE_2D);
+	}/* for (int i = 0; i < NUMBER_OF_KEY_ON_KEYBOARD; i++) */
+}
+
+static void generatePasswordString(uint8_t *displayedString, uint8_t *passwordString, uint8_t checkBoxState)
+{
+	//clear displayedString
+	memset(displayedString, '\0', MAX_APN_PASSWORD_LENGTH);
+
+	if (strlen(passwordString) != 0)
+	{
+		if (checkBoxState == CHB_STATE_PRESSED)
+		{
+			strcpy(displayedString, passwordString);
+		}
+		else
+		{
+			if (strlen(passwordString) > 1)
+			{
+				memset(displayedString, '*', (strlen(passwordString) - 1));
+			}
+
+			strcat(displayedString, &passwordString[strlen(passwordString) - 1]);
+		}
 	}
 }
 
@@ -948,17 +1013,55 @@ void wifiSettingsWindowHandler(UG_MESSAGE *msg)
 		{
 			switch (msg->sub_id)
 			{
-			/* Close button was release */
+				/* Close button was release */
 			case BTN_ID_0:
 				UG_WindowShow(&mainWindow);
 				break;
-			/* Connect in first raw was pressed */
-			case BTN_ID_3:
-				UG_WindowShow(&wifiKeyboardWindow);
+				/* disconnect button was release */
+			case BTN_ID_1:
+				ClockState.wifiStartDisconnect = true;
+
+				//clear password and ssid from clockstate
+				memset(ClockState.ssidOfAssignedApn, '\0', SSID_STRING_LENGTH);
+				memset(ClockState.passwordToAssignedApn, '\0', MAX_APN_PASSWORD_LENGTH);
+
+				ClockState.wifiConnected = false;
+
+				UG_WindowShow(&mainWindow);
 				break;
-			}
-		}
-	}
+				/* up network list was release */
+			case BTN_ID_8:
+				wifiListCursorPosition--;
+				refreshWifiList = true;
+				break;
+				/* down network list was release */
+			case BTN_ID_9:
+				wifiListCursorPosition++;
+				refreshWifiList = true;
+				break;
+			}/* switch (msg->sub_id) */
+
+			/* Connect to Wifi was release */
+			for (int i = 0; i < NUMBER_OF_WIFI_DISPLAY_NETWORKS; i++)
+			{
+				if (msg->sub_id == (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + i))
+				{
+					if(ClockState.wifiConnected &&
+						(strcmp(ApnStructure.AppInformationTable[wifiListCursorPosition + i].ssid, ClockState.ssidOfAssignedApn) == 0))
+					{
+						//Do nothing if device is already connected to this network
+					}
+					else
+					{
+						//copy selected APN to temporary buffer and init widget in new window
+						memcpy(sellectedWifiNetworkName, ApnStructure.AppInformationTable[wifiListCursorPosition + i].ssid, 33);
+						UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_1, sellectedWifiNetworkName);
+						UG_WindowShow(&wifiKeyboardWindow);
+					}
+				}
+			}/* for (int i = 0; i < NUMBER_OF_WIFI_DISPLAY_NETWORKS; i++) */
+		}/* if (msg->id == OBJ_TYPE_BUTTON && msg->event == OBJ_EVENT_RELEASED) */
+	}/* if (msg->type == MSG_TYPE_OBJECT) */
 }
 
 void wifiKeyboardWindowHandler(UG_MESSAGE *msg)
@@ -973,12 +1076,99 @@ void wifiKeyboardWindowHandler(UG_MESSAGE *msg)
 			case BTN_ID_0:
 				UG_WindowShow(&wifiSettingsWindow);
 				break;
+				/* Shift button was release */
+			case (BUTTON_WIFI_KEYBOARD_BEGIN + SHIFT_KEY_OFFSET_WKW):
+
+				if (KeyboardSignsGlobalState == BIG_LETTER)
+				{
+					KeyboardSignsGlobalState = SMALL_LETTER;
+				}
+				else if (KeyboardSignsGlobalState == SMALL_LETTER)
+				{
+					KeyboardSignsGlobalState = BIG_LETTER;
+				}
+
+				setKeyboardButtons(KeyboardSignsGlobalState);
+
+				break;
+				/* Letter or special character button was release */
+			case (BUTTON_WIFI_KEYBOARD_BEGIN + LETTER_OR_SPECIAL_CHAR_KEY_OFFSET_WKW):
+
+				if (KeyboardSignsGlobalState == BIG_LETTER || KeyboardSignsGlobalState == SMALL_LETTER)
+				{
+					KeyboardSignsGlobalState = SPECIAL_CHARACTER;
+				}
+				else if (KeyboardSignsGlobalState == SPECIAL_CHARACTER)
+				{
+					KeyboardSignsGlobalState = SMALL_LETTER;
+				}
+
+				setKeyboardButtons(KeyboardSignsGlobalState);
+
+				break;
+				/* Enter button was release */
+			case (BUTTON_WIFI_KEYBOARD_BEGIN + ENTER_KEY_OFFSET_WKW):
+				//copy password and selected APN to ClockState.
+				strcpy(ClockState.ssidOfAssignedApn, sellectedWifiNetworkName);
+				strcpy(ClockState.passwordToAssignedApn, passwordToApnBuffer);
+				UG_WindowShow(&mainWindow);
+				break;
+				/* Backspace button was release */
+			case (BUTTON_WIFI_KEYBOARD_BEGIN + BACKSPACE_KEY_OFFSET_WKW):
+				if (strlen(passwordToApnBuffer) > 0)
+				{
+					passwordToApnBuffer[strlen(passwordToApnBuffer) - 1] = '\0';
+				}
+
+				generatePasswordString(WidgetsStrings.labelApnPassword, passwordToApnBuffer,
+					UG_CheckboxGetChecked(&wifiKeyboardWindow, CHB_ID_0));
+				UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_3, WidgetsStrings.labelApnPassword);
+
+				break;
+			}/* switch (msg->sub_id) */
+
+			for (int i = 0; i < NUMBER_OF_KEY_ON_KEYBOARD; i++)
+			{
+				if (msg->sub_id == (BUTTON_WIFI_KEYBOARD_BEGIN + i))
+				{
+					if (strlen(KeyboardCodeTable[i]) != 0)
+					{
+						switch (KeyboardSignsGlobalState)
+						{
+						case SMALL_LETTER:
+							strcat(passwordToApnBuffer, KeyboardCodeTable[i]);
+							break;
+
+						case BIG_LETTER:
+							strcat(passwordToApnBuffer, &KeyboardCodeTable[i][2]);
+							break;
+
+						case SPECIAL_CHARACTER:
+							strcat(passwordToApnBuffer, &KeyboardCodeTable[i][4]);
+							break;
+						}
+
+						generatePasswordString(WidgetsStrings.labelApnPassword, passwordToApnBuffer,
+							UG_CheckboxGetChecked(&wifiKeyboardWindow, CHB_ID_0));
+						UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_3, WidgetsStrings.labelApnPassword);
+					}
+				}
+			}/* for (int i = 0; i < NUMBER_OF_KEY_ON_KEYBOARD; i++) */
+		}/* if (msg->id == OBJ_TYPE_BUTTON && msg->event == OBJ_EVENT_RELEASED) */
+
+		if (msg->id == OBJ_TYPE_CHECKBOX && msg->event == OBJ_EVENT_RELEASED)
+		{
+			if (msg->sub_id == CHB_ID_0)
+			{
+				generatePasswordString(WidgetsStrings.labelApnPassword, passwordToApnBuffer,
+					UG_CheckboxGetChecked(&wifiKeyboardWindow, CHB_ID_0));
+				UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_3, WidgetsStrings.labelApnPassword);
 			}
 		}
 	}
 }
 
-void GUI_UpdateTemperature()
+void GUI_UpdateTemperature(void)
 {
 	//update temperature in main window
 	calculateTemperatureString(WidgetsStrings.labelTemperatureInside,
@@ -1001,7 +1191,7 @@ void GUI_UpdateTemperature()
 	}
 }
 
-void GUI_UpdateTime()
+void GUI_UpdateTime(void)
 {
 	static uint8_t minutePreviousValue = 255;
 	static uint8_t hourPreviousValue = 255;
@@ -1021,7 +1211,7 @@ void GUI_UpdateTime()
 void GUI_IncrementDay(uint8_t *day, uint8_t *month, uint8_t *year)
 {
 	(*day)++;
-	if(*day > returnMaxDayInMonth(*month, *year))
+	if(*day > GUI_ReturnMaxDayInMonth(*month, *year))
 	{
 		*day = 1;
 		(*month)++;
@@ -1046,7 +1236,7 @@ void GUI_DecrementDay(uint8_t *day, uint8_t *month, uint8_t *year)
 			*month = 12;
 		}
 
-		*day = returnMaxDayInMonth(*month, *year);
+		*day = GUI_ReturnMaxDayInMonth(*month, *year);
 	}
 }
 
@@ -1078,7 +1268,7 @@ uint16_t GUI_GetDecrementedFramIndex(uint16_t value)
 	return value;
 }
 
-uint16_t GUI_ReturnNewFramIndex()
+uint16_t GUI_ReturnNewFramIndex(void)
 {
 	uint16_t nextIndexTmp = ClockState.currentFramIndex;
 
@@ -1109,7 +1299,7 @@ void GUI_InitTemperatureStructure(uint8_t source, uint8_t day, uint8_t month, ui
 	}
 }
 
-static void GUI_DrawTemperatureGraph()
+static void GUI_DrawTemperatureGraph(void)
 {
 	//end of table will represent right side
 	uint16_t measurementsValueDataTable[NUM_OF_MEASUREMENTS_IN_X_AXIS];
@@ -1567,7 +1757,7 @@ static void GUI_DrawTemperatureGraph()
 	UG_FontSelect(NULL);
 }
 
-void GUI_ProcessTemperatureWindow()
+void GUI_ProcessTemperatureWindow(void)
 {
 	static UG_WINDOW* previousWindow = &mainWindow;
 	static bool callRedrawFirstStructureFlag = true;
@@ -1741,7 +1931,7 @@ static void drawAllarmStatus(UG_AREA position, UG_COLOR firstCollor, UG_COLOR se
 	}
 }
 
-void GUI_ProcessAlarmAnimation()
+void GUI_ProcessAlarmAnimation(void)
 {
 	static UG_WINDOW* previousWindow = &temperatureWindow;
 
@@ -1807,7 +1997,7 @@ void GUI_ProcessAlarmAnimation()
 	previousWindow = gui.active_window;
 }
 
-void GUI_IncrementSecond()
+void GUI_IncrementSecond(void)
 {
 	ClockState.systemUpTime++;
 	ClockState.currentTimeSecond++;
@@ -1837,7 +2027,172 @@ void GUI_IncrementSecond()
 	}
 }
 
-void GUI_ClockInit()
+void GUI_RefreshWifiWindow(void)
+{
+	if (gui.active_window == &wifiSettingsWindow)
+	{
+		//refresh Wifi APN list if case was fulfiled
+		if(ClockState.wifiApnReceived || refreshWifiList)
+		{
+			//check correctness of cursor position
+			if (wifiListCursorPosition > 0)
+			{
+				int8_t wifiListCursorPositionTmp = (int8_t)ApnStructure.NumberOfApn - (int8_t)wifiListCursorPosition;
+
+				if (wifiListCursorPositionTmp < (int8_t)NUMBER_OF_WIFI_DISPLAY_NETWORKS)
+				{
+					wifiListCursorPositionTmp = (int8_t)ApnStructure.NumberOfApn - (int8_t)NUMBER_OF_WIFI_DISPLAY_NETWORKS;
+
+					if (wifiListCursorPositionTmp < 0)
+					{
+						wifiListCursorPositionTmp = 0;
+					}
+
+					wifiListCursorPosition = wifiListCursorPositionTmp;
+				}
+
+			}/* if (wifiListCursorPosition > 0) */
+
+			//refresh widgets with Wifi network
+			for (int i = 0; i < NUMBER_OF_WIFI_DISPLAY_NETWORKS; i++)
+			{
+				if ((i + wifiListCursorPosition) < ApnStructure.NumberOfApn)
+				{
+					UG_TextboxSetText(&wifiSettingsWindow, (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + i),
+							ApnStructure.AppInformationTable[i + wifiListCursorPosition].ssid);
+
+					UG_TextboxShow(&wifiSettingsWindow, (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + i));
+					UG_ButtonShow(&wifiSettingsWindow, (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + i));
+
+					if(ClockState.wifiConnected &&
+							(strcmp(ApnStructure.AppInformationTable[i + wifiListCursorPosition].ssid, ClockState.ssidOfAssignedApn) == 0))
+					{
+						UG_ButtonSetText(&wifiSettingsWindow, (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + i), "connected");
+					}
+					else
+					{
+						UG_ButtonSetText(&wifiSettingsWindow, (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + i), "connect");
+					}
+				}
+				else
+				{
+					UG_TextboxHide(&wifiSettingsWindow, (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + i));
+					UG_ButtonHide(&wifiSettingsWindow, (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + i));
+				}
+			}/* for (int i = 0; i < NUMBER_OF_WIFI_DISPLAY_NETWORKS; i++) */
+
+			//update up scroll visibility
+			if (wifiListCursorPosition == 0)
+			{
+				UG_ButtonHide(&wifiSettingsWindow, BTN_ID_8);
+			}
+			else
+			{
+				UG_ButtonShow(&wifiSettingsWindow, BTN_ID_8);
+			}
+
+			//update down scroll visibility
+			if ((ApnStructure.NumberOfApn <= NUMBER_OF_WIFI_DISPLAY_NETWORKS)
+					|| ((ApnStructure.NumberOfApn - wifiListCursorPosition - NUMBER_OF_WIFI_DISPLAY_NETWORKS) == 0))
+			{
+				UG_ButtonHide(&wifiSettingsWindow, BTN_ID_9);
+			}
+			else
+			{
+				UG_ButtonShow(&wifiSettingsWindow, BTN_ID_9);
+			}
+
+			UG_Update();
+
+			ClockState.wifiApnReceived = false;
+			refreshWifiList = false;
+		}/* if(ClockState.wifiApnReceived || refreshWifiList) */
+
+		//refresh Wifi status
+		{
+			static WIFI_GUI_STATUS wifiGuiStatus = WIFI_INACTIVE;
+			WIFI_GUI_STATUS wifiGuiStatusTmp = WIFI_ACTIVE;
+
+			if(ClockState.wifiReady)
+			{
+				wifiGuiStatusTmp = WIFI_ACTIVE;
+
+				if(ClockState.wifiConnected)
+				{
+					wifiGuiStatusTmp = WIFI_CONNECTED;
+				}
+			}
+			else
+			{
+				wifiGuiStatusTmp = WIFI_INACTIVE;
+			}
+
+			//refresh WiFi state
+			if(wifiGuiStatus != wifiGuiStatusTmp)
+			{
+				wifiGuiStatus = wifiGuiStatusTmp;
+
+				switch(wifiGuiStatus)
+				{
+				case WIFI_ACTIVE:
+					strcpy(WidgetsStrings.labelWifiStatus, "Active");
+					UG_ButtonHide(&wifiSettingsWindow, BTN_ID_1);
+					UG_TextboxHide(&wifiSettingsWindow, TXB_ID_1);
+					break;
+
+				case WIFI_INACTIVE:
+					strcpy(WidgetsStrings.labelWifiStatus, "Inactive");
+					UG_ButtonHide(&wifiSettingsWindow, BTN_ID_1);
+					UG_TextboxHide(&wifiSettingsWindow, TXB_ID_1);
+					break;
+
+				case WIFI_CONNECTED:
+					strcpy(WidgetsStrings.labelWifiStatus, "Connected to: ");
+					strcat(WidgetsStrings.labelWifiStatus, ClockState.ssidOfAssignedApn);
+					UG_ButtonShow(&wifiSettingsWindow, BTN_ID_1);
+					break;
+				}
+
+				UG_TextboxSetText(&wifiSettingsWindow, TXB_ID_0, WidgetsStrings.labelWifiStatus);
+			}
+		}//refresh Wifi status
+
+		//refresh Wifi IP adress
+		{
+			static bool previousWifiConnectedState = false;
+			static uint8_t previousAssignedFirstByteOfIp = 0;
+
+			if((ClockState.wifiConnected && (previousWifiConnectedState != ClockState.wifiConnected))
+				|| (ClockState.wifiConnected && (previousAssignedFirstByteOfIp != ClockState.ipAddressAssignedToDevice[0])))
+			{
+				uint8_t numberTmp[5] = { '\0', '\0', '\0', '\0', '\0' };
+
+				strcpy(WidgetsStrings.labelAssignedIpAdress, "IP: ");
+
+				if(ClockState.ipAddressAssignedToDevice[0] != 0)
+				{
+					for(int i = 0; i < IP_ADDRESS_BYTE_LENGTH; i++)
+					{
+						itoa(ClockState.ipAddressAssignedToDevice[i], numberTmp, 10);
+						strcat(WidgetsStrings.labelAssignedIpAdress, numberTmp);
+						strcat(WidgetsStrings.labelAssignedIpAdress, ".");
+					}
+
+					//delete last dot in IP address
+					WidgetsStrings.labelAssignedIpAdress[strlen(WidgetsStrings.labelAssignedIpAdress) - 1] = '\0';
+				}
+
+				UG_TextboxSetText(&wifiSettingsWindow, TXB_ID_1, WidgetsStrings.labelAssignedIpAdress);
+				UG_TextboxShow(&wifiSettingsWindow, TXB_ID_1);
+			}
+
+			previousWifiConnectedState = ClockState.wifiConnected;
+			previousAssignedFirstByteOfIp = ClockState.ipAddressAssignedToDevice[0];
+		}//refresh Wifi IP adresss
+	}/* if (gui.active_window == &wifiSettingsWindow) */
+}
+
+void GUI_ClockInit(void)
 {
 	/**********************************
 	* init string inside ClocState structure
@@ -2207,102 +2562,93 @@ void GUI_ClockInit()
 	UG_WindowSetTitleText(&wifiSettingsWindow, "WiFi settings");
 	UG_WindowSetTitleTextFont(&wifiSettingsWindow, &FONT_8X8);
 
-	UG_TextboxCreate(&wifiSettingsWindow, &textBoxWifiStatus, TXB_ID_0, 1, 1, 300, 20);
+	UG_TextboxCreate(&wifiSettingsWindow, &textBoxWifiStatus, TXB_ID_0, 1, 1, 280, 20);
 	UG_TextboxSetAlignment(&wifiSettingsWindow, TXB_ID_0, ALIGN_CENTER_LEFT);
-	UG_TextboxSetText(&wifiSettingsWindow, TXB_ID_0, "connected to:");//connected to: , disconnected, inactive, WiFi damaged
+	strcpy(WidgetsStrings.labelWifiStatus, "Inactive");
+	UG_TextboxSetText(&wifiSettingsWindow, TXB_ID_0, WidgetsStrings.labelWifiStatus);
 	UG_TextboxSetFont(&wifiSettingsWindow, TXB_ID_0, &FONT_8X12);
 
-	UG_TextboxCreate(&wifiSettingsWindow, &textBoxApnLabel, TXB_ID_1, 1, 50, 300, 70);
+	UG_TextboxCreate(&wifiSettingsWindow, &textBoxAssignedIpAddress, TXB_ID_1, 120, 25, 310, 45);
 	UG_TextboxSetAlignment(&wifiSettingsWindow, TXB_ID_1, ALIGN_CENTER_LEFT);
-	UG_TextboxSetText(&wifiSettingsWindow, TXB_ID_1, "Access points");
+	UG_TextboxSetText(&wifiSettingsWindow, TXB_ID_1, " ");
 	UG_TextboxSetFont(&wifiSettingsWindow, TXB_ID_1, &FONT_8X12);
+	UG_TextboxHide(&wifiSettingsWindow, TXB_ID_1);
 
-	UG_TextboxCreate(&wifiSettingsWindow, &textBoxNetwork0, TXB_ID_2, APN_NAME_BEGIN,
-		FIRST_LINE_OF_APN_BEGIN_WSW, APN_NAME_END, FIRST_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
+	UG_TextboxCreate(&wifiSettingsWindow, &textBoxApnListLabel, TXB_ID_2, 1, 50, 300, 70);
 	UG_TextboxSetAlignment(&wifiSettingsWindow, TXB_ID_2, ALIGN_CENTER_LEFT);
-	UG_TextboxSetText(&wifiSettingsWindow, TXB_ID_2, "first network");
+	UG_TextboxSetText(&wifiSettingsWindow, TXB_ID_2, "Access points:");
 	UG_TextboxSetFont(&wifiSettingsWindow, TXB_ID_2, &FONT_8X12);
 
-	UG_TextboxCreate(&wifiSettingsWindow, &textBoxNetwork1, TXB_ID_3, APN_NAME_BEGIN,
+	UG_TextboxCreate(&wifiSettingsWindow, &textBoxNetwork[0], TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN, APN_NAME_BEGIN,
+		FIRST_LINE_OF_APN_BEGIN_WSW, APN_NAME_END, FIRST_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
+
+	UG_TextboxCreate(&wifiSettingsWindow, &textBoxNetwork[1], (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + 1), APN_NAME_BEGIN,
 		SECOND_LINE_OF_APN_BEGIN_WSW, APN_NAME_END, SECOND_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
-	UG_TextboxSetAlignment(&wifiSettingsWindow, TXB_ID_3, ALIGN_CENTER_LEFT);
-	UG_TextboxSetText(&wifiSettingsWindow, TXB_ID_3, "second network");
-	UG_TextboxSetFont(&wifiSettingsWindow, TXB_ID_3, &FONT_8X12);
 
-	UG_TextboxCreate(&wifiSettingsWindow, &textBoxNetwork2, TXB_ID_4, APN_NAME_BEGIN,
+	UG_TextboxCreate(&wifiSettingsWindow, &textBoxNetwork[2], (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + 2), APN_NAME_BEGIN,
 		THIRD_LINE_OF_APN_BEGIN_WSW, APN_NAME_END, THIRD_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
-	UG_TextboxSetAlignment(&wifiSettingsWindow, TXB_ID_4, ALIGN_CENTER_LEFT);
-	UG_TextboxSetText(&wifiSettingsWindow, TXB_ID_4, "third network");
-	UG_TextboxSetFont(&wifiSettingsWindow, TXB_ID_4, &FONT_8X12);
 
-	UG_TextboxCreate(&wifiSettingsWindow, &textBoxNetwork3, TXB_ID_5, APN_NAME_BEGIN,
+	UG_TextboxCreate(&wifiSettingsWindow, &textBoxNetwork[3], (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + 3), APN_NAME_BEGIN,
 		FOURTH_LINE_OF_APN_BEGIN_WSW, APN_NAME_END, FOURTH_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
-	UG_TextboxSetAlignment(&wifiSettingsWindow, TXB_ID_5, ALIGN_CENTER_LEFT);
-	UG_TextboxSetText(&wifiSettingsWindow, TXB_ID_5, "fourth network");
-	UG_TextboxSetFont(&wifiSettingsWindow, TXB_ID_5, &FONT_8X12);
 
-	UG_TextboxCreate(&wifiSettingsWindow, &textBoxNetwork4, TXB_ID_6, APN_NAME_BEGIN,
+	UG_TextboxCreate(&wifiSettingsWindow, &textBoxNetwork[4], (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + 4), APN_NAME_BEGIN,
 		FIVETH_LINE_OF_APN_BEGIN_WSW, APN_NAME_END, FIVETH_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
-	UG_TextboxSetAlignment(&wifiSettingsWindow, TXB_ID_6, ALIGN_CENTER_LEFT);
-	UG_TextboxSetText(&wifiSettingsWindow, TXB_ID_6, "fiveth network");
-	UG_TextboxSetFont(&wifiSettingsWindow, TXB_ID_6, &FONT_8X12);
+
+	for (int i = 0; i < NUMBER_OF_WIFI_DISPLAY_NETWORKS; i++)
+	{
+		UG_TextboxSetAlignment(&wifiSettingsWindow, (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + i), ALIGN_CENTER_LEFT);
+		UG_TextboxSetText(&wifiSettingsWindow, (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + i), " ");
+		UG_TextboxSetFont(&wifiSettingsWindow, (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + i), &FONT_8X12);
+		UG_TextboxHide(&wifiSettingsWindow, (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + i));
+	}
 
 	UG_ButtonCreate(&wifiSettingsWindow, &buttonCloseWifiSettingsWindow, BTN_ID_0, 290, 0, 311, 20);
 	UG_ButtonSetText(&wifiSettingsWindow, BTN_ID_0, " ");
 	UG_ButtonSetFont(&wifiSettingsWindow, BTN_ID_0, &FONT_12X16);
 	UG_ButtonSetStyle(&wifiSettingsWindow, BTN_ID_0, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiSettingsWindow, &buttonControlPower, BTN_ID_1, 1, 25, 100, 45);
-	UG_ButtonSetText(&wifiSettingsWindow, BTN_ID_1, "turn off");
+	UG_ButtonCreate(&wifiSettingsWindow, &buttonControlConnection, BTN_ID_1, 1, 25, 110, 45);
+	UG_ButtonSetText(&wifiSettingsWindow, BTN_ID_1, "disconnect");
 	UG_ButtonSetFont(&wifiSettingsWindow, BTN_ID_1, &FONT_8X12);
 	UG_ButtonSetStyle(&wifiSettingsWindow, BTN_ID_1, BTN_STYLE_2D);
+	UG_ButtonHide(&wifiSettingsWindow, BTN_ID_1);
 
-	UG_ButtonCreate(&wifiSettingsWindow, &buttonControlConnection, BTN_ID_2, 105, 25, 250, 45);
-	UG_ButtonSetText(&wifiSettingsWindow, BTN_ID_2, "disconnect");
-	UG_ButtonSetFont(&wifiSettingsWindow, BTN_ID_2, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiSettingsWindow, BTN_ID_2, BTN_STYLE_2D);
-
-	UG_ButtonCreate(&wifiSettingsWindow, &buttonNetwork0, BTN_ID_3, APN_CONNECT_BUTTON_BEGIN,
+	UG_ButtonCreate(&wifiSettingsWindow, &buttonNetwork[0], BUTTON_WIFI_DISPLAY_NETWORK_BEGIN, APN_CONNECT_BUTTON_BEGIN,
 		FIRST_LINE_OF_APN_BEGIN_WSW, APN_CONNECT_BUTTON_END, FIRST_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
-	UG_ButtonSetText(&wifiSettingsWindow, BTN_ID_3, "connect");
-	UG_ButtonSetFont(&wifiSettingsWindow, BTN_ID_3, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiSettingsWindow, BTN_ID_3, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiSettingsWindow, &buttonNetwork1, BTN_ID_4, APN_CONNECT_BUTTON_BEGIN,
+	UG_ButtonCreate(&wifiSettingsWindow, &buttonNetwork[1], (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + 1), APN_CONNECT_BUTTON_BEGIN,
 		SECOND_LINE_OF_APN_BEGIN_WSW, APN_CONNECT_BUTTON_END, SECOND_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
-	UG_ButtonSetText(&wifiSettingsWindow, BTN_ID_4, "connect");
-	UG_ButtonSetFont(&wifiSettingsWindow, BTN_ID_4, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiSettingsWindow, BTN_ID_4, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiSettingsWindow, &buttonNetwork2, BTN_ID_5, APN_CONNECT_BUTTON_BEGIN,
+	UG_ButtonCreate(&wifiSettingsWindow, &buttonNetwork[2], (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + 2), APN_CONNECT_BUTTON_BEGIN,
 		THIRD_LINE_OF_APN_BEGIN_WSW, APN_CONNECT_BUTTON_END, THIRD_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
-	UG_ButtonSetText(&wifiSettingsWindow, BTN_ID_5, "connect");
-	UG_ButtonSetFont(&wifiSettingsWindow, BTN_ID_5, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiSettingsWindow, BTN_ID_5, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiSettingsWindow, &buttonNetwork3, BTN_ID_6, APN_CONNECT_BUTTON_BEGIN,
+	UG_ButtonCreate(&wifiSettingsWindow, &buttonNetwork[3], (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + 3), APN_CONNECT_BUTTON_BEGIN,
 		FOURTH_LINE_OF_APN_BEGIN_WSW, APN_CONNECT_BUTTON_END, FOURTH_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
-	UG_ButtonSetText(&wifiSettingsWindow, BTN_ID_6, "connect");
-	UG_ButtonSetFont(&wifiSettingsWindow, BTN_ID_6, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiSettingsWindow, BTN_ID_6, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiSettingsWindow, &buttonNetwork4, BTN_ID_7, APN_CONNECT_BUTTON_BEGIN,
+	UG_ButtonCreate(&wifiSettingsWindow, &buttonNetwork[4], (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + 4), APN_CONNECT_BUTTON_BEGIN,
 		FIVETH_LINE_OF_APN_BEGIN_WSW, APN_CONNECT_BUTTON_END, FIVETH_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
-	UG_ButtonSetText(&wifiSettingsWindow, BTN_ID_7, "connect");
-	UG_ButtonSetFont(&wifiSettingsWindow, BTN_ID_7, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiSettingsWindow, BTN_ID_7, BTN_STYLE_2D);
+
+	for (int i = 0; i < NUMBER_OF_WIFI_DISPLAY_NETWORKS; i++)
+	{
+		UG_ButtonSetText(&wifiSettingsWindow, (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + i), " ");
+		UG_ButtonSetFont(&wifiSettingsWindow, (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + i), &FONT_8X12);
+		UG_ButtonSetStyle(&wifiSettingsWindow, (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + i), BTN_STYLE_2D);
+		UG_ButtonHide(&wifiSettingsWindow, (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + i));
+	}
 
 	UG_ButtonCreate(&wifiSettingsWindow, &buttonUpNetworkList, BTN_ID_8, APN_SLIDER_BEGIN,
 		FIRST_LINE_OF_APN_BEGIN_WSW, APN_SLIDER_END, FIRST_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
 	UG_ButtonSetText(&wifiSettingsWindow, BTN_ID_8, " ");
 	UG_ButtonSetFont(&wifiSettingsWindow, BTN_ID_8, &FONT_8X12);
 	UG_ButtonSetStyle(&wifiSettingsWindow, BTN_ID_8, BTN_STYLE_2D);
+	UG_ButtonHide(&wifiSettingsWindow, BTN_ID_8);
 
 	UG_ButtonCreate(&wifiSettingsWindow, &buttonDownNetworkList, BTN_ID_9, APN_SLIDER_BEGIN,
 		FIVETH_LINE_OF_APN_BEGIN_WSW, APN_SLIDER_END, FIVETH_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
 	UG_ButtonSetText(&wifiSettingsWindow, BTN_ID_9, " ");
 	UG_ButtonSetFont(&wifiSettingsWindow, BTN_ID_9, &FONT_8X12);
 	UG_ButtonSetStyle(&wifiSettingsWindow, BTN_ID_9, BTN_STYLE_2D);
+	UG_ButtonHide(&wifiSettingsWindow, BTN_ID_9);
 
 	/**********************************
 	* Create the WiFi Keyboard Window
@@ -2311,20 +2657,25 @@ void GUI_ClockInit()
 	UG_WindowSetTitleText(&wifiKeyboardWindow, "WiFi password");
 	UG_WindowSetTitleTextFont(&wifiKeyboardWindow, &FONT_8X8);
 
-	UG_TextboxCreate(&wifiKeyboardWindow, &textBoxChosenApnLabel, TXB_ID_0, 1, 3, 280, 18);
+	UG_TextboxCreate(&wifiKeyboardWindow, &textBoxApnLabel, TXB_ID_0, 1, 3, 40, 18);
 	UG_TextboxSetAlignment(&wifiKeyboardWindow, TXB_ID_0, ALIGN_CENTER_LEFT);
-	UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_0, "APN: First network");
+	UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_0, "APN:");
 	UG_TextboxSetFont(&wifiKeyboardWindow, TXB_ID_0, &FONT_8X12);
 
-	UG_TextboxCreate(&wifiKeyboardWindow, &textBoxPApnPasswordLabel, TXB_ID_1, 1, 20, 280, 35);
+	UG_TextboxCreate(&wifiKeyboardWindow, &textBoxChosenApnLabel, TXB_ID_1, 41, 3, 280, 18);
 	UG_TextboxSetAlignment(&wifiKeyboardWindow, TXB_ID_1, ALIGN_CENTER_LEFT);
-	UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_1, "Password: ");
+	UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_1, " ");
 	UG_TextboxSetFont(&wifiKeyboardWindow, TXB_ID_1, &FONT_8X12);
 
-	UG_TextboxCreate(&wifiKeyboardWindow, &textBoxPApnPasswordContent, TXB_ID_2, 75, 20, 290, 35);
+	UG_TextboxCreate(&wifiKeyboardWindow, &textBoxPApnPasswordLabel, TXB_ID_2, 1, 20, 280, 35);
 	UG_TextboxSetAlignment(&wifiKeyboardWindow, TXB_ID_2, ALIGN_CENTER_LEFT);
-	UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_2, "********");
+	UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_2, "Password: ");
 	UG_TextboxSetFont(&wifiKeyboardWindow, TXB_ID_2, &FONT_8X12);
+
+	UG_TextboxCreate(&wifiKeyboardWindow, &textBoxPApnPasswordContent, TXB_ID_3, 75, 20, 290, 35);
+	UG_TextboxSetAlignment(&wifiKeyboardWindow, TXB_ID_3, ALIGN_CENTER_LEFT);
+	UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_3, WidgetsStrings.labelApnPassword);
+	UG_TextboxSetFont(&wifiKeyboardWindow, TXB_ID_3, &FONT_8X12);
 
 	UG_CheckboxCreate(&wifiKeyboardWindow, &ckeckBoxShowApnPassword, CHB_ID_0, 1, 40, 290, 60);
 	UG_CheckboxSetText(&wifiKeyboardWindow, CHB_ID_0, "show password");
@@ -2338,281 +2689,175 @@ void GUI_ClockInit()
 
 	//Keyboard key begin
 	//first row
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyQor1Num1a, BTN_ID_1, BUTTON_COLUMN_BEGIN_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyQor1Num1a, BUTTON_WIFI_KEYBOARD_BEGIN, BUTTON_COLUMN_BEGIN_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_BEGIN_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_1, "Q");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_1, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_1, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyWor2Num2a, BTN_ID_2, BUTTON_COLUMN_NR2_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyWor2Num2a, (BUTTON_WIFI_KEYBOARD_BEGIN + 1), BUTTON_COLUMN_NR2_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR2_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_2, "W");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_2, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_2, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyEor3Num3a, BTN_ID_3, BUTTON_COLUMN_NR4_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyEor3Num3a, (BUTTON_WIFI_KEYBOARD_BEGIN + 2), BUTTON_COLUMN_NR4_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR4_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_3, "E");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_3, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_3, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyRor4Num4a, BTN_ID_4, BUTTON_COLUMN_NR6_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyRor4Num4a, (BUTTON_WIFI_KEYBOARD_BEGIN + 3), BUTTON_COLUMN_NR6_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR6_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_4, "R");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_4, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_4, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyTor5Num5a, BTN_ID_5, BUTTON_COLUMN_NR8_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyTor5Num5a, (BUTTON_WIFI_KEYBOARD_BEGIN + 4), BUTTON_COLUMN_NR8_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR8_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_5, "T");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_5, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_5, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyYor6Num6a, BTN_ID_6, BUTTON_COLUMN_NR10_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyYor6Num6a, (BUTTON_WIFI_KEYBOARD_BEGIN + 5), BUTTON_COLUMN_NR10_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR10_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_6, "Y");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_6, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_6, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyUor7Num7a, BTN_ID_7, BUTTON_COLUMN_NR12_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyUor7Num7a, (BUTTON_WIFI_KEYBOARD_BEGIN + 6), BUTTON_COLUMN_NR12_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR12_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_7, "U");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_7, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_7, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyIor8Num8a, BTN_ID_8, BUTTON_COLUMN_NR14_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyIor8Num8a, (BUTTON_WIFI_KEYBOARD_BEGIN + 7), BUTTON_COLUMN_NR14_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR14_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_8, "I");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_8, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_8, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyOor9Num9a, BTN_ID_9, BUTTON_COLUMN_NR16_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyOor9Num9a, (BUTTON_WIFI_KEYBOARD_BEGIN + 8), BUTTON_COLUMN_NR16_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR16_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_9, "O");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_9, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_9, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyPor0Num10a, BTN_ID_10, BUTTON_COLUMN_NR18_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyPor0Num10a, (BUTTON_WIFI_KEYBOARD_BEGIN + 9), BUTTON_COLUMN_NR18_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR18_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_10, "P");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_10, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_10, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyGraveAccentOrTildeNum11a, BTN_ID_11, BUTTON_COLUMN_NR20_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyGraveAccentOrTildeNum11a, (BUTTON_WIFI_KEYBOARD_BEGIN + 10), BUTTON_COLUMN_NR20_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR20_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_11, "`");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_11, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_11, BTN_STYLE_2D);
 
 	//Second row
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyAorMonkeyNum1b, BTN_ID_12, BUTTON_COLUMN_NR1_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyAorMonkeyNum1b, (BUTTON_WIFI_KEYBOARD_BEGIN + 11), BUTTON_COLUMN_NR1_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR1_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_12, "A");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_12, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_12, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeySorHashNum2b, BTN_ID_13, BUTTON_COLUMN_NR3_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeySorHashNum2b, (BUTTON_WIFI_KEYBOARD_BEGIN + 12), BUTTON_COLUMN_NR3_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR3_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_13, "S");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_13, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_13, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyDorDolarNum3b, BTN_ID_14, BUTTON_COLUMN_NR5_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyDorDolarNum3b, (BUTTON_WIFI_KEYBOARD_BEGIN + 13), BUTTON_COLUMN_NR5_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR5_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_14, "D");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_14, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_14, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyForFloorNum4b, BTN_ID_15, BUTTON_COLUMN_NR7_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyForFloorNum4b, (BUTTON_WIFI_KEYBOARD_BEGIN + 14), BUTTON_COLUMN_NR7_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR7_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_15, "F");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_15, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_15, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyGorAmpersandNum5b, BTN_ID_16, BUTTON_COLUMN_NR9_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyGorAmpersandNum5b, (BUTTON_WIFI_KEYBOARD_BEGIN + 15), BUTTON_COLUMN_NR9_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR9_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_16, "G");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_16, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_16, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyHorMinusNum6b, BTN_ID_17, BUTTON_COLUMN_NR11_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyHorMinusNum6b, (BUTTON_WIFI_KEYBOARD_BEGIN + 16), BUTTON_COLUMN_NR11_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR11_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_17, "H");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_17, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_17, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyJorPlusNum7b, BTN_ID_18, BUTTON_COLUMN_NR13_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyJorPlusNum7b, (BUTTON_WIFI_KEYBOARD_BEGIN + 17), BUTTON_COLUMN_NR13_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR13_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_18, "J");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_18, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_18, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyKorAsteriskNum8b, BTN_ID_19, BUTTON_COLUMN_NR15_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyKorAsteriskNum8b, (BUTTON_WIFI_KEYBOARD_BEGIN + 18), BUTTON_COLUMN_NR15_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR15_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_19, "K");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_19, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_19, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyLorExclamationMarkNum9b, BTN_ID_20, BUTTON_COLUMN_NR17_WKW,
-		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR17_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyLorExclamationMarkNum9b, (BUTTON_WIFI_KEYBOARD_BEGIN + 19),
+		BUTTON_COLUMN_NR17_WKW, SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR17_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_20, "L");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_20, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_20, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyRightBracesOrRightSquareBracketsNum10b, BTN_ID_21, BUTTON_COLUMN_NR19_WKW,
-		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR19_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyRightBracesOrRightSquareBracketsNum10b, (BUTTON_WIFI_KEYBOARD_BEGIN + 20),
+		BUTTON_COLUMN_NR19_WKW, SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR19_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_21, "}");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_21, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_21, BTN_STYLE_2D);
 
 	//Third row
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyShiftNum1c, BTN_ID_22, BUTTON_COLUMN_BEGIN_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyShiftNum1c, (BUTTON_WIFI_KEYBOARD_BEGIN + SHIFT_KEY_OFFSET_WKW), BUTTON_COLUMN_BEGIN_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_BEGIN_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_22, "\x18");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_22, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_22, BTN_STYLE_2D);
+	UG_ButtonSetText(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + SHIFT_KEY_OFFSET_WKW), "\x18");
+	UG_ButtonSetFont(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + SHIFT_KEY_OFFSET_WKW), &FONT_8X12);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyZorQuotationMarksSingleNum2c, BTN_ID_23, BUTTON_COLUMN_NR2_WKW,
-		THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR2_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyZorQuotationMarksSingleNum2c, (BUTTON_WIFI_KEYBOARD_BEGIN + 22),
+		BUTTON_COLUMN_NR2_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR2_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_23, "Z");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_23, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_23, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyXorQuotationMarksDoubleNum3c, BTN_ID_24, BUTTON_COLUMN_NR4_WKW,
-		THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR4_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyXorQuotationMarksDoubleNum3c, (BUTTON_WIFI_KEYBOARD_BEGIN + 23),
+		BUTTON_COLUMN_NR4_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR4_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_24, "X");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_24, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_24, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyCorQuestionMarkNum4c, BTN_ID_25, BUTTON_COLUMN_NR6_WKW,
-		THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR6_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyCorQuestionMarkNum4c, (BUTTON_WIFI_KEYBOARD_BEGIN + 24),
+		BUTTON_COLUMN_NR6_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR6_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_25, "C");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_25, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_25, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyVorEqualsSignNum5c, BTN_ID_26, BUTTON_COLUMN_NR8_WKW,
-		THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR8_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyVorEqualsSignNum5c, (BUTTON_WIFI_KEYBOARD_BEGIN + 25),
+		BUTTON_COLUMN_NR8_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR8_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_26, "V");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_26, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_26, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyBorBackslashNum6c, BTN_ID_27, BUTTON_COLUMN_NR10_WKW,
-		THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR10_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyBorBackslashNum6c, (BUTTON_WIFI_KEYBOARD_BEGIN + 26),
+		BUTTON_COLUMN_NR10_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR10_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_27, "B");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_27, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_27, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyNorPercent1Num7c, BTN_ID_28, BUTTON_COLUMN_NR12_WKW,
-		THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR12_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyNorPercent1Num7c, (BUTTON_WIFI_KEYBOARD_BEGIN + 27),
+		BUTTON_COLUMN_NR12_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR12_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_28, "N");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_28, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_28, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyMorForwardSlashNum8c, BTN_ID_29, BUTTON_COLUMN_NR14_WKW,
-		THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR14_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyMorForwardSlashNum8c, (BUTTON_WIFI_KEYBOARD_BEGIN + 28),
+		BUTTON_COLUMN_NR14_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR14_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_29, "M");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_29, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_29, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyLeftBracesOrLeftSquareBracketsNum9c, BTN_ID_30, BUTTON_COLUMN_NR16_WKW,
-		THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR16_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyLeftBracesOrLeftSquareBracketsNum9c, (BUTTON_WIFI_KEYBOARD_BEGIN + 29),
+		BUTTON_COLUMN_NR16_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR16_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_30, "{");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_30, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_30, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyCaretOrVerticalBarNum10c, BTN_ID_31, BUTTON_COLUMN_NR18_WKW,
-		THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR18_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyCaretOrVerticalBarNum10c, (BUTTON_WIFI_KEYBOARD_BEGIN + 30),
+		BUTTON_COLUMN_NR18_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR18_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_31, "^");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_31, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_31, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyBackspaceNum11c, BTN_ID_32, BUTTON_COLUMN_NR20_WKW,
-		THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR20_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyBackspaceNum11c, (BUTTON_WIFI_KEYBOARD_BEGIN + BACKSPACE_KEY_OFFSET_WKW),
+		BUTTON_COLUMN_NR20_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR20_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_32, "\x1b");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_32, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_32, BTN_STYLE_2D);
+	UG_ButtonSetText(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + BACKSPACE_KEY_OFFSET_WKW), "\x1b");
+	UG_ButtonSetFont(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + BACKSPACE_KEY_OFFSET_WKW), &FONT_8X12);
 
 	//Fourth row
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeySwitchToSignNum1d, BTN_ID_33, BUTTON_COLUMN_BEGIN_WKW,
-		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR3_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeySwitchToSignNum1d,
+		(BUTTON_WIFI_KEYBOARD_BEGIN + LETTER_OR_SPECIAL_CHAR_KEY_OFFSET_WKW),
+		BUTTON_COLUMN_BEGIN_WKW, FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR3_WKW + BUTTON_LENGTH_WKW,
 		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_33, "QWE/12?");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_33, &FONT_6X8);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_33, BTN_STYLE_2D);
+	UG_ButtonSetText(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + LETTER_OR_SPECIAL_CHAR_KEY_OFFSET_WKW), "QWE/12?");
+	UG_ButtonSetFont(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + LETTER_OR_SPECIAL_CHAR_KEY_OFFSET_WKW), &FONT_6X8);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyDotOrColonNum2d, BTN_ID_34, BUTTON_COLUMN_NR5_WKW,
-		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR5_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyDotOrColonNum2d, (BUTTON_WIFI_KEYBOARD_BEGIN + 33),
+		BUTTON_COLUMN_NR5_WKW, FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR5_WKW + BUTTON_LENGTH_WKW,
 		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_34, ".");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_34, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_34, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyCommaQorSemicolonNum3d, BTN_ID_35, BUTTON_COLUMN_NR7_WKW,
-		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR7_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyCommaQorSemicolonNum3d, (BUTTON_WIFI_KEYBOARD_BEGIN + 34),
+		BUTTON_COLUMN_NR7_WKW, FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR7_WKW + BUTTON_LENGTH_WKW,
 		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_35, ",");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_35, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_35, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeySpaceNum4d, BTN_ID_36, BUTTON_COLUMN_NR9_WKW,
-		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR11_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeySpaceNum4d, (BUTTON_WIFI_KEYBOARD_BEGIN + 35),
+		BUTTON_COLUMN_NR9_WKW, FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR11_WKW + BUTTON_LENGTH_WKW,
 		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_36, " ");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_36, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_36, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyLeftRoundBracketOrLeftChevronNum5d, BTN_ID_37, BUTTON_COLUMN_NR13_WKW,
-		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR13_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyLeftRoundBracketOrLeftChevronNum5d, (BUTTON_WIFI_KEYBOARD_BEGIN + 36),
+		BUTTON_COLUMN_NR13_WKW, FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR13_WKW + BUTTON_LENGTH_WKW,
 		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_37, "(");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_37, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_37, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyRightRoundBracketOrRightChevronNum6d, BTN_ID_38, BUTTON_COLUMN_NR15_WKW,
-		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR15_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyRightRoundBracketOrRightChevronNum6d, (BUTTON_WIFI_KEYBOARD_BEGIN + 37),
+		BUTTON_COLUMN_NR15_WKW, FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR15_WKW + BUTTON_LENGTH_WKW,
 		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_38, ")");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_38, &FONT_8X12);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_38, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyEnterNum7d, BTN_ID_39, BUTTON_COLUMN_NR17_WKW,
-		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR20_WKW + BUTTON_LENGTH_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyEnterNum7d, (BUTTON_WIFI_KEYBOARD_BEGIN + ENTER_KEY_OFFSET_WKW),
+		BUTTON_COLUMN_NR17_WKW, FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR20_WKW + BUTTON_LENGTH_WKW,
 		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
-	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_39, "Enter");
-	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_39, &FONT_6X8);
-	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_39, BTN_STYLE_2D);
+	UG_ButtonSetText(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + ENTER_KEY_OFFSET_WKW), "Enter");
+	UG_ButtonSetFont(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + ENTER_KEY_OFFSET_WKW), &FONT_6X8);
+
+	setKeyboardButtons(KeyboardSignsGlobalState);
 
 	UG_WindowShow(&mainWindow);
 	//UG_WindowShow(&clockSettingsWindow);

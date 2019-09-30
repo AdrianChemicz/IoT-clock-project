@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Adrian Chemicz
+ * Copyright (c) 2018, 2019, Adrian Chemicz
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,11 +25,12 @@
  */
 
 #include "UART_Driver.h"
+#include "chip.h"
 
 static uint8_t AhbClkDivider;
-static uint8_t DivisorLatchMSB;
-static uint8_t DivisorLatchLSB;
-static uint8_t FractionalDivider;
+static uint8_t DivisorLatchMSB;//DLM
+static uint8_t DivisorLatchLSB;//DLL
+static uint8_t FractionalDivider;// MULVAL<<4 | DIVADDVAL
 
 static uint32_t* UART_GetBaseAddress(uint8_t portNumber)
 {
@@ -52,16 +53,22 @@ static void UART_SetClockPrescalers(uint32_t baudrate)
 	/*must be defined by user  */
 	switch(baudrate)
 	{
-	case 9600:
-		AhbClkDivider = 1;
+	case 9600://TODO
+		AhbClkDivider = 4;
 		DivisorLatchMSB = 0;
 		DivisorLatchLSB = 1;
 		FractionalDivider = 0x10;
 		break;
-	case 115200:
-		AhbClkDivider = 1;
+	case 115200://TODO
+		AhbClkDivider = 4;
 		DivisorLatchMSB = 0;
-		DivisorLatchLSB = 1;
+		DivisorLatchLSB = 4;
+		FractionalDivider = 0x85;
+		break;
+	case 74880:
+		AhbClkDivider = 4;
+		DivisorLatchMSB = 0;
+		DivisorLatchLSB = 10;
 		FractionalDivider = 0x10;
 		break;
 	default:
@@ -109,12 +116,18 @@ void UART_DriverInit(uint8_t portNumber, uint32_t baudrate, WORD_LENGTH length, 
 	UART_Port->LCR = (UART_Port->LCR)&(DISABLE_DIVISOR_LATCH);
 
 	//configure FIFO
-	UART_Port->FCR = ENABLE_AND_RESET_FIFO;
+	UART_Port->FCR = ENABLE_AND_RESET_FIFO|SET_RX_TRIGGER_LEVEL_AS_3;
 
 	//clear RX FIFO
-	for(int d=0,tmp=0;d<16;d++)
-		tmp=UART_Port->TER;
+	for(int d=0,tmp=0;d<UART_BUFFER_SIZE;d++)
+		tmp = UART_Port->TER;
 
+	//enable interrupts from Enables the Receive Data Available
+#if 1
+	UART_Port->IER = 1;
+#endif
+
+	NVIC_SetPriority(USART0_IRQn, 0);
 	NVIC_EnableIRQ(USART0_IRQn);
 }
 
@@ -136,3 +149,20 @@ UART_Status UART_ReturnStatusRegister(uint8_t portNumber)
 	UART_Status status = *((UART_Status*)&(UART_Port->LSR));
 	return status;
 }
+
+void UART_EnableInterrupts(uint8_t portNumber)
+{
+	if(portNumber == 0)
+	{
+		NVIC_EnableIRQ(USART0_IRQn);
+	}
+}
+
+void UART_DisableInterrupts(uint8_t portNumber)
+{
+	if(portNumber == 0)
+	{
+		NVIC_DisableIRQ(USART0_IRQn);
+	}
+}
+

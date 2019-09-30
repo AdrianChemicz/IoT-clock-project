@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Adrian Chemicz
+ * Copyright (c) 2018, 2019, Adrian Chemicz
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,6 +25,9 @@
  */
 
 #include "TouchPanel.h"
+#include "GPIO_Driver.h"
+#include "SPI_Driver.h"
+#include "chip.h"
 
 static bool pendingConversion;
 static uint8_t portNumber;
@@ -159,7 +162,8 @@ void TouchPanel_Init(uint8_t port)
 	GPIO_Direction(TOUCH_PANEL_PIN_PENIRQ_GPIO_PORT, TOUCH_PANEL_PIN_PENIRQ_GPIO_PIN, GPIO_DIR_INPUT);
 	
 	//set IOCONFILTCLKDIV0 clock divider responsible for glitch filter
-	LPC_SYSCON->IOCONCLKDIV[IOCONFILTCLKDIV0_INDEX] = 2;
+	//LPC_SYSCON->IOCONCLKDIV[IOCONFILTCLKDIV0_INDEX] = 2;
+	LPC_SYSCON->IOCONCLKDIV[IOCONFILTCLKDIV0_INDEX] = 10;
 
 	//configure GPIO pins to work with glitch GPIO filter
 #if TOUCH_PANEL_PIN_PENIRQ_GPIO_PORT == 0
@@ -177,8 +181,7 @@ void TouchPanel_Init(uint8_t port)
 	pendingConversion = false;
 }
 
-bool TouchPanel_Process(void)
-{
+bool TouchPanel_Process(void){
 #if SHARED_SPI_TOUCH
 	//Execute when pin PENIRQ on lcd is on low state(screen was pressed) and SPI is not used
 	if ((GPIO_GetState(TOUCH_PANEL_PIN_PENIRQ_GPIO_PORT, TOUCH_PANEL_PIN_PENIRQ_GPIO_PIN) == false)

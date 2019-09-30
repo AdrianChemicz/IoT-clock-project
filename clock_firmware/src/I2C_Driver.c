@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Adrian Chemicz
+ * Copyright (c) 2018, 2019, Adrian Chemicz
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,6 +25,7 @@
  */
 
 #include "I2C_Driver.h"
+#include "chip.h"
 
 static uint16_t SCLL;
 static uint16_t SCLH;
@@ -67,11 +68,6 @@ static void I2C_SetClockPrescalers(uint8_t portNumber)
 		SCLH = 0x40;
 		break;
 	}
-}
-
-void I2C_IRQHandler()
-{
-	I2C_InterruptProccess((uint8_t)0);
 }
 
 void I2C_InterruptProccess(uint8_t portNumber)
@@ -171,6 +167,11 @@ void I2C_InterruptProccess(uint8_t portNumber)
 	}
 	//clear interrupt bit (SIC - I2C interrupt Clear bit)
 	I2C_Port->CONCLR = (1<<3);
+}
+
+void I2C0_IRQHandler()
+{
+	I2C_InterruptProccess((uint8_t)0);
 }
 
 void I2C_DriverInit(uint8_t portNumber)

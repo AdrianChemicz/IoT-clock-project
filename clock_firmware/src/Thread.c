@@ -22,6 +22,7 @@ static ClockStateType ClockStateFramBuffer;
 static TemperatureSingleDayRecordType TemperatureSingleDayRecordBuffer;
 static uint8_t clearFramData[CLEAR_BLOCK_SIZE];
 static const uint8_t SoundAlarmTable[LENGHT_OF_SOUND_ALARM_TABLE] = {0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1};
+static WifiStateType WifiStateStructure;
 
 static uint16_t convertFramIndexToAddress(uint16_t index)
 {
@@ -419,7 +420,143 @@ endCheck:
 	}/* if(BufferCursor.loadDataFlag == true || temperatureFramTransaction->startReadTransaction == true) */
 }
 
-static uint16_t calculateFurnaceTemperature()
+static void wifiProcessFramSearchRequest(WifiStateType* wifiStateStructure)
+{
+	switch(wifiStateStructure->searchState)
+	{
+	case SEARCH_NOT_REQUESTED:
+		break;
+
+	case SEARCH_REQUESTED:
+		if((ClockState.sharedSpiState == NOT_USED)
+			&& (GPIO_GetState(TOUCH_PANEL_PIN_PENIRQ_GPIO_PORT, TOUCH_PANEL_PIN_PENIRQ_GPIO_PIN) == true))
+		{
+			//lock SPI
+			ClockState.sharedSpiState = FRAM_USAGE;
+			ClockState.FramTransactionIdentifier = FRAM_ID_SEARCH_TEMPERATURE;
+
+			//initialize variable in structure necessary for search
+			wifiStateStructure->readFramWasRequested = false;
+			wifiStateStructure->searchFramIndex = 0;
+
+			wifiStateStructure->searchState = SEARCH_PENDING;
+		}
+
+		break;
+
+	case SEARCH_PENDING:
+		if(wifiStateStructure->readFramWasRequested == false)
+		{
+			FRAM_Read(convertFramIndexToAddress(wifiStateStructure->searchFramIndex),
+				DAY_MEASUREMENT_HEADER_SIZE, (uint8_t*)&wifiStateStructure->TemperatureSingleDayRecordTmp);
+
+			wifiStateStructure->readFramWasRequested = true;
+		}
+		else
+		{
+			if(FRAM_Process())
+			{
+				wifiStateStructure->readFramWasRequested = false;
+				wifiStateStructure->searchState = SEARCH_PENDING_READ_READY;
+			}
+		}
+
+		break;
+
+	case SEARCH_PENDING_READ_READY:
+		//compare structure headers
+		if((wifiStateStructure->SearchedDayMeasurementHeader.day == wifiStateStructure->TemperatureSingleDayRecordTmp.day)
+			&& (wifiStateStructure->SearchedDayMeasurementHeader.month == wifiStateStructure->TemperatureSingleDayRecordTmp.month)
+			&& (wifiStateStructure->SearchedDayMeasurementHeader.year == wifiStateStructure->TemperatureSingleDayRecordTmp.year)
+			&& (wifiStateStructure->SearchedDayMeasurementHeader.source == wifiStateStructure->TemperatureSingleDayRecordTmp.source))
+		{
+			FRAM_Read(convertFramIndexToAddress(wifiStateStructure->searchFramIndex), sizeof(TemperatureSingleDayRecordType),
+				(uint8_t*)&wifiStateStructure->TemperatureSingleDayRecordTmp);
+
+			wifiStateStructure->searchState = SEARCH_HEADER_MATCH;
+		}
+		else
+		{
+			//case when all FRAM was searched and searched structure don't exist
+			if(wifiStateStructure->searchFramIndex >= MAX_RECORD_IN_FRAM)
+			{
+				wifiStateStructure->searchedStructureExist = false;
+
+				wifiStateStructure->searchState = SEARCH_FINISHED;
+			}
+			else
+			{
+				wifiStateStructure->searchFramIndex++;
+				wifiStateStructure->searchState = SEARCH_PENDING;
+			}
+		}
+
+		break;
+
+	case SEARCH_HEADER_MATCH:
+		if(FRAM_Process())
+		{
+			uint16_t checkSumValue = Chip_CRC_CRC16((uint16_t*)&wifiStateStructure->TemperatureSingleDayRecordTmp, (offsetof(TemperatureSingleDayRecordType, CRC16Value)/2));
+
+			if(checkSumValue != wifiStateStructure->TemperatureSingleDayRecordTmp.CRC16Value)
+			{
+				wifiStateStructure->searchState = SEARCH_PENDING;
+			}
+			else//this case mean that searched structure is correct
+			{
+				//init all fields in global structure
+				wifiStateStructure->TemperatureSingleDayRecordLoadedBuffer = wifiStateStructure->TemperatureSingleDayRecordTmp;
+				wifiStateStructure->temperatureStructureIsValid = true;
+				wifiStateStructure->searchedStructureExist = true;
+
+				wifiStateStructure->searchState = SEARCH_FINISHED;
+			}
+		}
+
+		break;
+
+	case SEARCH_FINISHED:
+
+		//unlock SPI
+		ClockState.sharedSpiState = NOT_USED;
+		ClockState.FramTransactionIdentifier = FRAM_ID_NOP;
+
+		//send SOME/IP message
+		if(wifiStateStructure->searchedStructureExist)
+		{
+			uint16_t someIpPayloadSizeTmp = sizeof(TemperatureSingleDayRecordType) - (wifiStateStructure->someIpReceivedMessage.methodId * SOME_IP_SERVICE_DAY_MEASUREMENT_MAX_RESP_PAYLOAD_SIZE);
+			uint8_t* dataStructurePointerTmp = ((uint8_t*)&wifiStateStructure->TemperatureSingleDayRecordLoadedBuffer);
+
+			if(someIpPayloadSizeTmp > SOME_IP_SERVICE_DAY_MEASUREMENT_MAX_RESP_PAYLOAD_SIZE)
+			{
+				someIpPayloadSizeTmp = SOME_IP_SERVICE_DAY_MEASUREMENT_MAX_RESP_PAYLOAD_SIZE;
+			}
+
+			wifiStateStructure->TxMessageTable[0].payloadSize = SOMEIP_CodeTxMessage(
+					wifiStateStructure->someIpReceivedMessage.serviceId,
+					wifiStateStructure->someIpReceivedMessage.methodId,
+					SOME_IP_RESPONSE_CODE, SOME_IP_RETURN_CODE_E_OK_VALUE,
+					wifiStateStructure->TxMessageTable[0].payload,
+					&dataStructurePointerTmp[wifiStateStructure->someIpReceivedMessage.methodId * SOME_IP_SERVICE_DAY_MEASUREMENT_MAX_RESP_PAYLOAD_SIZE],
+					someIpPayloadSizeTmp);
+		}
+		else//send SOME/IP response without payload - it mean that structure don't exist
+		{
+			wifiStateStructure->TxMessageTable[0].payloadSize = SOMEIP_CodeTxMessage(
+					wifiStateStructure->someIpReceivedMessage.serviceId,
+					wifiStateStructure->someIpReceivedMessage.methodId,
+					SOME_IP_RESPONSE_CODE, SOME_IP_RETURN_CODE_E_OK_VALUE,
+					wifiStateStructure->TxMessageTable[0].payload, NULL, 0);
+		}
+
+		wifiStateStructure->TxMessageTable[0].lockFlag = true;
+
+		wifiStateStructure->searchState = SEARCH_NOT_REQUESTED;
+		break;
+	}/* switch(wifiStateStructure->searchState) */
+}
+
+static uint16_t calculateFurnaceTemperature(void)
 {
 	if(ClockState.TemperatureSensorTable[FURNACE_TEMPERATURE].temperatureValid)
 	{
@@ -434,7 +571,7 @@ static uint16_t calculateFurnaceTemperature()
 	}
 }
 
-static void processAlarm()
+static void processAlarm(void)
 {
 	if(gui.active_window != &clockSettingsWindow)
 	{
@@ -525,13 +662,16 @@ static void processAlarm()
 	}
 }
 
+
+
 /*****************************************************************************************
 * Function initiate data for single Thread responsible for many thing like handle FRAM.
 * In initialization process is set timer(responsible for cyclic call Thread), FRAM
 * temperature measurement block and I2C bus expander.
 *****************************************************************************************/
-void Thread_Init()
+void Thread_Init(void)
 {
+
 	/**********************************
 	*	configure measurements blocks
 	***********************************/
@@ -583,6 +723,13 @@ void Thread_Init()
 	TemperatureSensor_ChoseSensor(CN6_TEMP_INSIDE);
 
 	TemperatureSensor_StartMeasurement();
+
+	/**********************************
+	*	configure WifiState structure
+	***********************************/
+	WifiStateStructure.connectToApnCounter = ONE_SECONDS*30;
+	WifiStateStructure.getApnCounter = ONE_SECONDS*12;
+
 	/**********************************
 	*	init timer
 	***********************************/
@@ -611,6 +758,9 @@ void Thread_Init()
 	//Enable timer (set CEN bit)
 	LPC_TIMER16_0->TCR=1;
 
+	//set interrupt timer priority
+	NVIC_SetPriority(TIMER_16_0_IRQn, 3);
+
 	//allow for interruptions from timer
 	NVIC_EnableIRQ(TIMER_16_0_IRQn);
 }
@@ -619,7 +769,7 @@ void Thread_Init()
 * Function is call every 20 ms. All things inside is asynchronous executed(taks isn't
 * block execution for longer period).
 *****************************************************************************************/
-void Thread_Call()
+void Thread_Call(void)
 {
 	/**********************************
 	*	read temperature from three sensors
@@ -831,8 +981,18 @@ void Thread_Call()
 	/**********************************
 	*	wifi
 	***********************************/
+	{
+		if(ClockState.wifiReady == false)
+		{
+			WIFI_Init();
+		}
+		else
+		{
+			WIFI_Process(&WifiStateStructure);
 
-
+			wifiProcessFramSearchRequest(&WifiStateStructure);
+		}
+	}
 }
 
 void TIMER16_0_IRQHandler(void)

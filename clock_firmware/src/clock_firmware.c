@@ -32,6 +32,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>. */
 #include "FRAM_Driver.h"
 #include "Thread.h"
 #include "ClockControl.h"
+#include "ESP_Layer.h"
+#include "LCD.h"
 
 #include <stdint.h>
 #include <cr_section_macros.h>
@@ -67,7 +69,9 @@ int main(void)
 	//init GPIO for manage I2C transceiver
 	TemperatureSensor_Init();
 
-	UART_DriverInit(0, 9600, L8_BIT, ONE_BIT, NONE_PARITY);
+	ESP_Init(0, 115200, 400, 3, 0);
+
+	UART_DisableInterrupts(ESP_GetUartPortNumber());
 
 	//search structure data in FRAM memory - two valid block is stored.
 	if(ClockStateLoader(FRAM_CLOCK_STATE_FIRST_COPY))
@@ -130,14 +134,22 @@ int main(void)
 
 	ClockState.factoryResetViaGui = false;
 
+	//clear WiFi flags and IP address
+	ClockState.wifiReady = false;
+	ClockState.wifiApnReceived = false;
+	ClockState.wifiConnected = false;
+	ClockState.wifiStartDisconnect = false;
+
+	memset(ClockState.ipAddressAssignedToDevice, 0, IP_ADDRESS_BYTE_LENGTH);
+
 	//init structures responsible for draw temperature
-	for(int i = 0; i<READ_TEMP_FRAM_BUFFER_SIZE; i++)
+	for(int i = 0; i < READ_TEMP_FRAM_BUFFER_SIZE; i++)
 	{
 		ReadFramTempBufferTable[i].availabilityFlag = false;
 		ReadFramTempBufferTable[i].framIndex = 0;
 		ReadFramTempBufferTable[i].notExistFlag = false;
 
-		if(i == (READ_TEMP_FRAM_BUFFER_SIZE-1))
+		if(i == (READ_TEMP_FRAM_BUFFER_SIZE - 1))
 		{
 			ReadFramTempBufferTable[i].pointerToNextElement = &ReadFramTempBufferTable[0];
 			ReadFramTempBufferTable[i].pointerToPreviousElement = &ReadFramTempBufferTable[i - 1];
@@ -163,11 +175,11 @@ int main(void)
 	/**********************************
 	*	main loop
 	***********************************/
-	for (;;)
+	for(;;)
 	{
 		static bool touchPanelState = false;
 
-		if (TouchPanel_Process())
+		if(TouchPanel_Process())
 		{
 			touchPanelState = true;
 			uint16_t xPixelPosition = TouchPanel_CalculatePixelX(TouchPanel_ReturnRawX());
@@ -185,7 +197,7 @@ int main(void)
 			ClockState.refreshGuiCounter = 0;
 		}
 
-		if (touchPanelState && !TouchPanel_TouchState())
+		if(touchPanelState && !TouchPanel_TouchState())
 		{
 			UG_TouchUpdate(-1, -1, TOUCH_STATE_RELEASED);
 			UG_Update();
@@ -211,7 +223,8 @@ int main(void)
 
 		GUI_ProcessTemperatureWindow();
 		GUI_ProcessAlarmAnimation();
-	}
+		GUI_RefreshWifiWindow();
+	}/* for(;;) */
 
     return 0;
 }
