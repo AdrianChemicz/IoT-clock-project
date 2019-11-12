@@ -32,10 +32,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>. */
 #include "image.h"
 #include "ESP_Layer.h"
 
-#define MAX_OBJECTS 17
-#define MAX_OBJECTS_SETTINGS 18
-#define MAX_OBJECTS_WIFI_SETTINGS 17
-#define MAX_OBJECTS_KEYBOARD_WINDOW 46
+#define MAX_OBJECTS 18
+#define MAX_OBJECTS_SETTINGS 23
+#define MAX_OBJECTS_TEMPERATURE_WINDOW 23
+#define MAX_OBJECTS_WIFI_SETTINGS 20
+#define MAX_OBJECTS_KEYBOARD_WINDOW 47
+
+#define	OPTIONS_CLOSE_BUTTON_X_START_POSITION 291
+#define	OPTIONS_CLOSE_BUTTON_Y_START_POSITION 0
+#define	OPTIONS_CLOSE_BUTTON_X_END_POSITION 313
+#define	OPTIONS_CLOSE_BUTTON_Y_END_POSITION 20
 
 #define DEFAULT_GUI_BACKGROUND_COLOR C_WHITE_SMOKE
 
@@ -59,6 +65,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>. */
 #define GRID_Y3_MW 164
 #define GRID_Y1_SECOND_BUTTON_MW 37
 #define GRID_Y1_THIRD_BUTTON_MW 64
+#define LABEL_LENGTH 71
+#define ALARM_BUTTON_LENGTH_MW 27
+#define ALARM_BUTTON_HEIGH_MW 25
 
 //clock settings window
 #define SET_TIME_BUTTON_HEIGHT 30
@@ -70,12 +79,29 @@ along with this program. If not, see <http://www.gnu.org/licenses/>. */
 #define GRID_Y1_CSW 30
 #define GRID_Y2_CSW 123
 
+#define INC_DEC_X_PICTURE_OFFSET_CSW 8
+#define INCREMENT_Y_PICTURE_OFFSET_CSW 5
+#define DECREMENT_Y_PICTURE_OFFSET_CSW 7
+
 //parameters for temperature window
 #define GRID_X1_TW 118
 #define GRID_X2_TW 262
 #define GRID_Y1_TW 165
 #define GRID_Y2_TW 185
 #define GRID_Y3_TW 201
+								  
+#define INC_DEC_X_PICTURE_OFFSET_TW 5
+#define INCREMENT_Y_PICTURE_OFFSET_TW 3
+#define DECREMENT_Y_PICTURE_OFFSET_TW 4
+
+#define MOVE_GRAPH_BUTTON_LEFT_X 5
+#define MOVE_GRAPH_BUTTON_RIGHT_X 280
+#define MOVE_GRAPH_BUTTON_Y 40
+#define MOVE_GRAPH_BUTTON_HEIGHT 100
+#define MOVE_GRAPH_BUTTON_LENGTH 25
+#define MOVE_GRAPH_LEFT_PICTURE_X_OFFSET 3
+#define MOVE_GRAPH_RIGHT_PICTURE_X_OFFSET 5
+#define MOVE_GRAPH_Y_PICTURE_OFFSET 30
 
 #define SET_TEMPERATURE_BUTTON_HEIGHT 14
 #define SET_TEMPERATURE_BUTTON_LENGTH 22

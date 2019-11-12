@@ -24,8 +24,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _BMP_H_
-#define _BMP_H_
+#ifndef _IMAGE_H_
+#define _IMAGE_H_
 
 #include "ugui.h"
 #include <stdint.h>
@@ -35,13 +35,19 @@
  * 3 pixel red, 3 pixel green, 2 pixel blue.
  */
 
-extern const uint8_t homePictureOutsideTable[4620];
 extern const UG_BMP homePictureOutside;
-extern const uint8_t homePictureInsideTable[4620];
 extern const UG_BMP homePictureInside;
-extern const uint8_t wifiPictureTable[4620];
 extern const UG_BMP wifiPicture;
-extern const uint8_t furnacePictureTable[9241];
 extern const UG_BMP furnacePicture;
+extern const UG_BMP optionsPicture;
+extern const UG_BMP closePicture;
+extern const UG_BMP incrementMinuteHourPicture;
+extern const UG_BMP decrementMinuteHourPicture;
+extern const UG_BMP smallIncrementPicture;
+extern const UG_BMP smallDecrementPicture;
+extern const UG_BMP moveHistoryGraphLeftPicture;
+extern const UG_BMP moveHistoryGraphRightPicture;
+extern const UG_BMP upWifiNetwork;
+extern const UG_BMP downWifiNetwork;
 
-#endif /* _BMP_H_ */
+#endif /* _IMAGE_H_ */

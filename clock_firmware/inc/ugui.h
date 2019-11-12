@@ -217,6 +217,7 @@ typedef struct
    UG_U16 height;
    UG_U8 bpp;
    UG_U8 colors;
+   void* options;
 } UG_BMP;
 
 #define BMP_BPP_1                                     (1<<0)
@@ -229,6 +230,7 @@ typedef struct
 #define BMP_RGB565                                    (1<<1)
 #define BMP_RGB555                                    (1<<2)
 #define BMP_RGB332                                    (1<<3)
+#define BMP_MONO                                      (1<<4)
 
 /* -------------------------------------------------------------------------------- */
 /* -- MESSAGE                                                                    -- */
