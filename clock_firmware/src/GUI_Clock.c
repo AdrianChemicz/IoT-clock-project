@@ -48,6 +48,7 @@ UG_WINDOW temperatureWindow;
 UG_WINDOW settingsWindow;
 UG_WINDOW wifiSettingsWindow;
 UG_WINDOW wifiKeyboardWindow;
+static UG_IMAGE imageClose;
 
 //main window
 static UG_BUTTON buttonClockValue;
@@ -67,6 +68,7 @@ static UG_IMAGE imageTemperatureOutside;
 static UG_IMAGE imageTemperatureInside;
 static UG_IMAGE imageTemperatureFurnace;
 static UG_IMAGE imageWiFiSettings;
+UG_IMAGE imageOptions;			  
 
 static UG_BUTTON buttonFirstAllarmStatus;
 static UG_BUTTON buttonSecondAllarmStatus;
@@ -93,6 +95,11 @@ static UG_BUTTON buttonChoseSecondAlarm;
 static UG_CHECKBOX ckeckBoxActiveFirstAlarm;
 static UG_CHECKBOX ckeckBoxActiveSecondAlarm;
 
+static UG_IMAGE imageIncrementHour;
+static UG_IMAGE imageDecrementHour;
+static UG_IMAGE imageIncrementMinute;
+static UG_IMAGE imageDecrementMinute;
+
 //temperature window
 static UG_TEXTBOX textBoxTemperatureInformation;
 static UG_TEXTBOX textBoxGraphLabel;
@@ -112,6 +119,13 @@ static UG_BUTTON buttonIncrementTemperatureAlarm;
 static UG_BUTTON buttonDecrementTemperatureAlarm;
 static UG_BUTTON buttonIncrementGraphStep;
 static UG_BUTTON buttonDecrementGraphStep;
+
+static UG_IMAGE imageMoveHistoryGraphLeft;
+static UG_IMAGE imageMoveHistoryGraphRight;
+static UG_IMAGE imageIncrementTemperatureOffset;
+static UG_IMAGE imageDecrementTemperatureOffset;
+static UG_IMAGE imageIncrementTemperatureAlarm;
+static UG_IMAGE imageDecrementTemperatureAlarm;
 
 static uint8_t temperatureGraphStepValue;
 
@@ -134,6 +148,13 @@ static UG_TEXTBOX textBoxBrightnessValuePercents;
 static UG_TEXTBOX textBoxUpTime;
 static UG_TEXTBOX textBoxCalendar;
 
+static UG_IMAGE imageIncrementDay;
+static UG_IMAGE imageDecrementDay;
+static UG_IMAGE imageIncrementMonth;
+static UG_IMAGE imageDecrementMonth;
+static UG_IMAGE imageIncrementYear;
+static UG_IMAGE imageDecrementYear;														   
+
 //wifi Settings window
 static UG_TEXTBOX textBoxWifiStatus;
 static UG_TEXTBOX textBoxApnListLabel;
@@ -146,6 +167,8 @@ static UG_BUTTON buttonCloseWifiSettingsWindow;
 static UG_BUTTON buttonControlConnection;
 static UG_BUTTON buttonUpNetworkList;
 static UG_BUTTON buttonDownNetworkList;
+static UG_IMAGE imageUpNetworkList;
+static UG_IMAGE imageDownNetworkList;
 
 uint8_t wifiListCursorPosition;
 static bool refreshWifiList;
@@ -203,7 +226,7 @@ static UG_BUTTON buttonKeyEnterNum7d; // Enter
 
 static UG_OBJECT mainWindowObjects[MAX_OBJECTS];
 static UG_OBJECT clockSettingsObjects[MAX_OBJECTS];
-static UG_OBJECT temperatureWindowObjects[MAX_OBJECTS];
+static UG_OBJECT temperatureWindowObjects[MAX_OBJECTS_TEMPERATURE_WINDOW];
 static UG_OBJECT settingsWindowObjects[MAX_OBJECTS_SETTINGS];
 static UG_OBJECT wifiSettingsObjects[MAX_OBJECTS_WIFI_SETTINGS];
 static UG_OBJECT wifiKeyboardObjects[MAX_OBJECTS_KEYBOARD_WINDOW];
@@ -366,6 +389,10 @@ static void visibleTemperatureSettings(bool visible)
 		UG_ButtonShow(&temperatureWindow, BTN_ID_3);
 		UG_ButtonShow(&temperatureWindow, BTN_ID_4);
 		UG_ButtonShow(&temperatureWindow, BTN_ID_5);
+		UG_ImageShow(&temperatureWindow, IMG_ID_3);
+		UG_ImageShow(&temperatureWindow, IMG_ID_4);
+		UG_ImageShow(&temperatureWindow, IMG_ID_5);
+		UG_ImageShow(&temperatureWindow, IMG_ID_6);
 	}
 	else
 	{
@@ -375,6 +402,10 @@ static void visibleTemperatureSettings(bool visible)
 		UG_ButtonHide(&temperatureWindow, BTN_ID_3);
 		UG_ButtonHide(&temperatureWindow, BTN_ID_4);
 		UG_ButtonHide(&temperatureWindow, BTN_ID_5);
+		UG_ImageHide(&temperatureWindow, IMG_ID_3);
+		UG_ImageHide(&temperatureWindow, IMG_ID_4);
+		UG_ImageHide(&temperatureWindow, IMG_ID_5);
+		UG_ImageHide(&temperatureWindow, IMG_ID_6);
 	}
 }
 
@@ -420,6 +451,12 @@ static void setCalendarModification(bool status)
 		UG_ButtonShow(&settingsWindow, BTN_ID_9);
 		UG_ButtonShow(&settingsWindow, BTN_ID_10);
 		UG_ButtonShow(&settingsWindow, BTN_ID_11);
+		UG_ImageShow(&settingsWindow, IMG_ID_1);
+		UG_ImageShow(&settingsWindow, IMG_ID_2);
+		UG_ImageShow(&settingsWindow, IMG_ID_3);
+		UG_ImageShow(&settingsWindow, IMG_ID_4);
+		UG_ImageShow(&settingsWindow, IMG_ID_5);
+		UG_ImageShow(&settingsWindow, IMG_ID_6);
 		UG_ButtonSetText(&settingsWindow, BTN_ID_5, "save");
 	}
 	else
@@ -430,6 +467,12 @@ static void setCalendarModification(bool status)
 		UG_ButtonHide(&settingsWindow, BTN_ID_9);
 		UG_ButtonHide(&settingsWindow, BTN_ID_10);
 		UG_ButtonHide(&settingsWindow, BTN_ID_11);
+		UG_ImageHide(&settingsWindow, IMG_ID_1);
+		UG_ImageHide(&settingsWindow, IMG_ID_2);
+		UG_ImageHide(&settingsWindow, IMG_ID_3);
+		UG_ImageHide(&settingsWindow, IMG_ID_4);
+		UG_ImageHide(&settingsWindow, IMG_ID_5);
+		UG_ImageHide(&settingsWindow, IMG_ID_6);
 		UG_ButtonSetText(&settingsWindow, BTN_ID_5, "change");
 	}
 }
@@ -2085,10 +2128,12 @@ void GUI_RefreshWifiWindow(void)
 			if (wifiListCursorPosition == 0)
 			{
 				UG_ButtonHide(&wifiSettingsWindow, BTN_ID_8);
+				UG_ImageHide(&wifiSettingsWindow, IMG_ID_1);
 			}
 			else
 			{
 				UG_ButtonShow(&wifiSettingsWindow, BTN_ID_8);
+				UG_ImageShow(&wifiSettingsWindow, IMG_ID_1);
 			}
 
 			//update down scroll visibility
@@ -2096,10 +2141,12 @@ void GUI_RefreshWifiWindow(void)
 					|| ((ApnStructure.NumberOfApn - wifiListCursorPosition - NUMBER_OF_WIFI_DISPLAY_NETWORKS) == 0))
 			{
 				UG_ButtonHide(&wifiSettingsWindow, BTN_ID_9);
+				UG_ImageHide(&wifiSettingsWindow, IMG_ID_2);
 			}
 			else
 			{
 				UG_ButtonShow(&wifiSettingsWindow, BTN_ID_9);
+				UG_ImageShow(&wifiSettingsWindow, IMG_ID_2);
 			}
 
 			UG_Update();
@@ -2209,21 +2256,6 @@ void GUI_ClockInit(void)
 	/**********************************
 	* init ugui and register driver
 	***********************************/
-#ifndef MICROCONTROLLER
-#if 1//draw on SDL layer
-	UG_Init(&gui, SDL_LCD_PixelSetFunction, 320, 240);
-
-	//Activate driver
-	UG_DriverRegister(DRIVER_FILL_FRAME, (void*)SDL_LCD_FillFrame);
-	UG_DriverEnable(DRIVER_FILL_FRAME);
-#else//draw on real LCD
-	UG_Init(&gui, LCD_SetPixel_uGui, 320, 240);
-
-	//Activate driver
-	UG_DriverRegister(DRIVER_FILL_FRAME, (void*)LCD_FillFrame_uGui);
-	UG_DriverEnable(DRIVER_FILL_FRAME);
-#endif
-#else
 	UG_Init(&gui, LCD_SetPixel_uGui, 320, 240);
 
 	//Activate drivers
@@ -2238,7 +2270,7 @@ void GUI_ClockInit(void)
 
 	UG_DriverRegister(DRIVER_PIXEL_IN_AREA_STOP, (void*)LCD_StopFillArea_uGui);
 	UG_DriverEnable(DRIVER_PIXEL_IN_AREA_STOP);
-#endif
+
 	/**********************************
 	* Create the main window
 	***********************************/
@@ -2260,7 +2292,9 @@ void GUI_ClockInit(void)
 	calculateTimeString(WidgetsStrings.labelMainWindowClockTimeValue, ClockState.currentTimeHour, ClockState.currentTimeMinute);
 	UG_ButtonSetText(&mainWindow, BTN_ID_0, WidgetsStrings.labelMainWindowClockTimeValue);
 
-	UG_ButtonCreate(&mainWindow, &buttonSettings, BTN_ID_1, 290, 0, 311, 20);
+	UG_ButtonCreate(&mainWindow, &buttonSettings, BTN_ID_1, OPTIONS_CLOSE_BUTTON_X_START_POSITION, 
+		OPTIONS_CLOSE_BUTTON_Y_START_POSITION, OPTIONS_CLOSE_BUTTON_X_END_POSITION, 
+		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
 
 	UG_TextboxCreate(&mainWindow, &textBoxTemperatureOutside, TXB_ID_1, GRID_X2_MW, GRID_Y2_MW, GRID_X2_MW + LABEL_LENGTH, GRID_Y2_MW + PICTURE_HEIGHT);
 	UG_TextboxSetAlignment(&mainWindow, TXB_ID_1, ALIGN_CENTER_LEFT);
@@ -2300,6 +2334,11 @@ void GUI_ClockInit(void)
 
 	UG_ImageCreate(&mainWindow, &imageWiFiSettings, IMG_ID_3, GRID_X3_MW, GRID_Y3_MW, 0, 0);
 	UG_ImageSetBMP(&mainWindow, IMG_ID_3, &wifiPicture);
+
+	UG_ImageCreate(&mainWindow, &imageOptions, IMG_ID_4, OPTIONS_CLOSE_BUTTON_X_START_POSITION + 3,
+		OPTIONS_CLOSE_BUTTON_Y_START_POSITION + 3, OPTIONS_CLOSE_BUTTON_X_END_POSITION,
+		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
+	UG_ImageSetBMP(&mainWindow, IMG_ID_4, &optionsPicture);
 
 	UG_ButtonCreate(&mainWindow, &buttonFirstAllarmStatus, BTN_ID_6, GRID_X1_MW - 1, GRID_Y1_MW, GRID_X1_MW + ALARM_BUTTON_LENGTH_MW, GRID_Y1_MW + ALARM_BUTTON_HEIGH_MW);
 	UG_ButtonSetStyle(&mainWindow, BTN_ID_6, BTN_STYLE_2D);
@@ -2372,13 +2411,36 @@ void GUI_ClockInit(void)
 	else
 		UG_CheckboxSetCheched(&clockSettingsWindow, CHB_ID_1, CHB_STATE_RELEASED);
 
-	UG_ButtonCreate(&clockSettingsWindow, &buttonCloseClockSettingsWindow, BTN_ID_7, 290, 0, 311, 20);
+	UG_ButtonCreate(&clockSettingsWindow, &buttonCloseClockSettingsWindow, BTN_ID_7, OPTIONS_CLOSE_BUTTON_X_START_POSITION,
+		OPTIONS_CLOSE_BUTTON_Y_START_POSITION, OPTIONS_CLOSE_BUTTON_X_END_POSITION,
+		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
 	UG_ButtonSetStyle(&clockSettingsWindow, BTN_ID_7, BTN_STYLE_2D);
+
+	UG_ImageCreate(&clockSettingsWindow, &imageClose, IMG_ID_0, OPTIONS_CLOSE_BUTTON_X_START_POSITION + 1,
+		OPTIONS_CLOSE_BUTTON_Y_START_POSITION + 1, OPTIONS_CLOSE_BUTTON_X_END_POSITION,
+		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
+	UG_ImageSetBMP(&clockSettingsWindow, IMG_ID_0, &closePicture);
+
+	UG_ImageCreate(&clockSettingsWindow, &imageIncrementHour, IMG_ID_1, GRID_X1_CSW + INC_DEC_X_PICTURE_OFFSET_CSW, 
+		GRID_Y1_CSW + INCREMENT_Y_PICTURE_OFFSET_CSW, GRID_X1_CSW + SET_TIME_BUTTON_LENGTH, GRID_Y1_CSW + SET_TIME_BUTTON_HEIGHT);
+	UG_ImageSetBMP(&clockSettingsWindow, IMG_ID_1, &incrementMinuteHourPicture);
+
+	UG_ImageCreate(&clockSettingsWindow, &imageDecrementHour, IMG_ID_2, GRID_X1_CSW + INC_DEC_X_PICTURE_OFFSET_CSW, 
+		GRID_Y2_CSW + DECREMENT_Y_PICTURE_OFFSET_CSW, GRID_X1_CSW + SET_TIME_BUTTON_LENGTH, GRID_Y2_CSW + SET_TIME_BUTTON_HEIGHT);
+	UG_ImageSetBMP(&clockSettingsWindow, IMG_ID_2, &decrementMinuteHourPicture);
+
+	UG_ImageCreate(&clockSettingsWindow, &imageIncrementMinute, IMG_ID_3, GRID_X2_CSW + INC_DEC_X_PICTURE_OFFSET_CSW, 
+		GRID_Y1_CSW + INCREMENT_Y_PICTURE_OFFSET_CSW, GRID_X2_CSW + SET_TIME_BUTTON_LENGTH, GRID_Y1_CSW + SET_TIME_BUTTON_HEIGHT);
+	UG_ImageSetBMP(&clockSettingsWindow, IMG_ID_3, &incrementMinuteHourPicture);
+
+	UG_ImageCreate(&clockSettingsWindow, &imageDecrementMinute, IMG_ID_4, GRID_X2_CSW + INC_DEC_X_PICTURE_OFFSET_CSW,
+		GRID_Y2_CSW + DECREMENT_Y_PICTURE_OFFSET_CSW, GRID_X2_CSW + SET_TIME_BUTTON_LENGTH, GRID_Y2_CSW + SET_TIME_BUTTON_HEIGHT);
+	UG_ImageSetBMP(&clockSettingsWindow, IMG_ID_4, &decrementMinuteHourPicture);
 
 	/**********************************
 	* Create the temperature window
 	***********************************/
-	UG_WindowCreate(&temperatureWindow, temperatureWindowObjects, MAX_OBJECTS, temperatureWindowHandler);
+	UG_WindowCreate(&temperatureWindow, temperatureWindowObjects, MAX_OBJECTS_TEMPERATURE_WINDOW, temperatureWindowHandler);
 	UG_WindowSetTitleText(&temperatureWindow, "temperature");
 	UG_WindowSetTitleTextFont(&temperatureWindow, &FONT_8X8);
 
@@ -2392,10 +2454,14 @@ void GUI_ClockInit(void)
 	UG_TextboxSetText(&temperatureWindow, TXB_ID_1, "history graph:");
 	UG_TextboxSetFont(&temperatureWindow, TXB_ID_1, &FONT_8X12);
 
-	UG_ButtonCreate(&temperatureWindow, &buttonHistoryGraphLeft, BTN_ID_0, 5, 40, 30, 140);
+	UG_ButtonCreate(&temperatureWindow, &buttonHistoryGraphLeft, BTN_ID_0, MOVE_GRAPH_BUTTON_LEFT_X, 
+		MOVE_GRAPH_BUTTON_Y, MOVE_GRAPH_BUTTON_LEFT_X + MOVE_GRAPH_BUTTON_LENGTH, 
+		MOVE_GRAPH_BUTTON_Y + MOVE_GRAPH_BUTTON_HEIGHT);
 	UG_ButtonSetStyle(&temperatureWindow, BTN_ID_0, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&temperatureWindow, &buttonHistoryGraphRight, BTN_ID_1, 280, 40, 305, 140);
+	UG_ButtonCreate(&temperatureWindow, &buttonHistoryGraphRight, BTN_ID_1, MOVE_GRAPH_BUTTON_RIGHT_X, 
+		MOVE_GRAPH_BUTTON_Y, MOVE_GRAPH_BUTTON_RIGHT_X + MOVE_GRAPH_BUTTON_LENGTH,
+		MOVE_GRAPH_BUTTON_Y + MOVE_GRAPH_BUTTON_HEIGHT);															 
 	UG_ButtonSetStyle(&temperatureWindow, BTN_ID_1, BTN_STYLE_2D);
 
 	UG_CheckboxCreate(&temperatureWindow, &ckeckBoxRecordTemperature, CHB_ID_1, 1, 142, 180, 158);
@@ -2427,7 +2493,9 @@ void GUI_ClockInit(void)
 	UG_ButtonCreate(&temperatureWindow, &buttonDecrementTemperatureAlarm, BTN_ID_5, GRID_X2_TW, GRID_Y3_TW, GRID_X2_TW + SET_TEMPERATURE_BUTTON_LENGTH, GRID_Y3_TW + SET_TEMPERATURE_BUTTON_HEIGHT);
 	UG_ButtonSetStyle(&temperatureWindow, BTN_ID_5, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&temperatureWindow, &buttonCloseTemperatureWindow, BTN_ID_6, 290, 0, 311, 20);
+	UG_ButtonCreate(&temperatureWindow, &buttonCloseTemperatureWindow, BTN_ID_6, OPTIONS_CLOSE_BUTTON_X_START_POSITION,
+		OPTIONS_CLOSE_BUTTON_Y_START_POSITION, OPTIONS_CLOSE_BUTTON_X_END_POSITION,
+		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
 	UG_ButtonSetStyle(&temperatureWindow, BTN_ID_6, BTN_STYLE_2D);
 
 	UG_TextboxCreate(&temperatureWindow, &textBoxStepValueLabel, TXB_ID_3, 181, 142, 242, 158);
@@ -2447,6 +2515,41 @@ void GUI_ClockInit(void)
 	UG_ButtonSetFont(&temperatureWindow, BTN_ID_8, &FONT_6X8);
 	UG_ButtonSetStyle(&temperatureWindow, BTN_ID_8, BTN_STYLE_2D);
 
+	UG_ImageCreate(&temperatureWindow, &imageClose, IMG_ID_0, OPTIONS_CLOSE_BUTTON_X_START_POSITION + 1,
+		OPTIONS_CLOSE_BUTTON_Y_START_POSITION + 1, OPTIONS_CLOSE_BUTTON_X_END_POSITION,
+		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
+	UG_ImageSetBMP(&temperatureWindow, IMG_ID_0, &closePicture);
+
+	UG_ImageCreate(&temperatureWindow, &imageMoveHistoryGraphLeft, IMG_ID_1, 
+		MOVE_GRAPH_BUTTON_LEFT_X + MOVE_GRAPH_LEFT_PICTURE_X_OFFSET, MOVE_GRAPH_BUTTON_Y + MOVE_GRAPH_Y_PICTURE_OFFSET,
+		MOVE_GRAPH_BUTTON_LEFT_X + MOVE_GRAPH_BUTTON_LENGTH, MOVE_GRAPH_BUTTON_Y + MOVE_GRAPH_BUTTON_HEIGHT);
+	UG_ImageSetBMP(&temperatureWindow, IMG_ID_1, &moveHistoryGraphLeftPicture);
+	
+	UG_ImageCreate(&temperatureWindow, &imageMoveHistoryGraphRight, IMG_ID_2, 
+		MOVE_GRAPH_BUTTON_RIGHT_X + MOVE_GRAPH_RIGHT_PICTURE_X_OFFSET, MOVE_GRAPH_BUTTON_Y + MOVE_GRAPH_Y_PICTURE_OFFSET,
+		MOVE_GRAPH_BUTTON_RIGHT_X + MOVE_GRAPH_BUTTON_LENGTH, MOVE_GRAPH_BUTTON_Y + MOVE_GRAPH_BUTTON_HEIGHT);
+	UG_ImageSetBMP(&temperatureWindow, IMG_ID_2, &moveHistoryGraphRightPicture);
+
+	UG_ImageCreate(&temperatureWindow, &imageIncrementTemperatureOffset, IMG_ID_3, 
+		GRID_X1_TW + INC_DEC_X_PICTURE_OFFSET_TW, GRID_Y1_TW + INCREMENT_Y_PICTURE_OFFSET_TW,
+		GRID_X1_TW + SET_TEMPERATURE_BUTTON_LENGTH - 1, GRID_Y1_TW + SET_TEMPERATURE_BUTTON_HEIGHT - 1);
+	UG_ImageSetBMP(&temperatureWindow, IMG_ID_3, &smallIncrementPicture);
+
+	UG_ImageCreate(&temperatureWindow, &imageDecrementTemperatureOffset, IMG_ID_4, 
+		GRID_X1_TW + INC_DEC_X_PICTURE_OFFSET_TW, GRID_Y3_TW + DECREMENT_Y_PICTURE_OFFSET_TW,
+		GRID_X1_TW + SET_TEMPERATURE_BUTTON_LENGTH - 1, GRID_Y3_TW + SET_TEMPERATURE_BUTTON_HEIGHT - 1);
+	UG_ImageSetBMP(&temperatureWindow, IMG_ID_4, &smallDecrementPicture);
+
+	UG_ImageCreate(&temperatureWindow, &imageIncrementTemperatureAlarm, IMG_ID_5, 
+		GRID_X2_TW + INC_DEC_X_PICTURE_OFFSET_TW, GRID_Y1_TW + INCREMENT_Y_PICTURE_OFFSET_TW,
+		GRID_X2_TW + SET_TEMPERATURE_BUTTON_LENGTH - 1, GRID_Y1_TW + SET_TEMPERATURE_BUTTON_HEIGHT - 1);
+	UG_ImageSetBMP(&temperatureWindow, IMG_ID_5, &smallIncrementPicture);
+
+	UG_ImageCreate(&temperatureWindow, &imageDecrementTemperatureAlarm, IMG_ID_6, 
+		GRID_X2_TW + INC_DEC_X_PICTURE_OFFSET_TW , GRID_Y3_TW + DECREMENT_Y_PICTURE_OFFSET_TW,
+		GRID_X2_TW + SET_TEMPERATURE_BUTTON_LENGTH - 1, GRID_Y3_TW + SET_TEMPERATURE_BUTTON_HEIGHT - 1);
+	UG_ImageSetBMP(&temperatureWindow, IMG_ID_6, &smallDecrementPicture);
+	
 	/**********************************
 	* Create the setting window
 	***********************************/
@@ -2482,7 +2585,9 @@ void GUI_ClockInit(void)
 	UG_TextboxSetText(&settingsWindow, TXB_ID_3, WidgetsStrings.labelCalendarValue);
 	UG_TextboxSetFont(&settingsWindow, TXB_ID_3, &FONT_8X12);
 
-	UG_ButtonCreate(&settingsWindow, &buttonCloseOptionsWindow, BTN_ID_0, 290, 0, 311, 20);
+	UG_ButtonCreate(&settingsWindow, &buttonCloseOptionsWindow, BTN_ID_0, OPTIONS_CLOSE_BUTTON_X_START_POSITION,
+		OPTIONS_CLOSE_BUTTON_Y_START_POSITION, OPTIONS_CLOSE_BUTTON_X_END_POSITION,
+		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
 	UG_ButtonSetStyle(&settingsWindow, BTN_ID_0, BTN_STYLE_2D);
 
 	UG_ButtonCreate(&settingsWindow, &buttonDecrementBrightness, BTN_ID_1, 140, FIRST_LINE_BEGIN_SW,
@@ -2553,6 +2658,41 @@ void GUI_ClockInit(void)
 	UG_ButtonSetFont(&settingsWindow, BTN_ID_11, &FONT_8X12);
 	UG_ButtonSetStyle(&settingsWindow, BTN_ID_11, BTN_STYLE_2D);
 
+	UG_ImageCreate(&settingsWindow, &imageClose, IMG_ID_0, OPTIONS_CLOSE_BUTTON_X_START_POSITION + 1,
+		OPTIONS_CLOSE_BUTTON_Y_START_POSITION + 1, OPTIONS_CLOSE_BUTTON_X_END_POSITION,
+		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
+	UG_ImageSetBMP(&settingsWindow, IMG_ID_0, &closePicture);
+	
+	UG_ImageCreate(&settingsWindow, &imageIncrementDay, IMG_ID_1, CALENDAR_GRID_X1_SW + 2, CALENDAR_GRID_Y1_SW + 2,
+		CALENDAR_GRID_X1_SW + CALENDAR_SWITCH_LENGTH_SW - 1, CALENDAR_GRID_Y1_SW + CALENDAR_SWITCH_HEIGH_SW - 1);
+	UG_ImageSetBMP(&settingsWindow, IMG_ID_1, &smallIncrementPicture);
+	UG_ImageHide(&settingsWindow, IMG_ID_1);
+
+	UG_ImageCreate(&settingsWindow, &imageDecrementDay, IMG_ID_2, CALENDAR_GRID_X1_SW + 2, CALENDAR_GRID_Y3_SW + 2,
+		CALENDAR_GRID_X1_SW + CALENDAR_SWITCH_LENGTH_SW - 1, CALENDAR_GRID_Y3_SW + CALENDAR_SWITCH_HEIGH_SW - 1);
+	UG_ImageSetBMP(&settingsWindow, IMG_ID_2, &smallDecrementPicture);
+	UG_ImageHide(&settingsWindow, IMG_ID_2);
+
+	UG_ImageCreate(&settingsWindow, &imageIncrementMonth, IMG_ID_3, CALENDAR_GRID_X2_SW + 2, CALENDAR_GRID_Y1_SW + 2,
+		CALENDAR_GRID_X2_SW + CALENDAR_SWITCH_LENGTH_SW - 1, CALENDAR_GRID_Y1_SW + CALENDAR_SWITCH_HEIGH_SW - 1);
+	UG_ImageSetBMP(&settingsWindow, IMG_ID_3, &smallIncrementPicture);
+	UG_ImageHide(&settingsWindow, IMG_ID_3);
+
+	UG_ImageCreate(&settingsWindow, &imageDecrementMonth, IMG_ID_4, CALENDAR_GRID_X2_SW + 2, CALENDAR_GRID_Y3_SW + 2,
+		CALENDAR_GRID_X2_SW + CALENDAR_SWITCH_LENGTH_SW - 1, CALENDAR_GRID_Y3_SW + CALENDAR_SWITCH_HEIGH_SW - 1);
+	UG_ImageSetBMP(&settingsWindow, IMG_ID_4, &smallDecrementPicture);
+	UG_ImageHide(&settingsWindow, IMG_ID_4);
+
+	UG_ImageCreate(&settingsWindow, &imageIncrementYear, IMG_ID_5, CALENDAR_GRID_X3_SW + 2, CALENDAR_GRID_Y1_SW + 2,
+		CALENDAR_GRID_X3_SW + CALENDAR_SWITCH_LENGTH_SW - 1, CALENDAR_GRID_Y1_SW + CALENDAR_SWITCH_HEIGH_SW - 1);
+	UG_ImageSetBMP(&settingsWindow, IMG_ID_5, &smallIncrementPicture);
+	UG_ImageHide(&settingsWindow, IMG_ID_5);
+
+	UG_ImageCreate(&settingsWindow, &imageDecrementYear, IMG_ID_6, CALENDAR_GRID_X3_SW + 2, CALENDAR_GRID_Y3_SW + 2,
+		CALENDAR_GRID_X3_SW + CALENDAR_SWITCH_LENGTH_SW - 1, CALENDAR_GRID_Y3_SW + CALENDAR_SWITCH_HEIGH_SW - 1);
+	UG_ImageSetBMP(&settingsWindow, IMG_ID_6, &smallDecrementPicture);
+	UG_ImageHide(&settingsWindow, IMG_ID_6);
+
 	setCalendarModification(false);
 
 	/**********************************
@@ -2602,7 +2742,9 @@ void GUI_ClockInit(void)
 		UG_TextboxHide(&wifiSettingsWindow, (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + i));
 	}
 
-	UG_ButtonCreate(&wifiSettingsWindow, &buttonCloseWifiSettingsWindow, BTN_ID_0, 290, 0, 311, 20);
+	UG_ButtonCreate(&wifiSettingsWindow, &buttonCloseWifiSettingsWindow, BTN_ID_0, OPTIONS_CLOSE_BUTTON_X_START_POSITION,
+		OPTIONS_CLOSE_BUTTON_Y_START_POSITION, OPTIONS_CLOSE_BUTTON_X_END_POSITION,
+		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
 	UG_ButtonSetText(&wifiSettingsWindow, BTN_ID_0, " ");
 	UG_ButtonSetFont(&wifiSettingsWindow, BTN_ID_0, &FONT_12X16);
 	UG_ButtonSetStyle(&wifiSettingsWindow, BTN_ID_0, BTN_STYLE_2D);
@@ -2649,6 +2791,21 @@ void GUI_ClockInit(void)
 	UG_ButtonSetFont(&wifiSettingsWindow, BTN_ID_9, &FONT_8X12);
 	UG_ButtonSetStyle(&wifiSettingsWindow, BTN_ID_9, BTN_STYLE_2D);
 	UG_ButtonHide(&wifiSettingsWindow, BTN_ID_9);
+	
+	UG_ImageCreate(&wifiSettingsWindow, &imageClose, IMG_ID_0, OPTIONS_CLOSE_BUTTON_X_START_POSITION + 1,
+		OPTIONS_CLOSE_BUTTON_Y_START_POSITION + 1, OPTIONS_CLOSE_BUTTON_X_END_POSITION,
+		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
+	UG_ImageSetBMP(&wifiSettingsWindow, IMG_ID_0, &closePicture);
+
+	UG_ImageCreate(&wifiSettingsWindow, &imageUpNetworkList, IMG_ID_1, APN_SLIDER_BEGIN + 3,
+		FIRST_LINE_OF_APN_BEGIN_WSW + 3, APN_SLIDER_END - 1, FIRST_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW - 1);
+	UG_ImageSetBMP(&wifiSettingsWindow, IMG_ID_1, &upWifiNetwork);
+	UG_ImageHide(&wifiSettingsWindow, IMG_ID_1);
+
+	UG_ImageCreate(&wifiSettingsWindow, &imageDownNetworkList, IMG_ID_2, APN_SLIDER_BEGIN + 3,
+		FIVETH_LINE_OF_APN_BEGIN_WSW + 3, APN_SLIDER_END - 1, FIVETH_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW - 1);
+	UG_ImageSetBMP(&wifiSettingsWindow, IMG_ID_2, &downWifiNetwork);
+	UG_ImageHide(&wifiSettingsWindow, IMG_ID_2);
 
 	/**********************************
 	* Create the WiFi Keyboard Window
@@ -2682,7 +2839,9 @@ void GUI_ClockInit(void)
 	UG_CheckboxSetFont(&wifiKeyboardWindow, CHB_ID_0, &FONT_6X8);
 	UG_CheckboxSetCheched(&wifiKeyboardWindow, CHB_ID_0, CHB_STATE_RELEASED);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonCloseKeyboardWindow, BTN_ID_0, 290, 0, 311, 20);
+	UG_ButtonCreate(&wifiKeyboardWindow, &buttonCloseKeyboardWindow, BTN_ID_0, OPTIONS_CLOSE_BUTTON_X_START_POSITION,
+		OPTIONS_CLOSE_BUTTON_Y_START_POSITION, OPTIONS_CLOSE_BUTTON_X_END_POSITION,
+		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
 	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_0, " ");
 	UG_ButtonSetFont(&wifiKeyboardWindow, BTN_ID_0, &FONT_12X16);
 	UG_ButtonSetStyle(&wifiKeyboardWindow, BTN_ID_0, BTN_STYLE_2D);
@@ -2859,12 +3018,12 @@ void GUI_ClockInit(void)
 
 	setKeyboardButtons(KeyboardSignsGlobalState);
 
+	UG_ImageCreate(&wifiKeyboardWindow, &imageClose, IMG_ID_0, OPTIONS_CLOSE_BUTTON_X_START_POSITION + 1,
+		OPTIONS_CLOSE_BUTTON_Y_START_POSITION + 1, OPTIONS_CLOSE_BUTTON_X_END_POSITION,
+		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
+	UG_ImageSetBMP(&wifiKeyboardWindow, IMG_ID_0, &closePicture);
+
 	UG_WindowShow(&mainWindow);
-	//UG_WindowShow(&clockSettingsWindow);
-	//UG_WindowShow(&temperatureWindow);
-	//UG_WindowShow(&settingsWindow);
-	//UG_WindowShow(&wifiSettingsWindow);
-	//UG_WindowShow(&wifiKeyboardWindow);
 
 	UG_Update();
 }

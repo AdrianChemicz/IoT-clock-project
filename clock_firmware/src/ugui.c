@@ -5814,14 +5814,34 @@ void UG_WaitForUpdate( void )
    #endif    
 }
 
-static UG_COLOR UG_CovertToColor(void* pixelPointer, UG_U8 bpp, UG_S32 xPosition)
+static UG_COLOR UG_CovertToColor(void* pixelPointer, UG_BMP* bmp, UG_S32 xPosition)
 {
 	UG_COLOR c = 0;
 	UG_U8 r, g, b;
 	UG_U16 tmp;
 
-	switch (bpp)
+	switch (bmp->bpp)
 	{
+	case BMP_BPP_1:
+		tmp = *((UG_U8*)pixelPointer);
+		c = (tmp >> (xPosition & 7)) & 1;
+
+		if (c == 0)
+		{
+			if (bmp->options == NULL)
+				c = C_BLACK;
+			else
+				c = ((UG_COLOR*)bmp->options)[0];
+		}
+		else
+		{
+			if (bmp->options == NULL)
+				c = C_WHITE;
+			else
+				c = ((UG_COLOR*)bmp->options)[1];
+		}
+		break;
+
 	case BMP_BPP_8:
 		tmp = *((UG_U8*)pixelPointer);
 		/* Convert RGB332 to RGB888 */
@@ -5847,20 +5867,23 @@ static UG_COLOR UG_CovertToColor(void* pixelPointer, UG_U8 bpp, UG_S32 xPosition
 		break;
 
 	default:
-
 		break;
-
 	}
 
 	return c;
 }
 
-static void* UG_IncrementPointer(void* pixelPointer, UG_U8 bpp, UG_S32 xPosition)
+static void* UG_IncrementPointer(void* pixelPointer, UG_BMP* bmp, UG_S32 xPosition)
 {
 	void* p = pixelPointer;
 
-	switch (bpp)
+	switch (bmp->bpp)
 	{
+	case BMP_BPP_1:
+		if (((xPosition & 7) == 7) || (xPosition >= (bmp->width - 1)))
+			p = ((UG_U8*)p) + 1;
+		break;
+
 	case BMP_BPP_8:
 		p = ((UG_U8*)p) + 1;
 		break;
@@ -5898,8 +5921,8 @@ void UG_DrawBMP( UG_S16 xp, UG_S16 yp, UG_BMP* bmp )
 			xp = xs;
 			for (x = 0; x<bmp->width; x++)
 			{
-				c = UG_CovertToColor(p, bmp->bpp, x);
-				p = UG_IncrementPointer(p, bmp->bpp, x);
+				c = UG_CovertToColor(p, bmp, x);
+				p = UG_IncrementPointer(p, bmp, x);
 				((void*(*)(UG_COLOR))gui->driver[DRIVER_PIXEL_IN_AREA_PUT].driver)(c);
 			}
 			yp++;
@@ -5916,8 +5939,8 @@ void UG_DrawBMP( UG_S16 xp, UG_S16 yp, UG_BMP* bmp )
 			xp = xs;
 			for (x = 0; x<bmp->width; x++)
 			{
-				c = UG_CovertToColor(p, bmp->bpp, x);
-				p = UG_IncrementPointer(p, bmp->bpp, x);
+				c = UG_CovertToColor(p, bmp, x);
+				p = UG_IncrementPointer(p, bmp, x);
 				UG_DrawPixel(xp++, yp, c);
 			}
 			yp++;
