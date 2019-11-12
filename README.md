@@ -44,16 +44,44 @@ uGui lobrary was modified to run faster.
 
 First release of source code
 
-7) New version of hardware with fixes.
+7) WiFi support was be added. 
 
-8) WiFi support will be added. Added support to monochrome
-bitmap in uGui. Add monochrome bitmap in GUI code. Add Options 
-fields in bitmap.
+Second release of code.
 
-Second release of code and first official release of HW.
+8) New version of hardware with fixes.
+
+9) Added support to monochrome bitmap in uGui. Added monochrome bitmap 
+in GUI code. Added Options fields in bitmap.
+
+Third release of code.
+First official release of HW.
+
+10) Code refactoring is necessary to delete thing which isn't necessary 
+and improve code readability.
+
+Fourth release of code.
+
+11) Prepare android application to control clock via Wifi.
+12) Prepare document with clock specification.
 
 License of code project:
   Below drivers is licensed under BSD 3-claus license:
-
+  -BacklightControl
+  -BuzzerControl
+  -ESP_Layer
+  -FRAM_Driver
+  -GPIO_Driver
+  -I2C_Driver
+  -LCD
+  -SOMEIP_Layer
+  -SPI_Driver
+  -TemperatureSensor
+  -TouchPanel
+  -UART_Driver
+  
   Below files is licensed under GPL license:
-
+  -ClockControl
+  -GUI_Clock
+  -Thread
+  -WIFI_InteractionLayer
+  
