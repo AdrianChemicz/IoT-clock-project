@@ -50,180 +50,6 @@ UG_WINDOW wifiSettingsWindow;
 UG_WINDOW wifiKeyboardWindow;
 static UG_IMAGE imageClose;
 
-//main window
-static UG_BUTTON buttonClockValue;
-
-static UG_TEXTBOX textBoxTemperatureOutside;
-static UG_TEXTBOX textBoxTemperatureInside;
-static UG_TEXTBOX textBoxTemperatureFurnace;
-
-static UG_BUTTON buttonSettings;
-
-static UG_BUTTON buttonTemperatureOutside;
-static UG_BUTTON buttonTemperatureInside;
-static UG_BUTTON buttonTemperatureFurnace;
-static UG_BUTTON buttonWiFiSettings;
-
-static UG_IMAGE imageTemperatureOutside;
-static UG_IMAGE imageTemperatureInside;
-static UG_IMAGE imageTemperatureFurnace;
-static UG_IMAGE imageWiFiSettings;
-UG_IMAGE imageOptions;			  
-
-static UG_BUTTON buttonFirstAllarmStatus;
-static UG_BUTTON buttonSecondAllarmStatus;
-static UG_BUTTON buttonFurnaceAllarmStatus;
-
-static UG_AREA possitionButtonFirstAlarm;
-static UG_AREA possitionButtonSecondAlarm;
-static UG_AREA possitionButtonFurnaceAlarm;
-
-//clock settings window
-static UG_TEXTBOX textBoxSettingInformation;
-static UG_TEXTBOX textBoxTimeValue;
-static UG_BUTTON buttonCloseClockSettingsWindow;
-
-static UG_BUTTON buttonIncrementHour;
-static UG_BUTTON buttonDecrementHour;
-static UG_BUTTON buttonIncrementMinute;
-static UG_BUTTON buttonDecrementMinute;
-
-static UG_BUTTON buttonChoseTimeValue;
-static UG_BUTTON buttonChoseFirstAlarm;
-static UG_BUTTON buttonChoseSecondAlarm;
-
-static UG_CHECKBOX ckeckBoxActiveFirstAlarm;
-static UG_CHECKBOX ckeckBoxActiveSecondAlarm;
-
-static UG_IMAGE imageIncrementHour;
-static UG_IMAGE imageDecrementHour;
-static UG_IMAGE imageIncrementMinute;
-static UG_IMAGE imageDecrementMinute;
-
-//temperature window
-static UG_TEXTBOX textBoxTemperatureInformation;
-static UG_TEXTBOX textBoxGraphLabel;
-static UG_BUTTON buttonCloseTemperatureWindow;
-
-static UG_BUTTON buttonHistoryGraphLeft;
-static UG_BUTTON buttonHistoryGraphRight;
-
-static UG_TEXTBOX textBoxStepValueLabel;
-static UG_TEXTBOX textBoxTemperatureOffset;
-static UG_CHECKBOX ckeckBoxTemperatureAlarm;
-static UG_CHECKBOX ckeckBoxRecordTemperature;
-
-static UG_BUTTON buttonIncrementTemperatureOffset;
-static UG_BUTTON buttonDecrementTemperatureOffset;
-static UG_BUTTON buttonIncrementTemperatureAlarm;
-static UG_BUTTON buttonDecrementTemperatureAlarm;
-static UG_BUTTON buttonIncrementGraphStep;
-static UG_BUTTON buttonDecrementGraphStep;
-
-static UG_IMAGE imageMoveHistoryGraphLeft;
-static UG_IMAGE imageMoveHistoryGraphRight;
-static UG_IMAGE imageIncrementTemperatureOffset;
-static UG_IMAGE imageDecrementTemperatureOffset;
-static UG_IMAGE imageIncrementTemperatureAlarm;
-static UG_IMAGE imageDecrementTemperatureAlarm;
-
-static uint8_t temperatureGraphStepValue;
-
-//options window
-static UG_BUTTON buttonCloseOptionsWindow;
-static UG_BUTTON buttonIncrementBrightness;
-static UG_BUTTON buttonDecrementBrightness;
-static UG_BUTTON buttonCalibrateLCD;
-static UG_BUTTON buttonFactoryReset;
-static UG_BUTTON buttonSetCalendar;
-static UG_BUTTON buttonIncrementDay;
-static UG_BUTTON buttonDecrementDay;
-static UG_BUTTON buttonIncrementMonth;
-static UG_BUTTON buttonDecrementMonth;
-static UG_BUTTON buttonIncrementYear;
-static UG_BUTTON buttonDecrementYear;
-
-static UG_TEXTBOX textBoxBrightnessValueLabel;
-static UG_TEXTBOX textBoxBrightnessValuePercents;
-static UG_TEXTBOX textBoxUpTime;
-static UG_TEXTBOX textBoxCalendar;
-
-static UG_IMAGE imageIncrementDay;
-static UG_IMAGE imageDecrementDay;
-static UG_IMAGE imageIncrementMonth;
-static UG_IMAGE imageDecrementMonth;
-static UG_IMAGE imageIncrementYear;
-static UG_IMAGE imageDecrementYear;														   
-
-//wifi Settings window
-static UG_TEXTBOX textBoxWifiStatus;
-static UG_TEXTBOX textBoxApnListLabel;
-static UG_TEXTBOX textBoxAssignedIpAddress;
-
-static UG_TEXTBOX textBoxNetwork[NUMBER_OF_WIFI_DISPLAY_NETWORKS];
-static UG_BUTTON buttonNetwork[NUMBER_OF_WIFI_DISPLAY_NETWORKS];
-
-static UG_BUTTON buttonCloseWifiSettingsWindow;
-static UG_BUTTON buttonControlConnection;
-static UG_BUTTON buttonUpNetworkList;
-static UG_BUTTON buttonDownNetworkList;
-static UG_IMAGE imageUpNetworkList;
-static UG_IMAGE imageDownNetworkList;
-
-uint8_t wifiListCursorPosition;
-static bool refreshWifiList;
-
-//wifi Keyboard window
-static UG_TEXTBOX textBoxApnLabel;
-static UG_TEXTBOX textBoxChosenApnLabel;
-static UG_TEXTBOX textBoxPApnPasswordLabel;
-static UG_TEXTBOX textBoxPApnPasswordContent;
-static UG_CHECKBOX ckeckBoxShowApnPassword;
-
-static UG_BUTTON buttonCloseKeyboardWindow;
-static UG_BUTTON buttonKeyQor1Num1a;
-static UG_BUTTON buttonKeyWor2Num2a;
-static UG_BUTTON buttonKeyEor3Num3a;
-static UG_BUTTON buttonKeyRor4Num4a;
-static UG_BUTTON buttonKeyTor5Num5a;
-static UG_BUTTON buttonKeyYor6Num6a;
-static UG_BUTTON buttonKeyUor7Num7a;
-static UG_BUTTON buttonKeyIor8Num8a;
-static UG_BUTTON buttonKeyOor9Num9a;
-static UG_BUTTON buttonKeyPor0Num10a;
-static UG_BUTTON buttonKeyGraveAccentOrTildeNum11a; // ` ~
-
-static UG_BUTTON buttonKeyAorMonkeyNum1b; // A @
-static UG_BUTTON buttonKeySorHashNum2b; // S #
-static UG_BUTTON buttonKeyDorDolarNum3b; // D $
-static UG_BUTTON buttonKeyForFloorNum4b; // F _
-static UG_BUTTON buttonKeyGorAmpersandNum5b; // G &
-static UG_BUTTON buttonKeyHorMinusNum6b; // H -
-static UG_BUTTON buttonKeyJorPlusNum7b; // J +
-static UG_BUTTON buttonKeyKorAsteriskNum8b; // K *
-static UG_BUTTON buttonKeyLorExclamationMarkNum9b; // L !
-static UG_BUTTON buttonKeyRightBracesOrRightSquareBracketsNum10b; // } ]
-
-static UG_BUTTON buttonKeyShiftNum1c; // Shift
-static UG_BUTTON buttonKeyZorQuotationMarksSingleNum2c; // Z '
-static UG_BUTTON buttonKeyXorQuotationMarksDoubleNum3c; // X "
-static UG_BUTTON buttonKeyCorQuestionMarkNum4c; // C ?
-static UG_BUTTON buttonKeyVorEqualsSignNum5c; // V =
-static UG_BUTTON buttonKeyBorBackslashNum6c; /* B \ */
-static UG_BUTTON buttonKeyNorPercent1Num7c; // N %
-static UG_BUTTON buttonKeyMorForwardSlashNum8c; // M /
-static UG_BUTTON buttonKeyLeftBracesOrLeftSquareBracketsNum9c; // { [
-static UG_BUTTON buttonKeyCaretOrVerticalBarNum10c; // ^ |
-static UG_BUTTON buttonKeyBackspaceNum11c; //Backspace
-
-static UG_BUTTON buttonKeySwitchToSignNum1d; // Shift
-static UG_BUTTON buttonKeyDotOrColonNum2d; // . :
-static UG_BUTTON buttonKeyCommaQorSemicolonNum3d; // , ;
-static UG_BUTTON buttonKeySpaceNum4d; // Space
-static UG_BUTTON buttonKeyLeftRoundBracketOrLeftChevronNum5d; // ( <
-static UG_BUTTON buttonKeyRightRoundBracketOrRightChevronNum6d; // ) >
-static UG_BUTTON buttonKeyEnterNum7d; // Enter
-
 static UG_OBJECT mainWindowObjects[MAX_OBJECTS];
 static UG_OBJECT clockSettingsObjects[MAX_OBJECTS];
 static UG_OBJECT temperatureWindowObjects[MAX_OBJECTS_TEMPERATURE_WINDOW];
@@ -231,10 +57,191 @@ static UG_OBJECT settingsWindowObjects[MAX_OBJECTS_SETTINGS];
 static UG_OBJECT wifiSettingsObjects[MAX_OBJECTS_WIFI_SETTINGS];
 static UG_OBJECT wifiKeyboardObjects[MAX_OBJECTS_KEYBOARD_WINDOW];
 
-KEYBOARD_SIGNS KeyboardSignsGlobalState;
+struct MainWindow{
+	UG_BUTTON buttonClockValue;
 
-uint8_t sellectedWifiNetworkName[33];
-uint8_t passwordToApnBuffer[MAX_APN_PASSWORD_LENGTH];
+	UG_TEXTBOX textBoxTemperatureOutside;
+	UG_TEXTBOX textBoxTemperatureInside;
+	UG_TEXTBOX textBoxTemperatureFurnace;
+
+	UG_BUTTON buttonSettings;
+
+	UG_BUTTON buttonTemperatureOutside;
+	UG_BUTTON buttonTemperatureInside;
+	UG_BUTTON buttonTemperatureFurnace;
+	UG_BUTTON buttonWiFiSettings;
+
+	UG_IMAGE imageTemperatureOutside;
+	UG_IMAGE imageTemperatureInside;
+	UG_IMAGE imageTemperatureFurnace;
+	UG_IMAGE imageWiFiSettings;
+	UG_IMAGE imageOptions;
+
+	UG_BUTTON buttonFirstAllarmStatus;
+	UG_BUTTON buttonSecondAllarmStatus;
+	UG_BUTTON buttonFurnaceAllarmStatus;
+
+	UG_AREA possitionButtonFirstAlarm;
+	UG_AREA possitionButtonSecondAlarm;
+	UG_AREA possitionButtonFurnaceAlarm;
+}mWindow;
+
+struct ClockSettingsWindow{
+	UG_TEXTBOX textBoxSettingInformation;
+	UG_TEXTBOX textBoxTimeValue;
+	UG_BUTTON buttonCloseClockSettingsWindow;
+
+	UG_BUTTON buttonIncrementHour;
+	UG_BUTTON buttonDecrementHour;
+	UG_BUTTON buttonIncrementMinute;
+	UG_BUTTON buttonDecrementMinute;
+
+	UG_BUTTON buttonChoseTimeValue;
+	UG_BUTTON buttonChoseFirstAlarm;
+	UG_BUTTON buttonChoseSecondAlarm;
+
+	UG_CHECKBOX ckeckBoxActiveFirstAlarm;
+	UG_CHECKBOX ckeckBoxActiveSecondAlarm;
+
+	UG_IMAGE imageIncrementHour;
+	UG_IMAGE imageDecrementHour;
+	UG_IMAGE imageIncrementMinute;
+	UG_IMAGE imageDecrementMinute;
+}csWindow;
+
+struct TemperatureWindow{
+	UG_TEXTBOX textBoxTemperatureInformation;
+	UG_TEXTBOX textBoxGraphLabel;
+	UG_BUTTON buttonCloseTemperatureWindow;
+
+	UG_BUTTON buttonHistoryGraphLeft;
+	UG_BUTTON buttonHistoryGraphRight;
+
+	UG_TEXTBOX textBoxStepValueLabel;
+	UG_TEXTBOX textBoxTemperatureOffset;
+	UG_CHECKBOX ckeckBoxTemperatureAlarm;
+	UG_CHECKBOX ckeckBoxRecordTemperature;
+
+	UG_BUTTON buttonIncrementTemperatureOffset;
+	UG_BUTTON buttonDecrementTemperatureOffset;
+	UG_BUTTON buttonIncrementTemperatureAlarm;
+	UG_BUTTON buttonDecrementTemperatureAlarm;
+	UG_BUTTON buttonIncrementGraphStep;
+	UG_BUTTON buttonDecrementGraphStep;
+
+	UG_IMAGE imageMoveHistoryGraphLeft;
+	UG_IMAGE imageMoveHistoryGraphRight;
+	UG_IMAGE imageIncrementTemperatureOffset;
+	UG_IMAGE imageDecrementTemperatureOffset;
+	UG_IMAGE imageIncrementTemperatureAlarm;
+	UG_IMAGE imageDecrementTemperatureAlarm;
+
+	uint8_t temperatureGraphStepValue;
+}tWindow;
+
+struct OptionsWindow{
+	UG_BUTTON buttonCloseOptionsWindow;
+	UG_BUTTON buttonIncrementBrightness;
+	UG_BUTTON buttonDecrementBrightness;
+	UG_BUTTON buttonCalibrateLCD;
+	UG_BUTTON buttonFactoryReset;
+	UG_BUTTON buttonSetCalendar;
+	UG_BUTTON buttonIncrementDay;
+	UG_BUTTON buttonDecrementDay;
+	UG_BUTTON buttonIncrementMonth;
+	UG_BUTTON buttonDecrementMonth;
+	UG_BUTTON buttonIncrementYear;
+	UG_BUTTON buttonDecrementYear;
+
+	UG_TEXTBOX textBoxBrightnessValueLabel;
+	UG_TEXTBOX textBoxBrightnessValuePercents;
+	UG_TEXTBOX textBoxUpTime;
+	UG_TEXTBOX textBoxCalendar;
+
+	UG_IMAGE imageIncrementDay;
+	UG_IMAGE imageDecrementDay;
+	UG_IMAGE imageIncrementMonth;
+	UG_IMAGE imageDecrementMonth;
+	UG_IMAGE imageIncrementYear;
+	UG_IMAGE imageDecrementYear;
+}oWindow;
+
+struct WifiSettingsWindow{
+	UG_TEXTBOX textBoxWifiStatus;
+	UG_TEXTBOX textBoxApnListLabel;
+	UG_TEXTBOX textBoxAssignedIpAddress;
+
+	UG_TEXTBOX textBoxNetwork[NUMBER_OF_WIFI_DISPLAY_NETWORKS];
+	UG_BUTTON buttonNetwork[NUMBER_OF_WIFI_DISPLAY_NETWORKS];
+
+	UG_BUTTON buttonCloseWifiSettingsWindow;
+	UG_BUTTON buttonControlConnection;
+	UG_BUTTON buttonUpNetworkList;
+	UG_BUTTON buttonDownNetworkList;
+	UG_IMAGE imageUpNetworkList;
+	UG_IMAGE imageDownNetworkList;
+
+	uint8_t wifiListCursorPosition;
+	bool refreshWifiList;
+}wsWindow;
+
+//wifi Keyboard window
+struct WifiKeyboardWindow{
+	UG_TEXTBOX textBoxApnLabel;
+	UG_TEXTBOX textBoxChosenApnLabel;
+	UG_TEXTBOX textBoxPApnPasswordLabel;
+	UG_TEXTBOX textBoxPApnPasswordContent;
+	UG_CHECKBOX ckeckBoxShowApnPassword;
+
+	UG_BUTTON buttonCloseKeyboardWindow;
+	UG_BUTTON buttonKeyQor1Num1a;
+	UG_BUTTON buttonKeyWor2Num2a;
+	UG_BUTTON buttonKeyEor3Num3a;
+	UG_BUTTON buttonKeyRor4Num4a;
+	UG_BUTTON buttonKeyTor5Num5a;
+	UG_BUTTON buttonKeyYor6Num6a;
+	UG_BUTTON buttonKeyUor7Num7a;
+	UG_BUTTON buttonKeyIor8Num8a;
+	UG_BUTTON buttonKeyOor9Num9a;
+	UG_BUTTON buttonKeyPor0Num10a;
+	UG_BUTTON buttonKeyGraveAccentOrTildeNum11a; // ` ~
+
+	UG_BUTTON buttonKeyAorMonkeyNum1b; // A @
+	UG_BUTTON buttonKeySorHashNum2b; // S #
+	UG_BUTTON buttonKeyDorDolarNum3b; // D $
+	UG_BUTTON buttonKeyForFloorNum4b; // F _
+	UG_BUTTON buttonKeyGorAmpersandNum5b; // G &
+	UG_BUTTON buttonKeyHorMinusNum6b; // H -
+	UG_BUTTON buttonKeyJorPlusNum7b; // J +
+	UG_BUTTON buttonKeyKorAsteriskNum8b; // K *
+	UG_BUTTON buttonKeyLorExclamationMarkNum9b; // L !
+	UG_BUTTON buttonKeyRightBracesOrRightSquareBracketsNum10b; // } ]
+
+	UG_BUTTON buttonKeyShiftNum1c; // Shift
+	UG_BUTTON buttonKeyZorQuotationMarksSingleNum2c; // Z '
+	UG_BUTTON buttonKeyXorQuotationMarksDoubleNum3c; // X "
+	UG_BUTTON buttonKeyCorQuestionMarkNum4c; // C ?
+	UG_BUTTON buttonKeyVorEqualsSignNum5c; // V =
+	UG_BUTTON buttonKeyBorBackslashNum6c; /* B \ */
+	UG_BUTTON buttonKeyNorPercent1Num7c; // N %
+	UG_BUTTON buttonKeyMorForwardSlashNum8c; // M /
+	UG_BUTTON buttonKeyLeftBracesOrLeftSquareBracketsNum9c; // { [
+	UG_BUTTON buttonKeyCaretOrVerticalBarNum10c; // ^ |
+	UG_BUTTON buttonKeyBackspaceNum11c; //Backspace
+
+	UG_BUTTON buttonKeySwitchToSignNum1d; // Shift
+	UG_BUTTON buttonKeyDotOrColonNum2d; // . :
+	UG_BUTTON buttonKeyCommaQorSemicolonNum3d; // , ;
+	UG_BUTTON buttonKeySpaceNum4d; // Space
+	UG_BUTTON buttonKeyLeftRoundBracketOrLeftChevronNum5d; // ( <
+	UG_BUTTON buttonKeyRightRoundBracketOrRightChevronNum6d; // ) >
+	UG_BUTTON buttonKeyEnterNum7d; // Enter
+
+	KEYBOARD_SIGNS KeyboardSignsGlobalState;
+
+	uint8_t sellectedWifiNetworkName[33];
+	uint8_t passwordToApnBuffer[MAX_APN_PASSWORD_LENGTH];
+}wkWindow;
 
 const uint8_t KeyboardCodeTable[NUMBER_OF_KEY_ON_KEYBOARD][6] = { { 'q', 0, 'Q', 0, '1', 0 }, { 'w', 0, 'W', 0, '2', 0 }, { 'e', 0, 'E', 0, '3', 0 }, { 'r', 0, 'R', 0, '4', 0 },
 { 't', 0, 'T', 0, '5', 0 }, { 'y', 0, 'Y', 0, '6', 0 }, { 'u', 0, 'U', 0, '7', 0 }, { 'i', 0, 'I', 0, '8', 0 }, { 'o', 0, 'O', 0, '9', 0 }, { 'p', 0, 'P', 0, '0', 0 },
@@ -875,19 +882,19 @@ void temperatureWindowHandler(UG_MESSAGE *msg)
 				break;
 			/* Decrement step button was pressed */
 			case BTN_ID_7:
-				if (temperatureGraphStepValue > 1)
+				if (tWindow.temperatureGraphStepValue > 1)
 				{
-					temperatureGraphStepValue--;
-					calculateGraphStepValueString(temperatureGraphStepValue);
+					tWindow.temperatureGraphStepValue--;
+					calculateGraphStepValueString(tWindow.temperatureGraphStepValue);
 					UG_TextboxSetText(&temperatureWindow, TXB_ID_3, WidgetsStrings.labelGraphStep);
 				}
 				break;
 			/* Increment step button was pressed */
 			case BTN_ID_8:
-				if (temperatureGraphStepValue < MAX_STEP_ON_GRAPH)
+				if (tWindow.temperatureGraphStepValue < MAX_STEP_ON_GRAPH)
 				{
-					temperatureGraphStepValue++;
-					calculateGraphStepValueString(temperatureGraphStepValue);
+					tWindow.temperatureGraphStepValue++;
+					calculateGraphStepValueString(tWindow.temperatureGraphStepValue);
 					UG_TextboxSetText(&temperatureWindow, TXB_ID_3, WidgetsStrings.labelGraphStep);
 				}
 				break;
@@ -1074,13 +1081,13 @@ void wifiSettingsWindowHandler(UG_MESSAGE *msg)
 				break;
 				/* up network list was release */
 			case BTN_ID_8:
-				wifiListCursorPosition--;
-				refreshWifiList = true;
+				wsWindow.wifiListCursorPosition--;
+				wsWindow.refreshWifiList = true;
 				break;
 				/* down network list was release */
 			case BTN_ID_9:
-				wifiListCursorPosition++;
-				refreshWifiList = true;
+				wsWindow.wifiListCursorPosition++;
+				wsWindow.refreshWifiList = true;
 				break;
 			}/* switch (msg->sub_id) */
 
@@ -1090,15 +1097,15 @@ void wifiSettingsWindowHandler(UG_MESSAGE *msg)
 				if (msg->sub_id == (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + i))
 				{
 					if(ClockState.wifiConnected &&
-						(strcmp(ApnStructure.AppInformationTable[wifiListCursorPosition + i].ssid, ClockState.ssidOfAssignedApn) == 0))
+						(strcmp(ApnStructure.AppInformationTable[wsWindow.wifiListCursorPosition + i].ssid, ClockState.ssidOfAssignedApn) == 0))
 					{
 						//Do nothing if device is already connected to this network
 					}
 					else
 					{
 						//copy selected APN to temporary buffer and init widget in new window
-						memcpy(sellectedWifiNetworkName, ApnStructure.AppInformationTable[wifiListCursorPosition + i].ssid, 33);
-						UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_1, sellectedWifiNetworkName);
+						memcpy(wkWindow.sellectedWifiNetworkName, ApnStructure.AppInformationTable[wsWindow.wifiListCursorPosition + i].ssid, 33);
+						UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_1, wkWindow.sellectedWifiNetworkName);
 						UG_WindowShow(&wifiKeyboardWindow);
 					}
 				}
@@ -1122,48 +1129,48 @@ void wifiKeyboardWindowHandler(UG_MESSAGE *msg)
 				/* Shift button was release */
 			case (BUTTON_WIFI_KEYBOARD_BEGIN + SHIFT_KEY_OFFSET_WKW):
 
-				if (KeyboardSignsGlobalState == BIG_LETTER)
+				if (wkWindow.KeyboardSignsGlobalState == BIG_LETTER)
 				{
-					KeyboardSignsGlobalState = SMALL_LETTER;
+					wkWindow.KeyboardSignsGlobalState = SMALL_LETTER;
 				}
-				else if (KeyboardSignsGlobalState == SMALL_LETTER)
+				else if (wkWindow.KeyboardSignsGlobalState == SMALL_LETTER)
 				{
-					KeyboardSignsGlobalState = BIG_LETTER;
+					wkWindow.KeyboardSignsGlobalState = BIG_LETTER;
 				}
 
-				setKeyboardButtons(KeyboardSignsGlobalState);
+				setKeyboardButtons(wkWindow.KeyboardSignsGlobalState);
 
 				break;
 				/* Letter or special character button was release */
 			case (BUTTON_WIFI_KEYBOARD_BEGIN + LETTER_OR_SPECIAL_CHAR_KEY_OFFSET_WKW):
 
-				if (KeyboardSignsGlobalState == BIG_LETTER || KeyboardSignsGlobalState == SMALL_LETTER)
+				if (wkWindow.KeyboardSignsGlobalState == BIG_LETTER || wkWindow.KeyboardSignsGlobalState == SMALL_LETTER)
 				{
-					KeyboardSignsGlobalState = SPECIAL_CHARACTER;
+					wkWindow.KeyboardSignsGlobalState = SPECIAL_CHARACTER;
 				}
-				else if (KeyboardSignsGlobalState == SPECIAL_CHARACTER)
+				else if (wkWindow.KeyboardSignsGlobalState == SPECIAL_CHARACTER)
 				{
-					KeyboardSignsGlobalState = SMALL_LETTER;
+					wkWindow.KeyboardSignsGlobalState = SMALL_LETTER;
 				}
 
-				setKeyboardButtons(KeyboardSignsGlobalState);
+				setKeyboardButtons(wkWindow.KeyboardSignsGlobalState);
 
 				break;
 				/* Enter button was release */
 			case (BUTTON_WIFI_KEYBOARD_BEGIN + ENTER_KEY_OFFSET_WKW):
 				//copy password and selected APN to ClockState.
-				strcpy(ClockState.ssidOfAssignedApn, sellectedWifiNetworkName);
-				strcpy(ClockState.passwordToAssignedApn, passwordToApnBuffer);
+				strcpy(ClockState.ssidOfAssignedApn, wkWindow.sellectedWifiNetworkName);
+				strcpy(ClockState.passwordToAssignedApn, wkWindow.passwordToApnBuffer);
 				UG_WindowShow(&mainWindow);
 				break;
 				/* Backspace button was release */
 			case (BUTTON_WIFI_KEYBOARD_BEGIN + BACKSPACE_KEY_OFFSET_WKW):
-				if (strlen(passwordToApnBuffer) > 0)
+				if (strlen(wkWindow.passwordToApnBuffer) > 0)
 				{
-					passwordToApnBuffer[strlen(passwordToApnBuffer) - 1] = '\0';
+					wkWindow.passwordToApnBuffer[strlen(wkWindow.passwordToApnBuffer) - 1] = '\0';
 				}
 
-				generatePasswordString(WidgetsStrings.labelApnPassword, passwordToApnBuffer,
+				generatePasswordString(WidgetsStrings.labelApnPassword, wkWindow.passwordToApnBuffer,
 					UG_CheckboxGetChecked(&wifiKeyboardWindow, CHB_ID_0));
 				UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_3, WidgetsStrings.labelApnPassword);
 
@@ -1176,22 +1183,22 @@ void wifiKeyboardWindowHandler(UG_MESSAGE *msg)
 				{
 					if (strlen(KeyboardCodeTable[i]) != 0)
 					{
-						switch (KeyboardSignsGlobalState)
+						switch (wkWindow.KeyboardSignsGlobalState)
 						{
 						case SMALL_LETTER:
-							strcat(passwordToApnBuffer, KeyboardCodeTable[i]);
+							strcat(wkWindow.passwordToApnBuffer, KeyboardCodeTable[i]);
 							break;
 
 						case BIG_LETTER:
-							strcat(passwordToApnBuffer, &KeyboardCodeTable[i][2]);
+							strcat(wkWindow.passwordToApnBuffer, &KeyboardCodeTable[i][2]);
 							break;
 
 						case SPECIAL_CHARACTER:
-							strcat(passwordToApnBuffer, &KeyboardCodeTable[i][4]);
+							strcat(wkWindow.passwordToApnBuffer, &KeyboardCodeTable[i][4]);
 							break;
 						}
 
-						generatePasswordString(WidgetsStrings.labelApnPassword, passwordToApnBuffer,
+						generatePasswordString(WidgetsStrings.labelApnPassword, wkWindow.passwordToApnBuffer,
 							UG_CheckboxGetChecked(&wifiKeyboardWindow, CHB_ID_0));
 						UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_3, WidgetsStrings.labelApnPassword);
 					}
@@ -1203,7 +1210,7 @@ void wifiKeyboardWindowHandler(UG_MESSAGE *msg)
 		{
 			if (msg->sub_id == CHB_ID_0)
 			{
-				generatePasswordString(WidgetsStrings.labelApnPassword, passwordToApnBuffer,
+				generatePasswordString(WidgetsStrings.labelApnPassword, wkWindow.passwordToApnBuffer,
 					UG_CheckboxGetChecked(&wifiKeyboardWindow, CHB_ID_0));
 				UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_3, WidgetsStrings.labelApnPassword);
 			}
@@ -1853,13 +1860,14 @@ void GUI_ProcessTemperatureWindow(void)
 			{
 				callRedraw = true;
 
-				if(((int16_t)BufferCursor.structIndex - (int16_t)temperatureGraphStepValue) < 0)
+				if(((int16_t)BufferCursor.structIndex - (int16_t)tWindow.temperatureGraphStepValue) < 0)
 				{
 					//check that structure is available
 					if(((ReadFramTempBufferType*)BufferCursor.structPointer->pointerToPreviousElement)->availabilityFlag)
 					{
 						BufferCursor.structPointer = ((ReadFramTempBufferType*)BufferCursor.structPointer->pointerToPreviousElement);
-						BufferCursor.structIndex = MAX_TEMP_RECORD_PER_DAY - 1 - (uint8_t)(((int16_t)BufferCursor.structIndex - (int16_t)temperatureGraphStepValue)*(int16_t)-1) + 1;
+						BufferCursor.structIndex = MAX_TEMP_RECORD_PER_DAY - 1 - (uint8_t)(((int16_t)BufferCursor.structIndex
+							- (int16_t)tWindow.temperatureGraphStepValue)*(int16_t)-1) + 1;
 					}
 					else
 					{
@@ -1875,7 +1883,7 @@ void GUI_ProcessTemperatureWindow(void)
 				}
 				else
 				{
-					BufferCursor.structIndex -= temperatureGraphStepValue;
+					BufferCursor.structIndex -= tWindow.temperatureGraphStepValue;
 				}
 
 				graphLeftButtonWasPressed = false;
@@ -1892,7 +1900,7 @@ void GUI_ProcessTemperatureWindow(void)
 					if(currentDayIndex != 0)
 						currentDayIndex--;
 
-					if(((uint16_t)BufferCursor.structIndex + (uint16_t)temperatureGraphStepValue) >= currentDayIndex)
+					if(((uint16_t)BufferCursor.structIndex + (uint16_t)tWindow.temperatureGraphStepValue) >= currentDayIndex)
 					{
 						if(BufferCursor.structIndex == currentDayIndex)
 						{
@@ -1905,17 +1913,18 @@ void GUI_ProcessTemperatureWindow(void)
 					}
 					else
 					{
-						BufferCursor.structIndex += temperatureGraphStepValue;
+						BufferCursor.structIndex += tWindow.temperatureGraphStepValue;
 					}
 				}
-				else if(((uint16_t)BufferCursor.structIndex + (uint16_t)temperatureGraphStepValue) > (MAX_TEMP_RECORD_PER_DAY - 1))
+				else if(((uint16_t)BufferCursor.structIndex + (uint16_t)tWindow.temperatureGraphStepValue) > (MAX_TEMP_RECORD_PER_DAY - 1))
 				{
 					BufferCursor.structPointer = ((ReadFramTempBufferType*)BufferCursor.structPointer->pointerToNextElement);
-					BufferCursor.structIndex = ((uint16_t)BufferCursor.structIndex + (uint16_t)temperatureGraphStepValue) - (uint16_t)(MAX_TEMP_RECORD_PER_DAY);
+					BufferCursor.structIndex = ((uint16_t)BufferCursor.structIndex + (uint16_t)tWindow.temperatureGraphStepValue)
+							- (uint16_t)(MAX_TEMP_RECORD_PER_DAY);
 				}
 				else
 				{
-					BufferCursor.structIndex += temperatureGraphStepValue;
+					BufferCursor.structIndex += tWindow.temperatureGraphStepValue;
 				}
 
 				graphRightButtonWasPressed = false;
@@ -1982,26 +1991,26 @@ void GUI_ProcessAlarmAnimation(void)
 	if((gui.active_window == &mainWindow) && (previousWindow != &mainWindow))
 	{
 		//get x axis position commnon for all button
-		UG_WindowGetArea(&mainWindow, &possitionButtonFirstAlarm);
-		possitionButtonFirstAlarm.xs += GRID_X1_MW;
-		possitionButtonFirstAlarm.xe = possitionButtonFirstAlarm.xs + ALARM_BUTTON_LENGTH_MW - 1;
+		UG_WindowGetArea(&mainWindow, &mWindow.possitionButtonFirstAlarm);
+		mWindow.possitionButtonFirstAlarm.xs += GRID_X1_MW;
+		mWindow.possitionButtonFirstAlarm.xe = mWindow.possitionButtonFirstAlarm.xs + ALARM_BUTTON_LENGTH_MW - 1;
 
-		possitionButtonSecondAlarm = possitionButtonFurnaceAlarm = possitionButtonFirstAlarm;
+		mWindow.possitionButtonSecondAlarm = mWindow.possitionButtonFurnaceAlarm = mWindow.possitionButtonFirstAlarm;
 
 		//initialize y axis for all button separately
-		possitionButtonFirstAlarm.ys += GRID_Y1_MW + 1;
-		possitionButtonFirstAlarm.ye = possitionButtonFirstAlarm.ys + ALARM_BUTTON_HEIGH_MW - 2;
+		mWindow.possitionButtonFirstAlarm.ys += GRID_Y1_MW + 1;
+		mWindow.possitionButtonFirstAlarm.ye = mWindow.possitionButtonFirstAlarm.ys + ALARM_BUTTON_HEIGH_MW - 2;
 
-		possitionButtonSecondAlarm.ys += GRID_Y1_SECOND_BUTTON_MW + 1;
-		possitionButtonSecondAlarm.ye = possitionButtonSecondAlarm.ys + ALARM_BUTTON_HEIGH_MW - 2;
+		mWindow.possitionButtonSecondAlarm.ys += GRID_Y1_SECOND_BUTTON_MW + 1;
+		mWindow.possitionButtonSecondAlarm.ye = mWindow.possitionButtonSecondAlarm.ys + ALARM_BUTTON_HEIGH_MW - 2;
 
-		possitionButtonFurnaceAlarm.ys += GRID_Y1_THIRD_BUTTON_MW + 1;
-		possitionButtonFurnaceAlarm.ye = possitionButtonFurnaceAlarm.ys + ALARM_BUTTON_HEIGH_MW - 2;
+		mWindow.possitionButtonFurnaceAlarm.ys += GRID_Y1_THIRD_BUTTON_MW + 1;
+		mWindow.possitionButtonFurnaceAlarm.ye = mWindow.possitionButtonFurnaceAlarm.ys + ALARM_BUTTON_HEIGH_MW - 2;
 
 		//draw state of alarm in field
-		drawAllarmStatus(possitionButtonFirstAlarm, C_BLACK, C_WHITE_SMOKE, ClockState.firstAlarmActive);
-		drawAllarmStatus(possitionButtonSecondAlarm, C_BLACK, C_WHITE_SMOKE, ClockState.secondAlarmActive);
-		drawAllarmStatus(possitionButtonFurnaceAlarm, C_DARK_ORANGE, C_GOLD, ClockState.temperatureFurnaceAlarmActive);
+		drawAllarmStatus(mWindow.possitionButtonFirstAlarm, C_BLACK, C_WHITE_SMOKE, ClockState.firstAlarmActive);
+		drawAllarmStatus(mWindow.possitionButtonSecondAlarm, C_BLACK, C_WHITE_SMOKE, ClockState.secondAlarmActive);
+		drawAllarmStatus(mWindow.possitionButtonFurnaceAlarm, C_DARK_ORANGE, C_GOLD, ClockState.temperatureFurnaceAlarmActive);
 	}
 	//if mainwindow is opened draw blinking when alarm is raised
 	else if(gui.active_window == &mainWindow)
@@ -2017,13 +2026,13 @@ void GUI_ProcessAlarmAnimation(void)
 			lastValueOfAlarmAnimationStep = ClockState.currentTimeSecond;
 
 			if(ClockState.firstAlarmRaised)
-				drawAllarmStatus(possitionButtonFirstAlarm, C_BLACK, C_WHITE_SMOKE, alarmButtonState);
+				drawAllarmStatus(mWindow.possitionButtonFirstAlarm, C_BLACK, C_WHITE_SMOKE, alarmButtonState);
 
 			if(ClockState.secondAlarmRaised)
-				drawAllarmStatus(possitionButtonSecondAlarm, C_BLACK, C_WHITE_SMOKE, alarmButtonState);
+				drawAllarmStatus(mWindow.possitionButtonSecondAlarm, C_BLACK, C_WHITE_SMOKE, alarmButtonState);
 
 			if(ClockState.temperatureFurnaceAlarmRaised)
-				drawAllarmStatus(possitionButtonFurnaceAlarm, C_DARK_ORANGE, C_GOLD, alarmButtonState);
+				drawAllarmStatus(mWindow.possitionButtonFurnaceAlarm, C_DARK_ORANGE, C_GOLD, alarmButtonState);
 		}
 
 		//case when allarm was disable and animation hand in inactive state
@@ -2031,9 +2040,9 @@ void GUI_ProcessAlarmAnimation(void)
 			&& (ClockState.secondAlarmRaised == false) && (ClockState.temperatureFurnaceAlarmRaised == false))
 		{
 			alarmButtonState = true;
-			drawAllarmStatus(possitionButtonFirstAlarm, C_BLACK, C_WHITE_SMOKE, ClockState.firstAlarmActive);
-			drawAllarmStatus(possitionButtonSecondAlarm, C_BLACK, C_WHITE_SMOKE, ClockState.secondAlarmActive);
-			drawAllarmStatus(possitionButtonFurnaceAlarm, C_DARK_ORANGE, C_GOLD, ClockState.temperatureFurnaceAlarmActive);
+			drawAllarmStatus(mWindow.possitionButtonFirstAlarm, C_BLACK, C_WHITE_SMOKE, ClockState.firstAlarmActive);
+			drawAllarmStatus(mWindow.possitionButtonSecondAlarm, C_BLACK, C_WHITE_SMOKE, ClockState.secondAlarmActive);
+			drawAllarmStatus(mWindow.possitionButtonFurnaceAlarm, C_DARK_ORANGE, C_GOLD, ClockState.temperatureFurnaceAlarmActive);
 		}
 	}
 
@@ -2075,12 +2084,12 @@ void GUI_RefreshWifiWindow(void)
 	if (gui.active_window == &wifiSettingsWindow)
 	{
 		//refresh Wifi APN list if case was fulfiled
-		if(ClockState.wifiApnReceived || refreshWifiList)
+		if(ClockState.wifiApnReceived || wsWindow.refreshWifiList)
 		{
 			//check correctness of cursor position
-			if (wifiListCursorPosition > 0)
+			if (wsWindow.wifiListCursorPosition > 0)
 			{
-				int8_t wifiListCursorPositionTmp = (int8_t)ApnStructure.NumberOfApn - (int8_t)wifiListCursorPosition;
+				int8_t wifiListCursorPositionTmp = (int8_t)ApnStructure.NumberOfApn - (int8_t)wsWindow.wifiListCursorPosition;
 
 				if (wifiListCursorPositionTmp < (int8_t)NUMBER_OF_WIFI_DISPLAY_NETWORKS)
 				{
@@ -2091,7 +2100,7 @@ void GUI_RefreshWifiWindow(void)
 						wifiListCursorPositionTmp = 0;
 					}
 
-					wifiListCursorPosition = wifiListCursorPositionTmp;
+					wsWindow.wifiListCursorPosition = wifiListCursorPositionTmp;
 				}
 
 			}/* if (wifiListCursorPosition > 0) */
@@ -2099,16 +2108,16 @@ void GUI_RefreshWifiWindow(void)
 			//refresh widgets with Wifi network
 			for (int i = 0; i < NUMBER_OF_WIFI_DISPLAY_NETWORKS; i++)
 			{
-				if ((i + wifiListCursorPosition) < ApnStructure.NumberOfApn)
+				if ((i + wsWindow.wifiListCursorPosition) < ApnStructure.NumberOfApn)
 				{
 					UG_TextboxSetText(&wifiSettingsWindow, (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + i),
-							ApnStructure.AppInformationTable[i + wifiListCursorPosition].ssid);
+							ApnStructure.AppInformationTable[i + wsWindow.wifiListCursorPosition].ssid);
 
 					UG_TextboxShow(&wifiSettingsWindow, (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + i));
 					UG_ButtonShow(&wifiSettingsWindow, (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + i));
 
 					if(ClockState.wifiConnected &&
-							(strcmp(ApnStructure.AppInformationTable[i + wifiListCursorPosition].ssid, ClockState.ssidOfAssignedApn) == 0))
+							(strcmp(ApnStructure.AppInformationTable[i + wsWindow.wifiListCursorPosition].ssid, ClockState.ssidOfAssignedApn) == 0))
 					{
 						UG_ButtonSetText(&wifiSettingsWindow, (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + i), "connected");
 					}
@@ -2125,7 +2134,7 @@ void GUI_RefreshWifiWindow(void)
 			}/* for (int i = 0; i < NUMBER_OF_WIFI_DISPLAY_NETWORKS; i++) */
 
 			//update up scroll visibility
-			if (wifiListCursorPosition == 0)
+			if (wsWindow.wifiListCursorPosition == 0)
 			{
 				UG_ButtonHide(&wifiSettingsWindow, BTN_ID_8);
 				UG_ImageHide(&wifiSettingsWindow, IMG_ID_1);
@@ -2138,7 +2147,7 @@ void GUI_RefreshWifiWindow(void)
 
 			//update down scroll visibility
 			if ((ApnStructure.NumberOfApn <= NUMBER_OF_WIFI_DISPLAY_NETWORKS)
-					|| ((ApnStructure.NumberOfApn - wifiListCursorPosition - NUMBER_OF_WIFI_DISPLAY_NETWORKS) == 0))
+					|| ((ApnStructure.NumberOfApn - wsWindow.wifiListCursorPosition - NUMBER_OF_WIFI_DISPLAY_NETWORKS) == 0))
 			{
 				UG_ButtonHide(&wifiSettingsWindow, BTN_ID_9);
 				UG_ImageHide(&wifiSettingsWindow, IMG_ID_2);
@@ -2152,7 +2161,7 @@ void GUI_RefreshWifiWindow(void)
 			UG_Update();
 
 			ClockState.wifiApnReceived = false;
-			refreshWifiList = false;
+			wsWindow.refreshWifiList = false;
 		}/* if(ClockState.wifiApnReceived || refreshWifiList) */
 
 		//refresh Wifi status
@@ -2277,77 +2286,77 @@ void GUI_ClockInit(void)
 	UG_WindowCreate(&mainWindow, mainWindowObjects, MAX_OBJECTS, mainWindowHandler);
 	/* Modify the window title */
 	UG_WindowSetTitleHeight(&mainWindow, 0);
-
-	UG_ButtonCreate(&mainWindow, &buttonClockValue, BTN_ID_0, GRID_X1_MW + 30, GRID_Y1_MW, 284, GRID_Y1_MW + 79);
+#if 0
+	UG_ButtonCreate(&mainWindow, &mWindow.buttonClockValue, BTN_ID_0, GRID_X1_MW + 30, GRID_Y1_MW, 284, GRID_Y1_MW + 79);
 	UG_ButtonSetFont(&mainWindow, BTN_ID_0, &FONT_32X53);
 	UG_ButtonSetStyle(&mainWindow, BTN_ID_0, BTN_STYLE_2D);
 	UG_ButtonSetAlignment(&mainWindow, BTN_ID_0, ALIGN_CENTER);
-
+#endif
 	GUI_UpdateTime();
 
-	UG_ButtonCreate(&mainWindow, &buttonClockValue, BTN_ID_0, GRID_X1_MW + 30, GRID_Y1_MW, 284, GRID_Y1_MW + 79);
+	UG_ButtonCreate(&mainWindow, &mWindow.buttonClockValue, BTN_ID_0, GRID_X1_MW + 30, GRID_Y1_MW, 284, GRID_Y1_MW + 79);
 	UG_ButtonSetFont(&mainWindow, BTN_ID_0, &FONT_32X53);
 	UG_ButtonSetStyle(&mainWindow, BTN_ID_0, BTN_STYLE_2D);
 	UG_ButtonSetAlignment(&mainWindow, BTN_ID_0, ALIGN_CENTER);
 	calculateTimeString(WidgetsStrings.labelMainWindowClockTimeValue, ClockState.currentTimeHour, ClockState.currentTimeMinute);
 	UG_ButtonSetText(&mainWindow, BTN_ID_0, WidgetsStrings.labelMainWindowClockTimeValue);
 
-	UG_ButtonCreate(&mainWindow, &buttonSettings, BTN_ID_1, OPTIONS_CLOSE_BUTTON_X_START_POSITION, 
+	UG_ButtonCreate(&mainWindow, &mWindow.buttonSettings, BTN_ID_1, OPTIONS_CLOSE_BUTTON_X_START_POSITION,
 		OPTIONS_CLOSE_BUTTON_Y_START_POSITION, OPTIONS_CLOSE_BUTTON_X_END_POSITION, 
 		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
 
-	UG_TextboxCreate(&mainWindow, &textBoxTemperatureOutside, TXB_ID_1, GRID_X2_MW, GRID_Y2_MW, GRID_X2_MW + LABEL_LENGTH, GRID_Y2_MW + PICTURE_HEIGHT);
+	UG_TextboxCreate(&mainWindow, &mWindow.textBoxTemperatureOutside, TXB_ID_1, GRID_X2_MW, GRID_Y2_MW, GRID_X2_MW + LABEL_LENGTH, GRID_Y2_MW + PICTURE_HEIGHT);
 	UG_TextboxSetAlignment(&mainWindow, TXB_ID_1, ALIGN_CENTER_LEFT);
 	UG_TextboxSetText(&mainWindow, TXB_ID_1, WidgetsStrings.labelTemperatureOutside);
 	UG_TextboxSetFont(&mainWindow, TXB_ID_1, &FONT_10X16);
 
-	UG_TextboxCreate(&mainWindow, &textBoxTemperatureInside, TXB_ID_2, GRID_X2_MW, GRID_Y3_MW, GRID_X2_MW + LABEL_LENGTH, GRID_Y3_MW + PICTURE_HEIGHT);
+	UG_TextboxCreate(&mainWindow, &mWindow.textBoxTemperatureInside, TXB_ID_2, GRID_X2_MW, GRID_Y3_MW, GRID_X2_MW + LABEL_LENGTH, GRID_Y3_MW + PICTURE_HEIGHT);
 	UG_TextboxSetAlignment(&mainWindow, TXB_ID_2, ALIGN_CENTER_LEFT);
 	UG_TextboxSetText(&mainWindow, TXB_ID_2, WidgetsStrings.labelTemperatureInside);
 	UG_TextboxSetFont(&mainWindow, TXB_ID_2, &FONT_10X16);
 
-	UG_TextboxCreate(&mainWindow, &textBoxTemperatureFurnace, TXB_ID_3, GRID_X4_MW, GRID_Y2_MW, GRID_X4_MW + LABEL_LENGTH, GRID_Y2_MW + PICTURE_HEIGHT);
+	UG_TextboxCreate(&mainWindow, &mWindow.textBoxTemperatureFurnace, TXB_ID_3, GRID_X4_MW, GRID_Y2_MW, GRID_X4_MW + LABEL_LENGTH, GRID_Y2_MW + PICTURE_HEIGHT);
 	UG_TextboxSetAlignment(&mainWindow, TXB_ID_3, ALIGN_CENTER_LEFT);
 	UG_TextboxSetText(&mainWindow, TXB_ID_3, WidgetsStrings.labelTemperatureFurnace);
 	UG_TextboxSetFont(&mainWindow, TXB_ID_3, &FONT_10X16);
 
-	UG_ButtonCreate(&mainWindow, &buttonTemperatureOutside, BTN_ID_2, GRID_X1_MW - 1, GRID_Y2_MW - 1, GRID_X1_MW + PICTURE_LENGTH, GRID_Y2_MW + PICTURE_HEIGHT);
+	UG_ButtonCreate(&mainWindow, &mWindow.buttonTemperatureOutside, BTN_ID_2, GRID_X1_MW - 1, GRID_Y2_MW - 1, GRID_X1_MW + PICTURE_LENGTH, GRID_Y2_MW + PICTURE_HEIGHT);
 	UG_ButtonSetStyle(&mainWindow, BTN_ID_2, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&mainWindow, &buttonTemperatureInside, BTN_ID_3, GRID_X1_MW - 1, GRID_Y3_MW - 1, GRID_X1_MW + PICTURE_LENGTH, GRID_Y3_MW + PICTURE_HEIGHT);
+	UG_ButtonCreate(&mainWindow, &mWindow.buttonTemperatureInside, BTN_ID_3, GRID_X1_MW - 1, GRID_Y3_MW - 1, GRID_X1_MW + PICTURE_LENGTH, GRID_Y3_MW + PICTURE_HEIGHT);
 	UG_ButtonSetStyle(&mainWindow, BTN_ID_3, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&mainWindow, &buttonTemperatureFurnace, BTN_ID_4, GRID_X3_MW - 1, GRID_Y2_MW - 1, GRID_X3_MW + PICTURE_LENGTH, GRID_Y2_MW + PICTURE_HEIGHT);
+	UG_ButtonCreate(&mainWindow, &mWindow.buttonTemperatureFurnace, BTN_ID_4, GRID_X3_MW - 1, GRID_Y2_MW - 1, GRID_X3_MW + PICTURE_LENGTH, GRID_Y2_MW + PICTURE_HEIGHT);
 	UG_ButtonSetStyle(&mainWindow, BTN_ID_4, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&mainWindow, &buttonWiFiSettings, BTN_ID_5, GRID_X3_MW - 1, GRID_Y3_MW - 1, GRID_X3_MW + PICTURE_LENGTH, GRID_Y3_MW + PICTURE_HEIGHT);
+	UG_ButtonCreate(&mainWindow, &mWindow.buttonWiFiSettings, BTN_ID_5, GRID_X3_MW - 1, GRID_Y3_MW - 1, GRID_X3_MW + PICTURE_LENGTH, GRID_Y3_MW + PICTURE_HEIGHT);
 	UG_ButtonSetStyle(&mainWindow, BTN_ID_5, BTN_STYLE_2D);
 
-	UG_ImageCreate(&mainWindow, &imageTemperatureOutside, IMG_ID_0, GRID_X1_MW, GRID_Y2_MW, 0, 0);
+	UG_ImageCreate(&mainWindow, &mWindow.imageTemperatureOutside, IMG_ID_0, GRID_X1_MW, GRID_Y2_MW, 0, 0);
 	UG_ImageSetBMP(&mainWindow, IMG_ID_0, &homePictureOutside);
 
-	UG_ImageCreate(&mainWindow, &imageTemperatureInside, IMG_ID_1, GRID_X1_MW, GRID_Y3_MW, 0, 0);
+	UG_ImageCreate(&mainWindow, &mWindow.imageTemperatureInside, IMG_ID_1, GRID_X1_MW, GRID_Y3_MW, 0, 0);
 	UG_ImageSetBMP(&mainWindow, IMG_ID_1, &homePictureInside);
 
-	UG_ImageCreate(&mainWindow, &imageTemperatureFurnace, IMG_ID_2, GRID_X3_MW, GRID_Y2_MW, 0, 0);
+	UG_ImageCreate(&mainWindow, &mWindow.imageTemperatureFurnace, IMG_ID_2, GRID_X3_MW, GRID_Y2_MW, 0, 0);
 	UG_ImageSetBMP(&mainWindow, IMG_ID_2, &furnacePicture);
 
-	UG_ImageCreate(&mainWindow, &imageWiFiSettings, IMG_ID_3, GRID_X3_MW, GRID_Y3_MW, 0, 0);
+	UG_ImageCreate(&mainWindow, &mWindow.imageWiFiSettings, IMG_ID_3, GRID_X3_MW, GRID_Y3_MW, 0, 0);
 	UG_ImageSetBMP(&mainWindow, IMG_ID_3, &wifiPicture);
 
-	UG_ImageCreate(&mainWindow, &imageOptions, IMG_ID_4, OPTIONS_CLOSE_BUTTON_X_START_POSITION + 3,
+	UG_ImageCreate(&mainWindow, &mWindow.imageOptions, IMG_ID_4, OPTIONS_CLOSE_BUTTON_X_START_POSITION + 3,
 		OPTIONS_CLOSE_BUTTON_Y_START_POSITION + 3, OPTIONS_CLOSE_BUTTON_X_END_POSITION,
 		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
 	UG_ImageSetBMP(&mainWindow, IMG_ID_4, &optionsPicture);
 
-	UG_ButtonCreate(&mainWindow, &buttonFirstAllarmStatus, BTN_ID_6, GRID_X1_MW - 1, GRID_Y1_MW, GRID_X1_MW + ALARM_BUTTON_LENGTH_MW, GRID_Y1_MW + ALARM_BUTTON_HEIGH_MW);
+	UG_ButtonCreate(&mainWindow, &mWindow.buttonFirstAllarmStatus, BTN_ID_6, GRID_X1_MW - 1, GRID_Y1_MW, GRID_X1_MW + ALARM_BUTTON_LENGTH_MW, GRID_Y1_MW + ALARM_BUTTON_HEIGH_MW);
 	UG_ButtonSetStyle(&mainWindow, BTN_ID_6, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&mainWindow, &buttonSecondAllarmStatus, BTN_ID_7, GRID_X1_MW - 1, GRID_Y1_SECOND_BUTTON_MW,
+	UG_ButtonCreate(&mainWindow, &mWindow.buttonSecondAllarmStatus, BTN_ID_7, GRID_X1_MW - 1, GRID_Y1_SECOND_BUTTON_MW,
 		GRID_X1_MW + ALARM_BUTTON_LENGTH_MW, GRID_Y1_SECOND_BUTTON_MW + ALARM_BUTTON_HEIGH_MW);
 	UG_ButtonSetStyle(&mainWindow, BTN_ID_7, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&mainWindow, &buttonFurnaceAllarmStatus, BTN_ID_8, GRID_X1_MW - 1, GRID_Y1_THIRD_BUTTON_MW,
+	UG_ButtonCreate(&mainWindow, &mWindow.buttonFurnaceAllarmStatus, BTN_ID_8, GRID_X1_MW - 1, GRID_Y1_THIRD_BUTTON_MW,
 		GRID_X1_MW + ALARM_BUTTON_LENGTH_MW, GRID_Y1_THIRD_BUTTON_MW + ALARM_BUTTON_HEIGH_MW);
 	UG_ButtonSetStyle(&mainWindow, BTN_ID_8, BTN_STYLE_2D);
 
@@ -2358,44 +2367,49 @@ void GUI_ClockInit(void)
 	UG_WindowSetTitleText(&clockSettingsWindow, "clock settings");
 	UG_WindowSetTitleTextFont(&clockSettingsWindow, &FONT_8X8);
 
-	UG_TextboxCreate(&clockSettingsWindow, &textBoxSettingInformation, TXB_ID_0, 0, 0, 270, 20);
+	UG_TextboxCreate(&clockSettingsWindow, &csWindow.textBoxSettingInformation, TXB_ID_0, 0, 0, 270, 20);
 	UG_TextboxSetAlignment(&clockSettingsWindow, TXB_ID_0, ALIGN_CENTER_LEFT);
 	UG_TextboxSetText(&clockSettingsWindow, TXB_ID_0, "actual time:");
 	UG_TextboxSetFont(&clockSettingsWindow, TXB_ID_0, &FONT_10X16);
 
-	UG_TextboxCreate(&clockSettingsWindow, &textBoxTimeValue, TXB_ID_1, 20, GRID_Y1_CSW + SET_TIME_BUTTON_HEIGHT + 2, 290, GRID_Y1_CSW + SET_TIME_BUTTON_HEIGHT + 60);
+	UG_TextboxCreate(&clockSettingsWindow, &csWindow.textBoxTimeValue, TXB_ID_1, 20, GRID_Y1_CSW + SET_TIME_BUTTON_HEIGHT + 2,
+		290, GRID_Y1_CSW + SET_TIME_BUTTON_HEIGHT + 60);
 	UG_TextboxSetAlignment(&clockSettingsWindow, TXB_ID_1, ALIGN_CENTER);
 	UG_TextboxSetText(&clockSettingsWindow, TXB_ID_1, " ");
 	UG_TextboxSetFont(&clockSettingsWindow, TXB_ID_1, &FONT_32X53);
 
-	UG_ButtonCreate(&clockSettingsWindow, &buttonIncrementHour, BTN_ID_0, GRID_X1_CSW, GRID_Y1_CSW, GRID_X1_CSW + SET_TIME_BUTTON_LENGTH, GRID_Y1_CSW + SET_TIME_BUTTON_HEIGHT);
+	UG_ButtonCreate(&clockSettingsWindow, &csWindow.buttonIncrementHour, BTN_ID_0, GRID_X1_CSW, GRID_Y1_CSW,
+		GRID_X1_CSW + SET_TIME_BUTTON_LENGTH, GRID_Y1_CSW + SET_TIME_BUTTON_HEIGHT);
 	UG_ButtonSetStyle(&clockSettingsWindow, BTN_ID_0, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&clockSettingsWindow, &buttonDecrementHour, BTN_ID_1, GRID_X1_CSW, GRID_Y2_CSW, GRID_X1_CSW + SET_TIME_BUTTON_LENGTH, GRID_Y2_CSW + SET_TIME_BUTTON_HEIGHT);
+	UG_ButtonCreate(&clockSettingsWindow, &csWindow.buttonDecrementHour, BTN_ID_1, GRID_X1_CSW, GRID_Y2_CSW,
+		GRID_X1_CSW + SET_TIME_BUTTON_LENGTH, GRID_Y2_CSW + SET_TIME_BUTTON_HEIGHT);
 	UG_ButtonSetStyle(&clockSettingsWindow, BTN_ID_1, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&clockSettingsWindow, &buttonIncrementMinute, BTN_ID_2, GRID_X2_CSW, GRID_Y1_CSW, GRID_X2_CSW + SET_TIME_BUTTON_LENGTH, GRID_Y1_CSW + SET_TIME_BUTTON_HEIGHT);
+	UG_ButtonCreate(&clockSettingsWindow, &csWindow.buttonIncrementMinute, BTN_ID_2, GRID_X2_CSW, GRID_Y1_CSW,
+		GRID_X2_CSW + SET_TIME_BUTTON_LENGTH, GRID_Y1_CSW + SET_TIME_BUTTON_HEIGHT);
 	UG_ButtonSetStyle(&clockSettingsWindow, BTN_ID_2, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&clockSettingsWindow, &buttonDecrementMinute, BTN_ID_3, GRID_X2_CSW, GRID_Y2_CSW, GRID_X2_CSW + SET_TIME_BUTTON_LENGTH, GRID_Y2_CSW + SET_TIME_BUTTON_HEIGHT);
+	UG_ButtonCreate(&clockSettingsWindow, &csWindow.buttonDecrementMinute, BTN_ID_3, GRID_X2_CSW, GRID_Y2_CSW,
+		GRID_X2_CSW + SET_TIME_BUTTON_LENGTH, GRID_Y2_CSW + SET_TIME_BUTTON_HEIGHT);
 	UG_ButtonSetStyle(&clockSettingsWindow, BTN_ID_3, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&clockSettingsWindow, &buttonChoseTimeValue, BTN_ID_4, 1, 160, 100, 210);
+	UG_ButtonCreate(&clockSettingsWindow, &csWindow.buttonChoseTimeValue, BTN_ID_4, 1, 160, 100, 210);
 	UG_ButtonSetText(&clockSettingsWindow, BTN_ID_4, "time");
 	UG_ButtonSetFont(&clockSettingsWindow, BTN_ID_4, &FONT_8X12);
 	UG_ButtonSetStyle(&clockSettingsWindow, BTN_ID_4, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&clockSettingsWindow, &buttonChoseFirstAlarm, BTN_ID_5, 103, 160, 203, 188);
+	UG_ButtonCreate(&clockSettingsWindow, &csWindow.buttonChoseFirstAlarm, BTN_ID_5, 103, 160, 203, 188);
 	UG_ButtonSetText(&clockSettingsWindow, BTN_ID_5, "1st alarm");
 	UG_ButtonSetFont(&clockSettingsWindow, BTN_ID_5, &FONT_8X12);
 	UG_ButtonSetStyle(&clockSettingsWindow, BTN_ID_5, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&clockSettingsWindow, &buttonChoseSecondAlarm, BTN_ID_6, 206, 160, 306, 188);
+	UG_ButtonCreate(&clockSettingsWindow, &csWindow.buttonChoseSecondAlarm, BTN_ID_6, 206, 160, 306, 188);
 	UG_ButtonSetText(&clockSettingsWindow, BTN_ID_6, "2nd alarm");
 	UG_ButtonSetFont(&clockSettingsWindow, BTN_ID_6, &FONT_8X12);
 	UG_ButtonSetStyle(&clockSettingsWindow, BTN_ID_6, BTN_STYLE_2D);
 
-	UG_CheckboxCreate(&clockSettingsWindow, &ckeckBoxActiveFirstAlarm, CHB_ID_0, 103, 190, 203, 210);
+	UG_CheckboxCreate(&clockSettingsWindow, &csWindow.ckeckBoxActiveFirstAlarm, CHB_ID_0, 103, 190, 203, 210);
 	UG_CheckboxSetText(&clockSettingsWindow, CHB_ID_0, "active");
 	UG_CheckboxSetFont(&clockSettingsWindow, CHB_ID_0, &FONT_8X12);
 	if (ClockState.firstAlarmActive)
@@ -2403,7 +2417,7 @@ void GUI_ClockInit(void)
 	else
 		UG_CheckboxSetCheched(&clockSettingsWindow, CHB_ID_0, CHB_STATE_RELEASED);
 
-	UG_CheckboxCreate(&clockSettingsWindow, &ckeckBoxActiveSecondAlarm, CHB_ID_1, 206, 190, 306, 210);
+	UG_CheckboxCreate(&clockSettingsWindow, &csWindow.ckeckBoxActiveSecondAlarm, CHB_ID_1, 206, 190, 306, 210);
 	UG_CheckboxSetText(&clockSettingsWindow, CHB_ID_1, "active");
 	UG_CheckboxSetFont(&clockSettingsWindow, CHB_ID_1, &FONT_8X12);
 	if (ClockState.secondAlarmActive)
@@ -2411,7 +2425,7 @@ void GUI_ClockInit(void)
 	else
 		UG_CheckboxSetCheched(&clockSettingsWindow, CHB_ID_1, CHB_STATE_RELEASED);
 
-	UG_ButtonCreate(&clockSettingsWindow, &buttonCloseClockSettingsWindow, BTN_ID_7, OPTIONS_CLOSE_BUTTON_X_START_POSITION,
+	UG_ButtonCreate(&clockSettingsWindow, &csWindow.buttonCloseClockSettingsWindow, BTN_ID_7, OPTIONS_CLOSE_BUTTON_X_START_POSITION,
 		OPTIONS_CLOSE_BUTTON_Y_START_POSITION, OPTIONS_CLOSE_BUTTON_X_END_POSITION,
 		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
 	UG_ButtonSetStyle(&clockSettingsWindow, BTN_ID_7, BTN_STYLE_2D);
@@ -2421,19 +2435,19 @@ void GUI_ClockInit(void)
 		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
 	UG_ImageSetBMP(&clockSettingsWindow, IMG_ID_0, &closePicture);
 
-	UG_ImageCreate(&clockSettingsWindow, &imageIncrementHour, IMG_ID_1, GRID_X1_CSW + INC_DEC_X_PICTURE_OFFSET_CSW, 
+	UG_ImageCreate(&clockSettingsWindow, &csWindow.imageIncrementHour, IMG_ID_1, GRID_X1_CSW + INC_DEC_X_PICTURE_OFFSET_CSW,
 		GRID_Y1_CSW + INCREMENT_Y_PICTURE_OFFSET_CSW, GRID_X1_CSW + SET_TIME_BUTTON_LENGTH, GRID_Y1_CSW + SET_TIME_BUTTON_HEIGHT);
 	UG_ImageSetBMP(&clockSettingsWindow, IMG_ID_1, &incrementMinuteHourPicture);
 
-	UG_ImageCreate(&clockSettingsWindow, &imageDecrementHour, IMG_ID_2, GRID_X1_CSW + INC_DEC_X_PICTURE_OFFSET_CSW, 
+	UG_ImageCreate(&clockSettingsWindow, &csWindow.imageDecrementHour, IMG_ID_2, GRID_X1_CSW + INC_DEC_X_PICTURE_OFFSET_CSW,
 		GRID_Y2_CSW + DECREMENT_Y_PICTURE_OFFSET_CSW, GRID_X1_CSW + SET_TIME_BUTTON_LENGTH, GRID_Y2_CSW + SET_TIME_BUTTON_HEIGHT);
 	UG_ImageSetBMP(&clockSettingsWindow, IMG_ID_2, &decrementMinuteHourPicture);
 
-	UG_ImageCreate(&clockSettingsWindow, &imageIncrementMinute, IMG_ID_3, GRID_X2_CSW + INC_DEC_X_PICTURE_OFFSET_CSW, 
+	UG_ImageCreate(&clockSettingsWindow, &csWindow.imageIncrementMinute, IMG_ID_3, GRID_X2_CSW + INC_DEC_X_PICTURE_OFFSET_CSW,
 		GRID_Y1_CSW + INCREMENT_Y_PICTURE_OFFSET_CSW, GRID_X2_CSW + SET_TIME_BUTTON_LENGTH, GRID_Y1_CSW + SET_TIME_BUTTON_HEIGHT);
 	UG_ImageSetBMP(&clockSettingsWindow, IMG_ID_3, &incrementMinuteHourPicture);
 
-	UG_ImageCreate(&clockSettingsWindow, &imageDecrementMinute, IMG_ID_4, GRID_X2_CSW + INC_DEC_X_PICTURE_OFFSET_CSW,
+	UG_ImageCreate(&clockSettingsWindow, &csWindow.imageDecrementMinute, IMG_ID_4, GRID_X2_CSW + INC_DEC_X_PICTURE_OFFSET_CSW,
 		GRID_Y2_CSW + DECREMENT_Y_PICTURE_OFFSET_CSW, GRID_X2_CSW + SET_TIME_BUTTON_LENGTH, GRID_Y2_CSW + SET_TIME_BUTTON_HEIGHT);
 	UG_ImageSetBMP(&clockSettingsWindow, IMG_ID_4, &decrementMinuteHourPicture);
 
@@ -2444,73 +2458,77 @@ void GUI_ClockInit(void)
 	UG_WindowSetTitleText(&temperatureWindow, "temperature");
 	UG_WindowSetTitleTextFont(&temperatureWindow, &FONT_8X8);
 
-	UG_TextboxCreate(&temperatureWindow, &textBoxTemperatureInformation, TXB_ID_0, 0, 0, 289, 20);
+	UG_TextboxCreate(&temperatureWindow, &tWindow.textBoxTemperatureInformation, TXB_ID_0, 0, 0, 289, 20);
 	UG_TextboxSetAlignment(&temperatureWindow, TXB_ID_0, ALIGN_CENTER_LEFT);
 	UG_TextboxSetText(&temperatureWindow, TXB_ID_0, WidgetsStrings.labelTemperatureInTitleOfWindow);
 	UG_TextboxSetFont(&temperatureWindow, TXB_ID_0, &FONT_8X12);
 
-	UG_TextboxCreate(&temperatureWindow, &textBoxGraphLabel, TXB_ID_1, 0, 20, 310, 40);
+	UG_TextboxCreate(&temperatureWindow, &tWindow.textBoxGraphLabel, TXB_ID_1, 0, 20, 310, 40);
 	UG_TextboxSetAlignment(&temperatureWindow, TXB_ID_1, ALIGN_CENTER_LEFT);
 	UG_TextboxSetText(&temperatureWindow, TXB_ID_1, "history graph:");
 	UG_TextboxSetFont(&temperatureWindow, TXB_ID_1, &FONT_8X12);
 
-	UG_ButtonCreate(&temperatureWindow, &buttonHistoryGraphLeft, BTN_ID_0, MOVE_GRAPH_BUTTON_LEFT_X, 
+	UG_ButtonCreate(&temperatureWindow, &tWindow.buttonHistoryGraphLeft, BTN_ID_0, MOVE_GRAPH_BUTTON_LEFT_X,
 		MOVE_GRAPH_BUTTON_Y, MOVE_GRAPH_BUTTON_LEFT_X + MOVE_GRAPH_BUTTON_LENGTH, 
 		MOVE_GRAPH_BUTTON_Y + MOVE_GRAPH_BUTTON_HEIGHT);
 	UG_ButtonSetStyle(&temperatureWindow, BTN_ID_0, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&temperatureWindow, &buttonHistoryGraphRight, BTN_ID_1, MOVE_GRAPH_BUTTON_RIGHT_X, 
+	UG_ButtonCreate(&temperatureWindow, &tWindow.buttonHistoryGraphRight, BTN_ID_1, MOVE_GRAPH_BUTTON_RIGHT_X,
 		MOVE_GRAPH_BUTTON_Y, MOVE_GRAPH_BUTTON_RIGHT_X + MOVE_GRAPH_BUTTON_LENGTH,
 		MOVE_GRAPH_BUTTON_Y + MOVE_GRAPH_BUTTON_HEIGHT);															 
 	UG_ButtonSetStyle(&temperatureWindow, BTN_ID_1, BTN_STYLE_2D);
 
-	UG_CheckboxCreate(&temperatureWindow, &ckeckBoxRecordTemperature, CHB_ID_1, 1, 142, 180, 158);
+	UG_CheckboxCreate(&temperatureWindow, &tWindow.ckeckBoxRecordTemperature, CHB_ID_1, 1, 142, 180, 158);
 	UG_CheckboxSetFont(&temperatureWindow, CHB_ID_1, &FONT_6X8);
 	UG_CheckboxSetCheched(&temperatureWindow, CHB_ID_1, CHB_STATE_RELEASED);
 	UG_CheckboxSetText(&temperatureWindow, CHB_ID_1, "record temperature");
 
-	UG_TextboxCreate(&temperatureWindow, &textBoxTemperatureOffset, TXB_ID_2, 0, GRID_Y2_TW, 149, GRID_Y2_TW + 12);
+	UG_TextboxCreate(&temperatureWindow, &tWindow.textBoxTemperatureOffset, TXB_ID_2, 0, GRID_Y2_TW, 149, GRID_Y2_TW + 12);
 	UG_TextboxSetAlignment(&temperatureWindow, TXB_ID_2, ALIGN_CENTER_LEFT);
 	UG_TextboxSetFont(&temperatureWindow, TXB_ID_2, &FONT_6X8);
 	calculateTemperatureOffsetString();
 	UG_TextboxSetText(&temperatureWindow, TXB_ID_2, WidgetsStrings.labelTemperatureFurnaceOffset);
 
-	UG_CheckboxCreate(&temperatureWindow, &ckeckBoxTemperatureAlarm, CHB_ID_0, 160, GRID_Y2_TW, 310, GRID_Y2_TW + 12);
+	UG_CheckboxCreate(&temperatureWindow, &tWindow.ckeckBoxTemperatureAlarm, CHB_ID_0, 160, GRID_Y2_TW, 310, GRID_Y2_TW + 12);
 	UG_CheckboxSetFont(&temperatureWindow, CHB_ID_0, &FONT_6X8);
 	UG_CheckboxSetCheched(&temperatureWindow, CHB_ID_0, CHB_STATE_RELEASED);
 	calculateTemperatureAlarmString();
 	UG_CheckboxSetText(&temperatureWindow, CHB_ID_0, WidgetsStrings.labelTemperatureFurnaceAlarm);
 
-	UG_ButtonCreate(&temperatureWindow, &buttonIncrementTemperatureOffset, BTN_ID_2, GRID_X1_TW, GRID_Y1_TW, GRID_X1_TW + SET_TEMPERATURE_BUTTON_LENGTH, GRID_Y1_TW + SET_TEMPERATURE_BUTTON_HEIGHT);
+	UG_ButtonCreate(&temperatureWindow, &tWindow.buttonIncrementTemperatureOffset, BTN_ID_2, GRID_X1_TW, GRID_Y1_TW,
+		GRID_X1_TW + SET_TEMPERATURE_BUTTON_LENGTH, GRID_Y1_TW + SET_TEMPERATURE_BUTTON_HEIGHT);
 	UG_ButtonSetStyle(&temperatureWindow, BTN_ID_2, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&temperatureWindow, &buttonDecrementTemperatureOffset, BTN_ID_3, GRID_X1_TW, GRID_Y3_TW, GRID_X1_TW + SET_TEMPERATURE_BUTTON_LENGTH, GRID_Y3_TW + SET_TEMPERATURE_BUTTON_HEIGHT);
+	UG_ButtonCreate(&temperatureWindow, &tWindow.buttonDecrementTemperatureOffset, BTN_ID_3, GRID_X1_TW, GRID_Y3_TW,
+		GRID_X1_TW + SET_TEMPERATURE_BUTTON_LENGTH, GRID_Y3_TW + SET_TEMPERATURE_BUTTON_HEIGHT);
 	UG_ButtonSetStyle(&temperatureWindow, BTN_ID_3, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&temperatureWindow, &buttonIncrementTemperatureAlarm, BTN_ID_4, GRID_X2_TW, GRID_Y1_TW, GRID_X2_TW + SET_TEMPERATURE_BUTTON_LENGTH, GRID_Y1_TW + SET_TEMPERATURE_BUTTON_HEIGHT);
+	UG_ButtonCreate(&temperatureWindow, &tWindow.buttonIncrementTemperatureAlarm, BTN_ID_4, GRID_X2_TW, GRID_Y1_TW,
+		GRID_X2_TW + SET_TEMPERATURE_BUTTON_LENGTH, GRID_Y1_TW + SET_TEMPERATURE_BUTTON_HEIGHT);
 	UG_ButtonSetStyle(&temperatureWindow, BTN_ID_4, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&temperatureWindow, &buttonDecrementTemperatureAlarm, BTN_ID_5, GRID_X2_TW, GRID_Y3_TW, GRID_X2_TW + SET_TEMPERATURE_BUTTON_LENGTH, GRID_Y3_TW + SET_TEMPERATURE_BUTTON_HEIGHT);
+	UG_ButtonCreate(&temperatureWindow, &tWindow.buttonDecrementTemperatureAlarm, BTN_ID_5, GRID_X2_TW, GRID_Y3_TW,
+		GRID_X2_TW + SET_TEMPERATURE_BUTTON_LENGTH, GRID_Y3_TW + SET_TEMPERATURE_BUTTON_HEIGHT);
 	UG_ButtonSetStyle(&temperatureWindow, BTN_ID_5, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&temperatureWindow, &buttonCloseTemperatureWindow, BTN_ID_6, OPTIONS_CLOSE_BUTTON_X_START_POSITION,
+	UG_ButtonCreate(&temperatureWindow, &tWindow.buttonCloseTemperatureWindow, BTN_ID_6, OPTIONS_CLOSE_BUTTON_X_START_POSITION,
 		OPTIONS_CLOSE_BUTTON_Y_START_POSITION, OPTIONS_CLOSE_BUTTON_X_END_POSITION,
 		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
 	UG_ButtonSetStyle(&temperatureWindow, BTN_ID_6, BTN_STYLE_2D);
 
-	UG_TextboxCreate(&temperatureWindow, &textBoxStepValueLabel, TXB_ID_3, 181, 142, 242, 158);
+	UG_TextboxCreate(&temperatureWindow, &tWindow.textBoxStepValueLabel, TXB_ID_3, 181, 142, 242, 158);
 	UG_TextboxSetAlignment(&temperatureWindow, TXB_ID_3, ALIGN_CENTER_LEFT);
-	temperatureGraphStepValue = 1;
-	calculateGraphStepValueString(temperatureGraphStepValue);
+	tWindow.temperatureGraphStepValue = 1;
+	calculateGraphStepValueString(tWindow.temperatureGraphStepValue);
 	UG_TextboxSetText(&temperatureWindow, TXB_ID_3, WidgetsStrings.labelGraphStep);
 	UG_TextboxSetFont(&temperatureWindow, TXB_ID_3, &FONT_6X8);
 
-	UG_ButtonCreate(&temperatureWindow, &buttonDecrementGraphStep, BTN_ID_7, 243, 142, 259, 158);
+	UG_ButtonCreate(&temperatureWindow, &tWindow.buttonDecrementGraphStep, BTN_ID_7, 243, 142, 259, 158);
 	UG_ButtonSetText(&temperatureWindow, BTN_ID_7, "-");
 	UG_ButtonSetFont(&temperatureWindow, BTN_ID_7, &FONT_6X8);
 	UG_ButtonSetStyle(&temperatureWindow, BTN_ID_7, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&temperatureWindow, &buttonIncrementGraphStep, BTN_ID_8, 262, 142, 278, 158);
+	UG_ButtonCreate(&temperatureWindow, &tWindow.buttonIncrementGraphStep, BTN_ID_8, 262, 142, 278, 158);
 	UG_ButtonSetText(&temperatureWindow, BTN_ID_8, "+");
 	UG_ButtonSetFont(&temperatureWindow, BTN_ID_8, &FONT_6X8);
 	UG_ButtonSetStyle(&temperatureWindow, BTN_ID_8, BTN_STYLE_2D);
@@ -2520,32 +2538,32 @@ void GUI_ClockInit(void)
 		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
 	UG_ImageSetBMP(&temperatureWindow, IMG_ID_0, &closePicture);
 
-	UG_ImageCreate(&temperatureWindow, &imageMoveHistoryGraphLeft, IMG_ID_1, 
+	UG_ImageCreate(&temperatureWindow, &tWindow.imageMoveHistoryGraphLeft, IMG_ID_1,
 		MOVE_GRAPH_BUTTON_LEFT_X + MOVE_GRAPH_LEFT_PICTURE_X_OFFSET, MOVE_GRAPH_BUTTON_Y + MOVE_GRAPH_Y_PICTURE_OFFSET,
 		MOVE_GRAPH_BUTTON_LEFT_X + MOVE_GRAPH_BUTTON_LENGTH, MOVE_GRAPH_BUTTON_Y + MOVE_GRAPH_BUTTON_HEIGHT);
 	UG_ImageSetBMP(&temperatureWindow, IMG_ID_1, &moveHistoryGraphLeftPicture);
 	
-	UG_ImageCreate(&temperatureWindow, &imageMoveHistoryGraphRight, IMG_ID_2, 
+	UG_ImageCreate(&temperatureWindow, &tWindow.imageMoveHistoryGraphRight, IMG_ID_2,
 		MOVE_GRAPH_BUTTON_RIGHT_X + MOVE_GRAPH_RIGHT_PICTURE_X_OFFSET, MOVE_GRAPH_BUTTON_Y + MOVE_GRAPH_Y_PICTURE_OFFSET,
 		MOVE_GRAPH_BUTTON_RIGHT_X + MOVE_GRAPH_BUTTON_LENGTH, MOVE_GRAPH_BUTTON_Y + MOVE_GRAPH_BUTTON_HEIGHT);
 	UG_ImageSetBMP(&temperatureWindow, IMG_ID_2, &moveHistoryGraphRightPicture);
 
-	UG_ImageCreate(&temperatureWindow, &imageIncrementTemperatureOffset, IMG_ID_3, 
+	UG_ImageCreate(&temperatureWindow, &tWindow.imageIncrementTemperatureOffset, IMG_ID_3,
 		GRID_X1_TW + INC_DEC_X_PICTURE_OFFSET_TW, GRID_Y1_TW + INCREMENT_Y_PICTURE_OFFSET_TW,
 		GRID_X1_TW + SET_TEMPERATURE_BUTTON_LENGTH - 1, GRID_Y1_TW + SET_TEMPERATURE_BUTTON_HEIGHT - 1);
 	UG_ImageSetBMP(&temperatureWindow, IMG_ID_3, &smallIncrementPicture);
 
-	UG_ImageCreate(&temperatureWindow, &imageDecrementTemperatureOffset, IMG_ID_4, 
+	UG_ImageCreate(&temperatureWindow, &tWindow.imageDecrementTemperatureOffset, IMG_ID_4,
 		GRID_X1_TW + INC_DEC_X_PICTURE_OFFSET_TW, GRID_Y3_TW + DECREMENT_Y_PICTURE_OFFSET_TW,
 		GRID_X1_TW + SET_TEMPERATURE_BUTTON_LENGTH - 1, GRID_Y3_TW + SET_TEMPERATURE_BUTTON_HEIGHT - 1);
 	UG_ImageSetBMP(&temperatureWindow, IMG_ID_4, &smallDecrementPicture);
 
-	UG_ImageCreate(&temperatureWindow, &imageIncrementTemperatureAlarm, IMG_ID_5, 
+	UG_ImageCreate(&temperatureWindow, &tWindow.imageIncrementTemperatureAlarm, IMG_ID_5,
 		GRID_X2_TW + INC_DEC_X_PICTURE_OFFSET_TW, GRID_Y1_TW + INCREMENT_Y_PICTURE_OFFSET_TW,
 		GRID_X2_TW + SET_TEMPERATURE_BUTTON_LENGTH - 1, GRID_Y1_TW + SET_TEMPERATURE_BUTTON_HEIGHT - 1);
 	UG_ImageSetBMP(&temperatureWindow, IMG_ID_5, &smallIncrementPicture);
 
-	UG_ImageCreate(&temperatureWindow, &imageDecrementTemperatureAlarm, IMG_ID_6, 
+	UG_ImageCreate(&temperatureWindow, &tWindow.imageDecrementTemperatureAlarm, IMG_ID_6,
 		GRID_X2_TW + INC_DEC_X_PICTURE_OFFSET_TW , GRID_Y3_TW + DECREMENT_Y_PICTURE_OFFSET_TW,
 		GRID_X2_TW + SET_TEMPERATURE_BUTTON_LENGTH - 1, GRID_Y3_TW + SET_TEMPERATURE_BUTTON_HEIGHT - 1);
 	UG_ImageSetBMP(&temperatureWindow, IMG_ID_6, &smallDecrementPicture);
@@ -2557,27 +2575,27 @@ void GUI_ClockInit(void)
 	UG_WindowSetTitleText(&settingsWindow, "options");
 	UG_WindowSetTitleTextFont(&settingsWindow, &FONT_8X8);
 
-	UG_TextboxCreate(&settingsWindow, &textBoxBrightnessValueLabel, TXB_ID_0, 1, FIRST_LINE_BEGIN_SW,
+	UG_TextboxCreate(&settingsWindow, &oWindow.textBoxBrightnessValueLabel, TXB_ID_0, 1, FIRST_LINE_BEGIN_SW,
 		100, FIRST_LINE_BEGIN_SW + LINE_HEIGH_SW);
 	UG_TextboxSetAlignment(&settingsWindow, TXB_ID_0, ALIGN_CENTER_LEFT);
 	UG_TextboxSetText(&settingsWindow, TXB_ID_0, "brightness:");
 	UG_TextboxSetFont(&settingsWindow, TXB_ID_0, &FONT_8X12);
 
-	UG_TextboxCreate(&settingsWindow, &textBoxBrightnessValuePercents, TXB_ID_1, 101, FIRST_LINE_BEGIN_SW,
+	UG_TextboxCreate(&settingsWindow, &oWindow.textBoxBrightnessValuePercents, TXB_ID_1, 101, FIRST_LINE_BEGIN_SW,
 		139, FIRST_LINE_BEGIN_SW + LINE_HEIGH_SW);
 	UG_TextboxSetAlignment(&settingsWindow, TXB_ID_1, ALIGN_CENTER_LEFT);
 	itoa(ClockState.brightness, WidgetsStrings.labelBrightnessValue, 10);
 	UG_TextboxSetText(&settingsWindow, TXB_ID_1, WidgetsStrings.labelBrightnessValue);
 	UG_TextboxSetFont(&settingsWindow, TXB_ID_1, &FONT_8X12);
 
-	UG_TextboxCreate(&settingsWindow, &textBoxUpTime, TXB_ID_2, 1, SECOND_LINE_BEGIN_SW,
+	UG_TextboxCreate(&settingsWindow, &oWindow.textBoxUpTime, TXB_ID_2, 1, SECOND_LINE_BEGIN_SW,
 		300, SECOND_LINE_BEGIN_SW + LINE_HEIGH_SW);
 	UG_TextboxSetAlignment(&settingsWindow, TXB_ID_2, ALIGN_CENTER_LEFT);
 	calculateUpTimeString();
 	UG_TextboxSetText(&settingsWindow, TXB_ID_2, WidgetsStrings.labelUpTime);
 	UG_TextboxSetFont(&settingsWindow, TXB_ID_2, &FONT_8X12);
 
-	UG_TextboxCreate(&settingsWindow, &textBoxCalendar, TXB_ID_3, 1, CALENDAR_GRID_Y2_SW,
+	UG_TextboxCreate(&settingsWindow, &oWindow.textBoxCalendar, TXB_ID_3, 1, CALENDAR_GRID_Y2_SW,
 		125, CALENDAR_GRID_Y2_SW + 20);
 	UG_TextboxSetAlignment(&settingsWindow, TXB_ID_3, ALIGN_CENTER_LEFT);
 	calculateCalendarString(WidgetsStrings.labelCalendarValue, CalendarValueInSettings.day,
@@ -2585,74 +2603,74 @@ void GUI_ClockInit(void)
 	UG_TextboxSetText(&settingsWindow, TXB_ID_3, WidgetsStrings.labelCalendarValue);
 	UG_TextboxSetFont(&settingsWindow, TXB_ID_3, &FONT_8X12);
 
-	UG_ButtonCreate(&settingsWindow, &buttonCloseOptionsWindow, BTN_ID_0, OPTIONS_CLOSE_BUTTON_X_START_POSITION,
+	UG_ButtonCreate(&settingsWindow, &oWindow.buttonCloseOptionsWindow, BTN_ID_0, OPTIONS_CLOSE_BUTTON_X_START_POSITION,
 		OPTIONS_CLOSE_BUTTON_Y_START_POSITION, OPTIONS_CLOSE_BUTTON_X_END_POSITION,
 		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
 	UG_ButtonSetStyle(&settingsWindow, BTN_ID_0, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&settingsWindow, &buttonDecrementBrightness, BTN_ID_1, 140, FIRST_LINE_BEGIN_SW,
+	UG_ButtonCreate(&settingsWindow, &oWindow.buttonDecrementBrightness, BTN_ID_1, 140, FIRST_LINE_BEGIN_SW,
 		140 + LINE_HEIGH_SW, FIRST_LINE_BEGIN_SW + LINE_HEIGH_SW);
 	UG_ButtonSetText(&settingsWindow, BTN_ID_1, "-");
 	UG_ButtonSetAlignment(&settingsWindow, BTN_ID_1, ALIGN_CENTER);
 	UG_ButtonSetFont(&settingsWindow, BTN_ID_1, &FONT_8X12);
 	UG_ButtonSetStyle(&settingsWindow, BTN_ID_1, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&settingsWindow, &buttonIncrementBrightness, BTN_ID_2, 165, FIRST_LINE_BEGIN_SW,
+	UG_ButtonCreate(&settingsWindow, &oWindow.buttonIncrementBrightness, BTN_ID_2, 165, FIRST_LINE_BEGIN_SW,
 		165 + LINE_HEIGH_SW, FIRST_LINE_BEGIN_SW + LINE_HEIGH_SW);
 	UG_ButtonSetText(&settingsWindow, BTN_ID_2, "+");
 	UG_ButtonSetAlignment(&settingsWindow, BTN_ID_2, ALIGN_CENTER);
 	UG_ButtonSetFont(&settingsWindow, BTN_ID_2, &FONT_8X12);
 	UG_ButtonSetStyle(&settingsWindow, BTN_ID_2, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&settingsWindow, &buttonCalibrateLCD, BTN_ID_3, 1, THIRD_LINE_BEGIN_SW, 250,
+	UG_ButtonCreate(&settingsWindow, &oWindow.buttonCalibrateLCD, BTN_ID_3, 1, THIRD_LINE_BEGIN_SW, 250,
 		THIRD_LINE_BEGIN_SW + LINE_HEIGH_SW);
 	UG_ButtonSetText(&settingsWindow, BTN_ID_3, "calibrate touch screen");
 	UG_ButtonSetFont(&settingsWindow, BTN_ID_3, &FONT_8X12);
 	UG_ButtonSetStyle(&settingsWindow, BTN_ID_3, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&settingsWindow, &buttonFactoryReset, BTN_ID_4, 1, FOURTH_LINE_BEGIN_SW, 250,
+	UG_ButtonCreate(&settingsWindow, &oWindow.buttonFactoryReset, BTN_ID_4, 1, FOURTH_LINE_BEGIN_SW, 250,
 		FOURTH_LINE_BEGIN_SW + LINE_HEIGH_SW);
 	UG_ButtonSetText(&settingsWindow, BTN_ID_4, "factory reset");
 	UG_ButtonSetFont(&settingsWindow, BTN_ID_4, &FONT_8X12);
 	UG_ButtonSetStyle(&settingsWindow, BTN_ID_4, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&settingsWindow, &buttonSetCalendar, BTN_ID_5, 130, CALENDAR_GRID_Y2_SW, 250,
+	UG_ButtonCreate(&settingsWindow, &oWindow.buttonSetCalendar, BTN_ID_5, 130, CALENDAR_GRID_Y2_SW, 250,
 		CALENDAR_GRID_Y2_SW + 20);
 	UG_ButtonSetText(&settingsWindow, BTN_ID_5, "change");
 	UG_ButtonSetFont(&settingsWindow, BTN_ID_5, &FONT_8X12);
 	UG_ButtonSetStyle(&settingsWindow, BTN_ID_5, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&settingsWindow, &buttonIncrementDay, BTN_ID_6, CALENDAR_GRID_X1_SW, CALENDAR_GRID_Y1_SW,
+	UG_ButtonCreate(&settingsWindow, &oWindow.buttonIncrementDay, BTN_ID_6, CALENDAR_GRID_X1_SW, CALENDAR_GRID_Y1_SW,
 		CALENDAR_GRID_X1_SW + CALENDAR_SWITCH_LENGTH_SW, CALENDAR_GRID_Y1_SW + CALENDAR_SWITCH_HEIGH_SW);
 	UG_ButtonSetText(&settingsWindow, BTN_ID_6, "");
 	UG_ButtonSetFont(&settingsWindow, BTN_ID_6, &FONT_8X12);
 	UG_ButtonSetStyle(&settingsWindow, BTN_ID_6, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&settingsWindow, &buttonDecrementDay, BTN_ID_7, CALENDAR_GRID_X1_SW, CALENDAR_GRID_Y3_SW,
+	UG_ButtonCreate(&settingsWindow, &oWindow.buttonDecrementDay, BTN_ID_7, CALENDAR_GRID_X1_SW, CALENDAR_GRID_Y3_SW,
 		CALENDAR_GRID_X1_SW + CALENDAR_SWITCH_LENGTH_SW, CALENDAR_GRID_Y3_SW + CALENDAR_SWITCH_HEIGH_SW);
 	UG_ButtonSetText(&settingsWindow, BTN_ID_7, "");
 	UG_ButtonSetFont(&settingsWindow, BTN_ID_7, &FONT_8X12);
 	UG_ButtonSetStyle(&settingsWindow, BTN_ID_7, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&settingsWindow, &buttonIncrementMonth, BTN_ID_8, CALENDAR_GRID_X2_SW, CALENDAR_GRID_Y1_SW,
+	UG_ButtonCreate(&settingsWindow, &oWindow.buttonIncrementMonth, BTN_ID_8, CALENDAR_GRID_X2_SW, CALENDAR_GRID_Y1_SW,
 		CALENDAR_GRID_X2_SW + CALENDAR_SWITCH_LENGTH_SW, CALENDAR_GRID_Y1_SW + CALENDAR_SWITCH_HEIGH_SW);
 	UG_ButtonSetText(&settingsWindow, BTN_ID_8, "");
 	UG_ButtonSetFont(&settingsWindow, BTN_ID_8, &FONT_8X12);
 	UG_ButtonSetStyle(&settingsWindow, BTN_ID_8, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&settingsWindow, &buttonDecrementMonth, BTN_ID_9, CALENDAR_GRID_X2_SW, CALENDAR_GRID_Y3_SW,
+	UG_ButtonCreate(&settingsWindow, &oWindow.buttonDecrementMonth, BTN_ID_9, CALENDAR_GRID_X2_SW, CALENDAR_GRID_Y3_SW,
 		CALENDAR_GRID_X2_SW + CALENDAR_SWITCH_LENGTH_SW, CALENDAR_GRID_Y3_SW + CALENDAR_SWITCH_HEIGH_SW);
 	UG_ButtonSetText(&settingsWindow, BTN_ID_9, "");
 	UG_ButtonSetFont(&settingsWindow, BTN_ID_9, &FONT_8X12);
 	UG_ButtonSetStyle(&settingsWindow, BTN_ID_9, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&settingsWindow, &buttonIncrementYear, BTN_ID_10, CALENDAR_GRID_X3_SW, CALENDAR_GRID_Y1_SW,
+	UG_ButtonCreate(&settingsWindow, &oWindow.buttonIncrementYear, BTN_ID_10, CALENDAR_GRID_X3_SW, CALENDAR_GRID_Y1_SW,
 		CALENDAR_GRID_X3_SW + CALENDAR_SWITCH_LENGTH_SW, CALENDAR_GRID_Y1_SW + CALENDAR_SWITCH_HEIGH_SW);
 	UG_ButtonSetText(&settingsWindow, BTN_ID_10, "");
 	UG_ButtonSetFont(&settingsWindow, BTN_ID_10, &FONT_8X12);
 	UG_ButtonSetStyle(&settingsWindow, BTN_ID_10, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&settingsWindow, &buttonDecrementYear, BTN_ID_11, CALENDAR_GRID_X3_SW, CALENDAR_GRID_Y3_SW,
+	UG_ButtonCreate(&settingsWindow, &oWindow.buttonDecrementYear, BTN_ID_11, CALENDAR_GRID_X3_SW, CALENDAR_GRID_Y3_SW,
 		CALENDAR_GRID_X3_SW + CALENDAR_SWITCH_LENGTH_SW, CALENDAR_GRID_Y3_SW + CALENDAR_SWITCH_HEIGH_SW);
 	UG_ButtonSetText(&settingsWindow, BTN_ID_11, "");
 	UG_ButtonSetFont(&settingsWindow, BTN_ID_11, &FONT_8X12);
@@ -2663,32 +2681,32 @@ void GUI_ClockInit(void)
 		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
 	UG_ImageSetBMP(&settingsWindow, IMG_ID_0, &closePicture);
 	
-	UG_ImageCreate(&settingsWindow, &imageIncrementDay, IMG_ID_1, CALENDAR_GRID_X1_SW + 2, CALENDAR_GRID_Y1_SW + 2,
+	UG_ImageCreate(&settingsWindow, &oWindow.imageIncrementDay, IMG_ID_1, CALENDAR_GRID_X1_SW + 2, CALENDAR_GRID_Y1_SW + 2,
 		CALENDAR_GRID_X1_SW + CALENDAR_SWITCH_LENGTH_SW - 1, CALENDAR_GRID_Y1_SW + CALENDAR_SWITCH_HEIGH_SW - 1);
 	UG_ImageSetBMP(&settingsWindow, IMG_ID_1, &smallIncrementPicture);
 	UG_ImageHide(&settingsWindow, IMG_ID_1);
 
-	UG_ImageCreate(&settingsWindow, &imageDecrementDay, IMG_ID_2, CALENDAR_GRID_X1_SW + 2, CALENDAR_GRID_Y3_SW + 2,
+	UG_ImageCreate(&settingsWindow, &oWindow.imageDecrementDay, IMG_ID_2, CALENDAR_GRID_X1_SW + 2, CALENDAR_GRID_Y3_SW + 2,
 		CALENDAR_GRID_X1_SW + CALENDAR_SWITCH_LENGTH_SW - 1, CALENDAR_GRID_Y3_SW + CALENDAR_SWITCH_HEIGH_SW - 1);
 	UG_ImageSetBMP(&settingsWindow, IMG_ID_2, &smallDecrementPicture);
 	UG_ImageHide(&settingsWindow, IMG_ID_2);
 
-	UG_ImageCreate(&settingsWindow, &imageIncrementMonth, IMG_ID_3, CALENDAR_GRID_X2_SW + 2, CALENDAR_GRID_Y1_SW + 2,
+	UG_ImageCreate(&settingsWindow, &oWindow.imageIncrementMonth, IMG_ID_3, CALENDAR_GRID_X2_SW + 2, CALENDAR_GRID_Y1_SW + 2,
 		CALENDAR_GRID_X2_SW + CALENDAR_SWITCH_LENGTH_SW - 1, CALENDAR_GRID_Y1_SW + CALENDAR_SWITCH_HEIGH_SW - 1);
 	UG_ImageSetBMP(&settingsWindow, IMG_ID_3, &smallIncrementPicture);
 	UG_ImageHide(&settingsWindow, IMG_ID_3);
 
-	UG_ImageCreate(&settingsWindow, &imageDecrementMonth, IMG_ID_4, CALENDAR_GRID_X2_SW + 2, CALENDAR_GRID_Y3_SW + 2,
+	UG_ImageCreate(&settingsWindow, &oWindow.imageDecrementMonth, IMG_ID_4, CALENDAR_GRID_X2_SW + 2, CALENDAR_GRID_Y3_SW + 2,
 		CALENDAR_GRID_X2_SW + CALENDAR_SWITCH_LENGTH_SW - 1, CALENDAR_GRID_Y3_SW + CALENDAR_SWITCH_HEIGH_SW - 1);
 	UG_ImageSetBMP(&settingsWindow, IMG_ID_4, &smallDecrementPicture);
 	UG_ImageHide(&settingsWindow, IMG_ID_4);
 
-	UG_ImageCreate(&settingsWindow, &imageIncrementYear, IMG_ID_5, CALENDAR_GRID_X3_SW + 2, CALENDAR_GRID_Y1_SW + 2,
+	UG_ImageCreate(&settingsWindow, &oWindow.imageIncrementYear, IMG_ID_5, CALENDAR_GRID_X3_SW + 2, CALENDAR_GRID_Y1_SW + 2,
 		CALENDAR_GRID_X3_SW + CALENDAR_SWITCH_LENGTH_SW - 1, CALENDAR_GRID_Y1_SW + CALENDAR_SWITCH_HEIGH_SW - 1);
 	UG_ImageSetBMP(&settingsWindow, IMG_ID_5, &smallIncrementPicture);
 	UG_ImageHide(&settingsWindow, IMG_ID_5);
 
-	UG_ImageCreate(&settingsWindow, &imageDecrementYear, IMG_ID_6, CALENDAR_GRID_X3_SW + 2, CALENDAR_GRID_Y3_SW + 2,
+	UG_ImageCreate(&settingsWindow, &oWindow.imageDecrementYear, IMG_ID_6, CALENDAR_GRID_X3_SW + 2, CALENDAR_GRID_Y3_SW + 2,
 		CALENDAR_GRID_X3_SW + CALENDAR_SWITCH_LENGTH_SW - 1, CALENDAR_GRID_Y3_SW + CALENDAR_SWITCH_HEIGH_SW - 1);
 	UG_ImageSetBMP(&settingsWindow, IMG_ID_6, &smallDecrementPicture);
 	UG_ImageHide(&settingsWindow, IMG_ID_6);
@@ -2702,36 +2720,36 @@ void GUI_ClockInit(void)
 	UG_WindowSetTitleText(&wifiSettingsWindow, "WiFi settings");
 	UG_WindowSetTitleTextFont(&wifiSettingsWindow, &FONT_8X8);
 
-	UG_TextboxCreate(&wifiSettingsWindow, &textBoxWifiStatus, TXB_ID_0, 1, 1, 280, 20);
+	UG_TextboxCreate(&wifiSettingsWindow, &wsWindow.textBoxWifiStatus, TXB_ID_0, 1, 1, 280, 20);
 	UG_TextboxSetAlignment(&wifiSettingsWindow, TXB_ID_0, ALIGN_CENTER_LEFT);
 	strcpy(WidgetsStrings.labelWifiStatus, "Inactive");
 	UG_TextboxSetText(&wifiSettingsWindow, TXB_ID_0, WidgetsStrings.labelWifiStatus);
 	UG_TextboxSetFont(&wifiSettingsWindow, TXB_ID_0, &FONT_8X12);
 
-	UG_TextboxCreate(&wifiSettingsWindow, &textBoxAssignedIpAddress, TXB_ID_1, 120, 25, 310, 45);
+	UG_TextboxCreate(&wifiSettingsWindow, &wsWindow.textBoxAssignedIpAddress, TXB_ID_1, 120, 25, 310, 45);
 	UG_TextboxSetAlignment(&wifiSettingsWindow, TXB_ID_1, ALIGN_CENTER_LEFT);
 	UG_TextboxSetText(&wifiSettingsWindow, TXB_ID_1, " ");
 	UG_TextboxSetFont(&wifiSettingsWindow, TXB_ID_1, &FONT_8X12);
 	UG_TextboxHide(&wifiSettingsWindow, TXB_ID_1);
 
-	UG_TextboxCreate(&wifiSettingsWindow, &textBoxApnListLabel, TXB_ID_2, 1, 50, 300, 70);
+	UG_TextboxCreate(&wifiSettingsWindow, &wsWindow.textBoxApnListLabel, TXB_ID_2, 1, 50, 300, 70);
 	UG_TextboxSetAlignment(&wifiSettingsWindow, TXB_ID_2, ALIGN_CENTER_LEFT);
 	UG_TextboxSetText(&wifiSettingsWindow, TXB_ID_2, "Access points:");
 	UG_TextboxSetFont(&wifiSettingsWindow, TXB_ID_2, &FONT_8X12);
 
-	UG_TextboxCreate(&wifiSettingsWindow, &textBoxNetwork[0], TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN, APN_NAME_BEGIN,
+	UG_TextboxCreate(&wifiSettingsWindow, &wsWindow.textBoxNetwork[0], TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN, APN_NAME_BEGIN,
 		FIRST_LINE_OF_APN_BEGIN_WSW, APN_NAME_END, FIRST_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
 
-	UG_TextboxCreate(&wifiSettingsWindow, &textBoxNetwork[1], (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + 1), APN_NAME_BEGIN,
+	UG_TextboxCreate(&wifiSettingsWindow, &wsWindow.textBoxNetwork[1], (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + 1), APN_NAME_BEGIN,
 		SECOND_LINE_OF_APN_BEGIN_WSW, APN_NAME_END, SECOND_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
 
-	UG_TextboxCreate(&wifiSettingsWindow, &textBoxNetwork[2], (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + 2), APN_NAME_BEGIN,
+	UG_TextboxCreate(&wifiSettingsWindow, &wsWindow.textBoxNetwork[2], (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + 2), APN_NAME_BEGIN,
 		THIRD_LINE_OF_APN_BEGIN_WSW, APN_NAME_END, THIRD_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
 
-	UG_TextboxCreate(&wifiSettingsWindow, &textBoxNetwork[3], (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + 3), APN_NAME_BEGIN,
+	UG_TextboxCreate(&wifiSettingsWindow, &wsWindow.textBoxNetwork[3], (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + 3), APN_NAME_BEGIN,
 		FOURTH_LINE_OF_APN_BEGIN_WSW, APN_NAME_END, FOURTH_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
 
-	UG_TextboxCreate(&wifiSettingsWindow, &textBoxNetwork[4], (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + 4), APN_NAME_BEGIN,
+	UG_TextboxCreate(&wifiSettingsWindow, &wsWindow.textBoxNetwork[4], (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + 4), APN_NAME_BEGIN,
 		FIVETH_LINE_OF_APN_BEGIN_WSW, APN_NAME_END, FIVETH_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
 
 	for (int i = 0; i < NUMBER_OF_WIFI_DISPLAY_NETWORKS; i++)
@@ -2742,32 +2760,32 @@ void GUI_ClockInit(void)
 		UG_TextboxHide(&wifiSettingsWindow, (TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN + i));
 	}
 
-	UG_ButtonCreate(&wifiSettingsWindow, &buttonCloseWifiSettingsWindow, BTN_ID_0, OPTIONS_CLOSE_BUTTON_X_START_POSITION,
+	UG_ButtonCreate(&wifiSettingsWindow, &wsWindow.buttonCloseWifiSettingsWindow, BTN_ID_0, OPTIONS_CLOSE_BUTTON_X_START_POSITION,
 		OPTIONS_CLOSE_BUTTON_Y_START_POSITION, OPTIONS_CLOSE_BUTTON_X_END_POSITION,
 		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
 	UG_ButtonSetText(&wifiSettingsWindow, BTN_ID_0, " ");
 	UG_ButtonSetFont(&wifiSettingsWindow, BTN_ID_0, &FONT_12X16);
 	UG_ButtonSetStyle(&wifiSettingsWindow, BTN_ID_0, BTN_STYLE_2D);
 
-	UG_ButtonCreate(&wifiSettingsWindow, &buttonControlConnection, BTN_ID_1, 1, 25, 110, 45);
+	UG_ButtonCreate(&wifiSettingsWindow, &wsWindow.buttonControlConnection, BTN_ID_1, 1, 25, 110, 45);
 	UG_ButtonSetText(&wifiSettingsWindow, BTN_ID_1, "disconnect");
 	UG_ButtonSetFont(&wifiSettingsWindow, BTN_ID_1, &FONT_8X12);
 	UG_ButtonSetStyle(&wifiSettingsWindow, BTN_ID_1, BTN_STYLE_2D);
 	UG_ButtonHide(&wifiSettingsWindow, BTN_ID_1);
 
-	UG_ButtonCreate(&wifiSettingsWindow, &buttonNetwork[0], BUTTON_WIFI_DISPLAY_NETWORK_BEGIN, APN_CONNECT_BUTTON_BEGIN,
+	UG_ButtonCreate(&wifiSettingsWindow, &wsWindow.buttonNetwork[0], BUTTON_WIFI_DISPLAY_NETWORK_BEGIN, APN_CONNECT_BUTTON_BEGIN,
 		FIRST_LINE_OF_APN_BEGIN_WSW, APN_CONNECT_BUTTON_END, FIRST_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
 
-	UG_ButtonCreate(&wifiSettingsWindow, &buttonNetwork[1], (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + 1), APN_CONNECT_BUTTON_BEGIN,
+	UG_ButtonCreate(&wifiSettingsWindow, &wsWindow.buttonNetwork[1], (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + 1), APN_CONNECT_BUTTON_BEGIN,
 		SECOND_LINE_OF_APN_BEGIN_WSW, APN_CONNECT_BUTTON_END, SECOND_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
 
-	UG_ButtonCreate(&wifiSettingsWindow, &buttonNetwork[2], (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + 2), APN_CONNECT_BUTTON_BEGIN,
+	UG_ButtonCreate(&wifiSettingsWindow, &wsWindow.buttonNetwork[2], (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + 2), APN_CONNECT_BUTTON_BEGIN,
 		THIRD_LINE_OF_APN_BEGIN_WSW, APN_CONNECT_BUTTON_END, THIRD_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
 
-	UG_ButtonCreate(&wifiSettingsWindow, &buttonNetwork[3], (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + 3), APN_CONNECT_BUTTON_BEGIN,
+	UG_ButtonCreate(&wifiSettingsWindow, &wsWindow.buttonNetwork[3], (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + 3), APN_CONNECT_BUTTON_BEGIN,
 		FOURTH_LINE_OF_APN_BEGIN_WSW, APN_CONNECT_BUTTON_END, FOURTH_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
 
-	UG_ButtonCreate(&wifiSettingsWindow, &buttonNetwork[4], (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + 4), APN_CONNECT_BUTTON_BEGIN,
+	UG_ButtonCreate(&wifiSettingsWindow, &wsWindow.buttonNetwork[4], (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + 4), APN_CONNECT_BUTTON_BEGIN,
 		FIVETH_LINE_OF_APN_BEGIN_WSW, APN_CONNECT_BUTTON_END, FIVETH_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
 
 	for (int i = 0; i < NUMBER_OF_WIFI_DISPLAY_NETWORKS; i++)
@@ -2778,14 +2796,14 @@ void GUI_ClockInit(void)
 		UG_ButtonHide(&wifiSettingsWindow, (BUTTON_WIFI_DISPLAY_NETWORK_BEGIN + i));
 	}
 
-	UG_ButtonCreate(&wifiSettingsWindow, &buttonUpNetworkList, BTN_ID_8, APN_SLIDER_BEGIN,
+	UG_ButtonCreate(&wifiSettingsWindow, &wsWindow.buttonUpNetworkList, BTN_ID_8, APN_SLIDER_BEGIN,
 		FIRST_LINE_OF_APN_BEGIN_WSW, APN_SLIDER_END, FIRST_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
 	UG_ButtonSetText(&wifiSettingsWindow, BTN_ID_8, " ");
 	UG_ButtonSetFont(&wifiSettingsWindow, BTN_ID_8, &FONT_8X12);
 	UG_ButtonSetStyle(&wifiSettingsWindow, BTN_ID_8, BTN_STYLE_2D);
 	UG_ButtonHide(&wifiSettingsWindow, BTN_ID_8);
 
-	UG_ButtonCreate(&wifiSettingsWindow, &buttonDownNetworkList, BTN_ID_9, APN_SLIDER_BEGIN,
+	UG_ButtonCreate(&wifiSettingsWindow, &wsWindow.buttonDownNetworkList, BTN_ID_9, APN_SLIDER_BEGIN,
 		FIVETH_LINE_OF_APN_BEGIN_WSW, APN_SLIDER_END, FIVETH_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW);
 	UG_ButtonSetText(&wifiSettingsWindow, BTN_ID_9, " ");
 	UG_ButtonSetFont(&wifiSettingsWindow, BTN_ID_9, &FONT_8X12);
@@ -2797,12 +2815,12 @@ void GUI_ClockInit(void)
 		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
 	UG_ImageSetBMP(&wifiSettingsWindow, IMG_ID_0, &closePicture);
 
-	UG_ImageCreate(&wifiSettingsWindow, &imageUpNetworkList, IMG_ID_1, APN_SLIDER_BEGIN + 3,
+	UG_ImageCreate(&wifiSettingsWindow, &wsWindow.imageUpNetworkList, IMG_ID_1, APN_SLIDER_BEGIN + 3,
 		FIRST_LINE_OF_APN_BEGIN_WSW + 3, APN_SLIDER_END - 1, FIRST_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW - 1);
 	UG_ImageSetBMP(&wifiSettingsWindow, IMG_ID_1, &upWifiNetwork);
 	UG_ImageHide(&wifiSettingsWindow, IMG_ID_1);
 
-	UG_ImageCreate(&wifiSettingsWindow, &imageDownNetworkList, IMG_ID_2, APN_SLIDER_BEGIN + 3,
+	UG_ImageCreate(&wifiSettingsWindow, &wsWindow.imageDownNetworkList, IMG_ID_2, APN_SLIDER_BEGIN + 3,
 		FIVETH_LINE_OF_APN_BEGIN_WSW + 3, APN_SLIDER_END - 1, FIVETH_LINE_OF_APN_BEGIN_WSW + APN_LIST_LINE_HEIGH_WSW - 1);
 	UG_ImageSetBMP(&wifiSettingsWindow, IMG_ID_2, &downWifiNetwork);
 	UG_ImageHide(&wifiSettingsWindow, IMG_ID_2);
@@ -2814,32 +2832,32 @@ void GUI_ClockInit(void)
 	UG_WindowSetTitleText(&wifiKeyboardWindow, "WiFi password");
 	UG_WindowSetTitleTextFont(&wifiKeyboardWindow, &FONT_8X8);
 
-	UG_TextboxCreate(&wifiKeyboardWindow, &textBoxApnLabel, TXB_ID_0, 1, 3, 40, 18);
+	UG_TextboxCreate(&wifiKeyboardWindow, &wkWindow.textBoxApnLabel, TXB_ID_0, 1, 3, 40, 18);
 	UG_TextboxSetAlignment(&wifiKeyboardWindow, TXB_ID_0, ALIGN_CENTER_LEFT);
 	UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_0, "APN:");
 	UG_TextboxSetFont(&wifiKeyboardWindow, TXB_ID_0, &FONT_8X12);
 
-	UG_TextboxCreate(&wifiKeyboardWindow, &textBoxChosenApnLabel, TXB_ID_1, 41, 3, 280, 18);
+	UG_TextboxCreate(&wifiKeyboardWindow, &wkWindow.textBoxChosenApnLabel, TXB_ID_1, 41, 3, 280, 18);
 	UG_TextboxSetAlignment(&wifiKeyboardWindow, TXB_ID_1, ALIGN_CENTER_LEFT);
 	UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_1, " ");
 	UG_TextboxSetFont(&wifiKeyboardWindow, TXB_ID_1, &FONT_8X12);
 
-	UG_TextboxCreate(&wifiKeyboardWindow, &textBoxPApnPasswordLabel, TXB_ID_2, 1, 20, 280, 35);
+	UG_TextboxCreate(&wifiKeyboardWindow, &wkWindow.textBoxPApnPasswordLabel, TXB_ID_2, 1, 20, 280, 35);
 	UG_TextboxSetAlignment(&wifiKeyboardWindow, TXB_ID_2, ALIGN_CENTER_LEFT);
 	UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_2, "Password: ");
 	UG_TextboxSetFont(&wifiKeyboardWindow, TXB_ID_2, &FONT_8X12);
 
-	UG_TextboxCreate(&wifiKeyboardWindow, &textBoxPApnPasswordContent, TXB_ID_3, 75, 20, 290, 35);
+	UG_TextboxCreate(&wifiKeyboardWindow, &wkWindow.textBoxPApnPasswordContent, TXB_ID_3, 75, 20, 290, 35);
 	UG_TextboxSetAlignment(&wifiKeyboardWindow, TXB_ID_3, ALIGN_CENTER_LEFT);
 	UG_TextboxSetText(&wifiKeyboardWindow, TXB_ID_3, WidgetsStrings.labelApnPassword);
 	UG_TextboxSetFont(&wifiKeyboardWindow, TXB_ID_3, &FONT_8X12);
 
-	UG_CheckboxCreate(&wifiKeyboardWindow, &ckeckBoxShowApnPassword, CHB_ID_0, 1, 40, 290, 60);
+	UG_CheckboxCreate(&wifiKeyboardWindow, &wkWindow.ckeckBoxShowApnPassword, CHB_ID_0, 1, 40, 290, 60);
 	UG_CheckboxSetText(&wifiKeyboardWindow, CHB_ID_0, "show password");
 	UG_CheckboxSetFont(&wifiKeyboardWindow, CHB_ID_0, &FONT_6X8);
 	UG_CheckboxSetCheched(&wifiKeyboardWindow, CHB_ID_0, CHB_STATE_RELEASED);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonCloseKeyboardWindow, BTN_ID_0, OPTIONS_CLOSE_BUTTON_X_START_POSITION,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonCloseKeyboardWindow, BTN_ID_0, OPTIONS_CLOSE_BUTTON_X_START_POSITION,
 		OPTIONS_CLOSE_BUTTON_Y_START_POSITION, OPTIONS_CLOSE_BUTTON_X_END_POSITION,
 		OPTIONS_CLOSE_BUTTON_Y_END_POSITION);
 	UG_ButtonSetText(&wifiKeyboardWindow, BTN_ID_0, " ");
@@ -2848,175 +2866,175 @@ void GUI_ClockInit(void)
 
 	//Keyboard key begin
 	//first row
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyQor1Num1a, BUTTON_WIFI_KEYBOARD_BEGIN, BUTTON_COLUMN_BEGIN_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyQor1Num1a, BUTTON_WIFI_KEYBOARD_BEGIN, BUTTON_COLUMN_BEGIN_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_BEGIN_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyWor2Num2a, (BUTTON_WIFI_KEYBOARD_BEGIN + 1), BUTTON_COLUMN_NR2_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyWor2Num2a, (BUTTON_WIFI_KEYBOARD_BEGIN + 1), BUTTON_COLUMN_NR2_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR2_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyEor3Num3a, (BUTTON_WIFI_KEYBOARD_BEGIN + 2), BUTTON_COLUMN_NR4_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyEor3Num3a, (BUTTON_WIFI_KEYBOARD_BEGIN + 2), BUTTON_COLUMN_NR4_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR4_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyRor4Num4a, (BUTTON_WIFI_KEYBOARD_BEGIN + 3), BUTTON_COLUMN_NR6_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyRor4Num4a, (BUTTON_WIFI_KEYBOARD_BEGIN + 3), BUTTON_COLUMN_NR6_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR6_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyTor5Num5a, (BUTTON_WIFI_KEYBOARD_BEGIN + 4), BUTTON_COLUMN_NR8_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyTor5Num5a, (BUTTON_WIFI_KEYBOARD_BEGIN + 4), BUTTON_COLUMN_NR8_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR8_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyYor6Num6a, (BUTTON_WIFI_KEYBOARD_BEGIN + 5), BUTTON_COLUMN_NR10_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyYor6Num6a, (BUTTON_WIFI_KEYBOARD_BEGIN + 5), BUTTON_COLUMN_NR10_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR10_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyUor7Num7a, (BUTTON_WIFI_KEYBOARD_BEGIN + 6), BUTTON_COLUMN_NR12_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyUor7Num7a, (BUTTON_WIFI_KEYBOARD_BEGIN + 6), BUTTON_COLUMN_NR12_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR12_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyIor8Num8a, (BUTTON_WIFI_KEYBOARD_BEGIN + 7), BUTTON_COLUMN_NR14_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyIor8Num8a, (BUTTON_WIFI_KEYBOARD_BEGIN + 7), BUTTON_COLUMN_NR14_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR14_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyOor9Num9a, (BUTTON_WIFI_KEYBOARD_BEGIN + 8), BUTTON_COLUMN_NR16_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyOor9Num9a, (BUTTON_WIFI_KEYBOARD_BEGIN + 8), BUTTON_COLUMN_NR16_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR16_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyPor0Num10a, (BUTTON_WIFI_KEYBOARD_BEGIN + 9), BUTTON_COLUMN_NR18_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyPor0Num10a, (BUTTON_WIFI_KEYBOARD_BEGIN + 9), BUTTON_COLUMN_NR18_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR18_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyGraveAccentOrTildeNum11a, (BUTTON_WIFI_KEYBOARD_BEGIN + 10), BUTTON_COLUMN_NR20_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyGraveAccentOrTildeNum11a, (BUTTON_WIFI_KEYBOARD_BEGIN + 10), BUTTON_COLUMN_NR20_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR20_WKW + BUTTON_LENGTH_WKW,
 		FIRST_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
 	//Second row
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyAorMonkeyNum1b, (BUTTON_WIFI_KEYBOARD_BEGIN + 11), BUTTON_COLUMN_NR1_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyAorMonkeyNum1b, (BUTTON_WIFI_KEYBOARD_BEGIN + 11), BUTTON_COLUMN_NR1_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR1_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeySorHashNum2b, (BUTTON_WIFI_KEYBOARD_BEGIN + 12), BUTTON_COLUMN_NR3_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeySorHashNum2b, (BUTTON_WIFI_KEYBOARD_BEGIN + 12), BUTTON_COLUMN_NR3_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR3_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyDorDolarNum3b, (BUTTON_WIFI_KEYBOARD_BEGIN + 13), BUTTON_COLUMN_NR5_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyDorDolarNum3b, (BUTTON_WIFI_KEYBOARD_BEGIN + 13), BUTTON_COLUMN_NR5_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR5_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyForFloorNum4b, (BUTTON_WIFI_KEYBOARD_BEGIN + 14), BUTTON_COLUMN_NR7_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyForFloorNum4b, (BUTTON_WIFI_KEYBOARD_BEGIN + 14), BUTTON_COLUMN_NR7_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR7_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyGorAmpersandNum5b, (BUTTON_WIFI_KEYBOARD_BEGIN + 15), BUTTON_COLUMN_NR9_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyGorAmpersandNum5b, (BUTTON_WIFI_KEYBOARD_BEGIN + 15), BUTTON_COLUMN_NR9_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR9_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyHorMinusNum6b, (BUTTON_WIFI_KEYBOARD_BEGIN + 16), BUTTON_COLUMN_NR11_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyHorMinusNum6b, (BUTTON_WIFI_KEYBOARD_BEGIN + 16), BUTTON_COLUMN_NR11_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR11_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyJorPlusNum7b, (BUTTON_WIFI_KEYBOARD_BEGIN + 17), BUTTON_COLUMN_NR13_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyJorPlusNum7b, (BUTTON_WIFI_KEYBOARD_BEGIN + 17), BUTTON_COLUMN_NR13_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR13_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyKorAsteriskNum8b, (BUTTON_WIFI_KEYBOARD_BEGIN + 18), BUTTON_COLUMN_NR15_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyKorAsteriskNum8b, (BUTTON_WIFI_KEYBOARD_BEGIN + 18), BUTTON_COLUMN_NR15_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR15_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyLorExclamationMarkNum9b, (BUTTON_WIFI_KEYBOARD_BEGIN + 19),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyLorExclamationMarkNum9b, (BUTTON_WIFI_KEYBOARD_BEGIN + 19),
 		BUTTON_COLUMN_NR17_WKW, SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR17_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyRightBracesOrRightSquareBracketsNum10b, (BUTTON_WIFI_KEYBOARD_BEGIN + 20),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyRightBracesOrRightSquareBracketsNum10b, (BUTTON_WIFI_KEYBOARD_BEGIN + 20),
 		BUTTON_COLUMN_NR19_WKW, SECOND_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR19_WKW + BUTTON_LENGTH_WKW,
 		SECOND_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
 	//Third row
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyShiftNum1c, (BUTTON_WIFI_KEYBOARD_BEGIN + SHIFT_KEY_OFFSET_WKW), BUTTON_COLUMN_BEGIN_WKW,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyShiftNum1c, (BUTTON_WIFI_KEYBOARD_BEGIN + SHIFT_KEY_OFFSET_WKW), BUTTON_COLUMN_BEGIN_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_BEGIN_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 	UG_ButtonSetText(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + SHIFT_KEY_OFFSET_WKW), "\x18");
 	UG_ButtonSetFont(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + SHIFT_KEY_OFFSET_WKW), &FONT_8X12);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyZorQuotationMarksSingleNum2c, (BUTTON_WIFI_KEYBOARD_BEGIN + 22),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyZorQuotationMarksSingleNum2c, (BUTTON_WIFI_KEYBOARD_BEGIN + 22),
 		BUTTON_COLUMN_NR2_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR2_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyXorQuotationMarksDoubleNum3c, (BUTTON_WIFI_KEYBOARD_BEGIN + 23),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyXorQuotationMarksDoubleNum3c, (BUTTON_WIFI_KEYBOARD_BEGIN + 23),
 		BUTTON_COLUMN_NR4_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR4_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyCorQuestionMarkNum4c, (BUTTON_WIFI_KEYBOARD_BEGIN + 24),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyCorQuestionMarkNum4c, (BUTTON_WIFI_KEYBOARD_BEGIN + 24),
 		BUTTON_COLUMN_NR6_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR6_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyVorEqualsSignNum5c, (BUTTON_WIFI_KEYBOARD_BEGIN + 25),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyVorEqualsSignNum5c, (BUTTON_WIFI_KEYBOARD_BEGIN + 25),
 		BUTTON_COLUMN_NR8_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR8_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyBorBackslashNum6c, (BUTTON_WIFI_KEYBOARD_BEGIN + 26),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyBorBackslashNum6c, (BUTTON_WIFI_KEYBOARD_BEGIN + 26),
 		BUTTON_COLUMN_NR10_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR10_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyNorPercent1Num7c, (BUTTON_WIFI_KEYBOARD_BEGIN + 27),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyNorPercent1Num7c, (BUTTON_WIFI_KEYBOARD_BEGIN + 27),
 		BUTTON_COLUMN_NR12_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR12_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyMorForwardSlashNum8c, (BUTTON_WIFI_KEYBOARD_BEGIN + 28),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyMorForwardSlashNum8c, (BUTTON_WIFI_KEYBOARD_BEGIN + 28),
 		BUTTON_COLUMN_NR14_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR14_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyLeftBracesOrLeftSquareBracketsNum9c, (BUTTON_WIFI_KEYBOARD_BEGIN + 29),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyLeftBracesOrLeftSquareBracketsNum9c, (BUTTON_WIFI_KEYBOARD_BEGIN + 29),
 		BUTTON_COLUMN_NR16_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR16_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyCaretOrVerticalBarNum10c, (BUTTON_WIFI_KEYBOARD_BEGIN + 30),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyCaretOrVerticalBarNum10c, (BUTTON_WIFI_KEYBOARD_BEGIN + 30),
 		BUTTON_COLUMN_NR18_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR18_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyBackspaceNum11c, (BUTTON_WIFI_KEYBOARD_BEGIN + BACKSPACE_KEY_OFFSET_WKW),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyBackspaceNum11c, (BUTTON_WIFI_KEYBOARD_BEGIN + BACKSPACE_KEY_OFFSET_WKW),
 		BUTTON_COLUMN_NR20_WKW, THIRD_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR20_WKW + BUTTON_LENGTH_WKW,
 		THIRD_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 	UG_ButtonSetText(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + BACKSPACE_KEY_OFFSET_WKW), "\x1b");
 	UG_ButtonSetFont(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + BACKSPACE_KEY_OFFSET_WKW), &FONT_8X12);
 
 	//Fourth row
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeySwitchToSignNum1d,
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeySwitchToSignNum1d,
 		(BUTTON_WIFI_KEYBOARD_BEGIN + LETTER_OR_SPECIAL_CHAR_KEY_OFFSET_WKW),
 		BUTTON_COLUMN_BEGIN_WKW, FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR3_WKW + BUTTON_LENGTH_WKW,
 		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 	UG_ButtonSetText(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + LETTER_OR_SPECIAL_CHAR_KEY_OFFSET_WKW), "QWE/12?");
 	UG_ButtonSetFont(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + LETTER_OR_SPECIAL_CHAR_KEY_OFFSET_WKW), &FONT_6X8);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyDotOrColonNum2d, (BUTTON_WIFI_KEYBOARD_BEGIN + 33),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyDotOrColonNum2d, (BUTTON_WIFI_KEYBOARD_BEGIN + 33),
 		BUTTON_COLUMN_NR5_WKW, FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR5_WKW + BUTTON_LENGTH_WKW,
 		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyCommaQorSemicolonNum3d, (BUTTON_WIFI_KEYBOARD_BEGIN + 34),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyCommaQorSemicolonNum3d, (BUTTON_WIFI_KEYBOARD_BEGIN + 34),
 		BUTTON_COLUMN_NR7_WKW, FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR7_WKW + BUTTON_LENGTH_WKW,
 		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeySpaceNum4d, (BUTTON_WIFI_KEYBOARD_BEGIN + 35),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeySpaceNum4d, (BUTTON_WIFI_KEYBOARD_BEGIN + 35),
 		BUTTON_COLUMN_NR9_WKW, FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR11_WKW + BUTTON_LENGTH_WKW,
 		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyLeftRoundBracketOrLeftChevronNum5d, (BUTTON_WIFI_KEYBOARD_BEGIN + 36),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyLeftRoundBracketOrLeftChevronNum5d, (BUTTON_WIFI_KEYBOARD_BEGIN + 36),
 		BUTTON_COLUMN_NR13_WKW, FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR13_WKW + BUTTON_LENGTH_WKW,
 		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyRightRoundBracketOrRightChevronNum6d, (BUTTON_WIFI_KEYBOARD_BEGIN + 37),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyRightRoundBracketOrRightChevronNum6d, (BUTTON_WIFI_KEYBOARD_BEGIN + 37),
 		BUTTON_COLUMN_NR15_WKW, FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR15_WKW + BUTTON_LENGTH_WKW,
 		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 
-	UG_ButtonCreate(&wifiKeyboardWindow, &buttonKeyEnterNum7d, (BUTTON_WIFI_KEYBOARD_BEGIN + ENTER_KEY_OFFSET_WKW),
+	UG_ButtonCreate(&wifiKeyboardWindow, &wkWindow.buttonKeyEnterNum7d, (BUTTON_WIFI_KEYBOARD_BEGIN + ENTER_KEY_OFFSET_WKW),
 		BUTTON_COLUMN_NR17_WKW, FOURTH_ROW_OF_BUTTONS_BEGIN_WKW, BUTTON_COLUMN_NR20_WKW + BUTTON_LENGTH_WKW,
 		FOURTH_ROW_OF_BUTTONS_BEGIN_WKW + BUTTON_HEIGH_WKW);
 	UG_ButtonSetText(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + ENTER_KEY_OFFSET_WKW), "Enter");
 	UG_ButtonSetFont(&wifiKeyboardWindow, (BUTTON_WIFI_KEYBOARD_BEGIN + ENTER_KEY_OFFSET_WKW), &FONT_6X8);
 
-	setKeyboardButtons(KeyboardSignsGlobalState);
+	setKeyboardButtons(wkWindow.KeyboardSignsGlobalState);
 
 	UG_ImageCreate(&wifiKeyboardWindow, &imageClose, IMG_ID_0, OPTIONS_CLOSE_BUTTON_X_START_POSITION + 1,
 		OPTIONS_CLOSE_BUTTON_Y_START_POSITION + 1, OPTIONS_CLOSE_BUTTON_X_END_POSITION,

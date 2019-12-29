@@ -79,7 +79,7 @@ void I2C_InterruptProccess(uint8_t portNumber)
 	{
 	case 0x08://call when start was send
 		//change device status
-		I2C_Device_Instance_Table[portNumber].deviceStatus = I2C_Sending;
+		I2C_Device_Instance_Table[portNumber].deviceStatus = I2C_SENDING;
 		//clear start bit (STAC - START flag Clear bit)
 		I2C_Port->CONCLR = (1<<5);
 
@@ -122,7 +122,7 @@ void I2C_InterruptProccess(uint8_t portNumber)
 			{
 				//send stop bit(set STO bit - STOP flag.)
 				I2C_Port->CONSET = (1<<4);
-				I2C_Device_Instance_Table[portNumber].deviceStatus = I2C_WaitingForData;
+				I2C_Device_Instance_Table[portNumber].deviceStatus = I2C_WAITING_FOR_DATA;
 			}
 		}
 		else //send data
@@ -162,7 +162,7 @@ void I2C_InterruptProccess(uint8_t portNumber)
 		//in control set register set STOP flag
 		I2C_Port->CONSET = (1<<4);
 
-		I2C_Device_Instance_Table[portNumber].deviceStatus = I2C_WaitingForData;
+		I2C_Device_Instance_Table[portNumber].deviceStatus = I2C_WAITING_FOR_DATA;
 		break;
 	}
 	//clear interrupt bit (SIC - I2C interrupt Clear bit)
@@ -179,7 +179,7 @@ void I2C_DriverInit(uint8_t portNumber)
 	LPC_I2C_T *I2C_Port = (LPC_I2C_T*)I2C_GetBaseAddress(portNumber);
 	I2C_SetClockPrescalers(portNumber);
 
-	I2C_Device_Instance_Table[portNumber].deviceStatus = I2C_WaitingForData;
+	I2C_Device_Instance_Table[portNumber].deviceStatus = I2C_WAITING_FOR_DATA;
 	//turn on options responsible for change GPIO purpose like UART, ADC or SPI
 	LPC_SYSCON->SYSAHBCLKCTRL |= (1<<16);
 
@@ -224,7 +224,7 @@ void I2C_SendReadData(uint8_t portNumber, uint8_t deviceAddress, uint8_t *dataTo
 	I2C_Device_Instance_Table[portNumber].dataToRead = sizeOfReadData;
 
 	//change device status after initialize structure
-	I2C_Device_Instance_Table[portNumber].deviceStatus = I2C_WaitingForSend;
+	I2C_Device_Instance_Table[portNumber].deviceStatus = I2C_WAITING_FOR_SEND;
 	//send start bit (in control set register STA bit - START flag)
 	I2C_Port->CONSET = (1<<5);
 }

@@ -97,8 +97,10 @@ int main(void)
 		ClockState.month = INVALID_CALENDAR_DATE;
 		ClockState.year = INVALID_CALENDAR_DATE;
 
-		//set FRAM index as invalid
-		//ClockState.TemperatureSensorTable[INSIDE_TEMPERATURE].
+		//initialize FRAM index of all temperature sources
+		ClockState.TemperatureSensorTable[INSIDE_TEMPERATURE].temperatureFramIndex = NOT_INITIALIZED_FRAM_INDEX_VALUE;
+		ClockState.TemperatureSensorTable[OUTSIDE_TEMPERATURE].temperatureFramIndex = NOT_INITIALIZED_FRAM_INDEX_VALUE;
+		ClockState.TemperatureSensorTable[FURNACE_TEMPERATURE].temperatureFramIndex = NOT_INITIALIZED_FRAM_INDEX_VALUE;
 	}
 
 	//set brightness

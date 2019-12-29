@@ -44,7 +44,7 @@ static inline void FRAM_ClearSpiBuffer()
 void FRAM_Init(uint8_t port)
 {
 	portNumber = port;
-	Operation = None;
+	Operation = NONE;
 	memoryPointer = 0;
 
 	//configure GPIO
@@ -65,7 +65,7 @@ bool FRAM_Process(void)
 
 	switch(Operation)
 	{
-	case PrepareMemoryWrite:
+	case PREPARE_MEMORY_WRITE:
 		//set pin in high state after send write enable opcode
 		GPIO_SetState(FRAM_PIN_CS_GPIO_PORT, FRAM_PIN_CS_GPIO_PIN, true);
 
@@ -82,15 +82,15 @@ bool FRAM_Process(void)
 		SPI_PutByteToTransmitter(portNumber, (uint8_t)(dataAddressWrite>>8));
 		SPI_PutByteToTransmitter(portNumber, (uint8_t)(dataAddressWrite & 0xFF));
 
-		Operation = MemoryWrite;
+		Operation = MEMORY_WRITE;
 		returnState = false;
 		break;
 
-	case MemoryWrite:
+	case MEMORY_WRITE:
 		//check finish transaction statement
 		if(numOfDataCopied >= numOfDataToCopy)
 		{
-			Operation = FinalizeMemoryTransaction;
+			Operation = FINALIZE_MEMORY_TRANSACTION;
 		}
 
 		for(uint16_t i = 0;(i < SPI_BUFFER_SIZE) && (numOfDataCopied < numOfDataToCopy);i++, numOfDataCopied++)
@@ -100,14 +100,14 @@ bool FRAM_Process(void)
 		returnState = false;
 		break;
 
-	case PrepareMemoryRead:
+	case PREPARE_MEMORY_READ:
 		FRAM_ClearSpiBuffer();
 
-		Operation = MemoryRead;
+		Operation = MEMORY_READ;
 		returnState =  false;
 		break;
 
-	case MemoryRead:
+	case MEMORY_READ:
 		;
 		static uint16_t readCounter = 0;
 
@@ -130,22 +130,22 @@ bool FRAM_Process(void)
 
 		//check finish transaction statement
 		if(readCounter >= numOfDataToCopy)
-			Operation = FinalizeMemoryTransaction;
+			Operation = FINALIZE_MEMORY_TRANSACTION;
 		returnState = false;
 		break;
 
-	case FinalizeMemoryTransaction:
+	case FINALIZE_MEMORY_TRANSACTION:
 		//set pin in high state
 		GPIO_SetState(FRAM_PIN_CS_GPIO_PORT, FRAM_PIN_CS_GPIO_PIN, true);
 
 		FRAM_ClearSpiBuffer();
 
-		Operation = None;
+		Operation = NONE;
 
 		returnState = true;
 		break;
 
-	case None:
+	case NONE:
 	default:
 		break;
 	}
@@ -158,7 +158,7 @@ void FRAM_Write(uint16_t dataAddress, uint16_t numOfBytes, uint8_t* writeBufferP
 	numOfDataCopied = 0;
 	memoryPointer = writeBufferPointer;
 	numOfDataToCopy = numOfBytes;
-	Operation = PrepareMemoryWrite;
+	Operation = PREPARE_MEMORY_WRITE;
 	dataAddressWrite = dataAddress;
 
 	//set pin in low state
@@ -174,7 +174,7 @@ void FRAM_Read(uint16_t dataAddress, uint16_t numOfBytes, uint8_t* readBufferPoi
 	numOfDataCopied = 0;
 	memoryPointer = readBufferPointer;
 	numOfDataToCopy = numOfBytes;
-	Operation = PrepareMemoryRead;
+	Operation = PREPARE_MEMORY_READ;
 
 	//set pin in low state
 	GPIO_SetState(FRAM_PIN_CS_GPIO_PORT, FRAM_PIN_CS_GPIO_PIN, false);

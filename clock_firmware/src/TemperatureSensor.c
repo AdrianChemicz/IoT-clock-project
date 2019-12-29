@@ -53,23 +53,23 @@ void TemperatureSensor_StartMeasurement(void)
 
 TempStatus TemperatureSensor_CheckMeasurementStatus(void)
 {
-	TempStatus tempStatusTmp = I2C_WaitingForRequest;
+	TempStatus tempStatusTmp = I2C_WAITING_FOR_REQUEST;
 
 	switch (activeState)
 	{
 	case 0:
-		tempStatusTmp = I2C_WaitingForRequest;
+		tempStatusTmp = I2C_WAITING_FOR_REQUEST;
 		break;
 
 	case 1:
 	case 2:
 	case 3:
 	case 4:
-		tempStatusTmp = I2C_RequestExecuting;
+		tempStatusTmp = I2C_REQUEST_EXECUTING;
 		break;
 
 	case 5:
-		tempStatusTmp = I2C_DataIsReady;
+		tempStatusTmp = I2C_DATA_IS_READY;
 		break;
 	}
 
@@ -87,7 +87,7 @@ void TemperatureSensor_Process(void)
 		activeState = 2;
 		break;
 	case 2:
-		if (I2C_CheckStatus(I2C_PORT_NUMBER) == I2C_WaitingForData)
+		if (I2C_CheckStatus(I2C_PORT_NUMBER) == I2C_WAITING_FOR_DATA)
 			activeState = 3;
 		break;
 	case 3:
@@ -95,7 +95,7 @@ void TemperatureSensor_Process(void)
 		activeState = 4;
 		break;
 	case 4:
-		if (I2C_CheckStatus(I2C_PORT_NUMBER) == I2C_WaitingForData)
+		if (I2C_CheckStatus(I2C_PORT_NUMBER) == I2C_WAITING_FOR_DATA)
 			activeState = 5;
 		break;
 	case 5:

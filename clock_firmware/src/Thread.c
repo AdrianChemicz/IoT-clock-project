@@ -24,14 +24,31 @@ static uint8_t clearFramData[CLEAR_BLOCK_SIZE];
 static const uint8_t SoundAlarmTable[LENGHT_OF_SOUND_ALARM_TABLE] = {0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1};
 static WifiStateType WifiStateStructure;
 
+/*****************************************************************************************
+* convertFramIndexToAddress() - calculate FRAM memory address using index of block with
+* temperature per day structure.
+*
+* Parameters:
+* @index: value in range from 0 to MAX_RECORD_IN_FRAM with number of selected
+*  TemperatureSingleDayRecordType structure in FRAM.
+*
+* Return: FRAM memory address where index of TemperatureSingleDayRecordType structure
+* is located.
+*****************************************************************************************/
 static uint16_t convertFramIndexToAddress(uint16_t index)
 {
 	return (FRAM_MEASUREMENT_DATA_BEGIN + (sizeof(TemperatureSingleDayRecordType)*index));
 }
 
 /*****************************************************************************************
-* Function is call when last value in current day is send to FRAM memory and next value
-* will belong to next day.
+* nextDayTemperatureStructureInit() - increase date about one day in TemperatureSingleDayRecordType
+* structure located in memory address hold by pointerToStructure argument. Function also
+* initialize all temperature values in TemperatureSingleDayRecordType structure as
+* INVALID_READ_SENSOR_VALUE.
+*
+* Parameters:
+* @pointerToStructure: pointer to TemperatureSingleDayRecordType which will be modified.
+*
 *****************************************************************************************/
 static void nextDayTemperatureStructureInit(TemperatureSingleDayRecordType *pointerToStructure)
 {
@@ -45,6 +62,22 @@ static void nextDayTemperatureStructureInit(TemperatureSingleDayRecordType *poin
 	}
 }
 
+/*****************************************************************************************
+* verifyTemperatureRecord() - verify that TemperatureSingleDayRecordType structure under
+* memory hold by temperatureSingleDay pointer is correct. Correctness mean that values of
+* fields day, month, year and source of temperature sensor is the same like parameters of
+* this function. This function also check CRC field to confirm that data ins structure is
+* valid.
+*
+* Parameters:
+* @temperatureSingleDay: pointer to TemperatureSingleDayRecordType which will be verified.
+* @sourceTemperature: type of temperature sensor used to comarison with tested structure.
+* @day: day number used to comarison with tested structure.
+* @month: month number used to comarison with tested structure.
+* @year: year number used to comarison with tested structure.
+*
+* Return: true if tested structure is valid otherwise false.
+*****************************************************************************************/
 bool verifyTemperatureRecord(TemperatureSingleDayRecordType *temperatureSingleDay,
 		uint8_t sourceTemperature, uint8_t day, uint8_t month, uint8_t year)
 {
@@ -67,11 +100,28 @@ bool verifyTemperatureRecord(TemperatureSingleDayRecordType *temperatureSingleDa
 	}
 }
 
-static bool temperatureRecordLoader(uint16_t address, TemperatureSingleDayRecordType *temperatureSingleDay, uint8_t sourceTemperature)
+/*****************************************************************************************
+* temperatureRecordLoader() - load temperature structure from address set as paramatere to
+* memory address hold by temperatureSingleDay pointer. Loaded TemperatureSingleDayRecordType
+* structure fields will be checked that fields are correct. Timestamp in structure will be
+* compared with current timestamp hold by ClockState structure. Function also check that
+* tested structure not contain only zeroes as fields values. This function is blocking
+* and is call on startup procedure.
+*
+* Parameters:
+* @address: FRAM memory address where TemperatureSingleDayRecordType structure is stored.
+* @temperatureSingleDay: pointer to RAM memory where TemperatureSingleDayRecordType
+*  structure will be loaded.
+* @sourceTemperature: type of temperature sensor used to comarison with tested structure.
+*
+* Return: true if tested structure is valid otherwise false.
+*****************************************************************************************/
+static bool temperatureRecordLoader(uint16_t address, TemperatureSingleDayRecordType *temperatureSingleDay,
+		uint8_t sourceTemperature)
 {
 	FRAM_Read(address, sizeof(TemperatureSingleDayRecordType), (uint8_t*)temperatureSingleDay);
 
-	for(int i=0;i<100000;i++)
+	for(int i = 0; i<100000; i++)
 	{
 		if(FRAM_Process())
 		{
@@ -82,7 +132,7 @@ static bool temperatureRecordLoader(uint16_t address, TemperatureSingleDayRecord
 
 	//if temperatureSingleDay contain only zeros treat as invalid
 	bool emptyStructure = true;
-	for(uint16_t i =0;i<(uint16_t)(sizeof(TemperatureSingleDayRecordType));i++)
+	for(uint16_t i = 0; i < (uint16_t)(sizeof(TemperatureSingleDayRecordType)); i++)
 	{
 		uint8_t* temperatureDataPointer = (uint8_t*)(temperatureSingleDay);
 		if(temperatureDataPointer[i] != 0)
@@ -100,14 +150,26 @@ static bool temperatureRecordLoader(uint16_t address, TemperatureSingleDayRecord
 }
 
 /*****************************************************************************************
-* Function load last temperature day structure from FRAM and verified correctness.
-* Function call is performed on beginning of startup process and procedure is
-* blocking which not cause problem beacuse call is performed just once.
+* initTemperatureBlock() - load last temperature day structure from FRAM memory and
+* verified correctness. FRAM index before using will be checked that is corrected.
+* If data pointed by FRAM index will be incorrect that in second atempt is loaded and
+* tested data from FRAM_MEASUREMENT_BACKUP_COPY address. Function call is performed on
+* beginning of startup process and procedure is blocking which not cause problem beacuse
+* call is performed just once for all sensors. This function is directly call from
+* Thread_Init function and call chain of above functions.
+*
+* Parameters:
+* @temperatureSingleDay: pointer to RAM memory where TemperatureSingleDayRecordType
+*  structure will be loaded.
+* @temperatureFramIndex: value in range from 0 to MAX_RECORD_IN_FRAM with number of
+*  selected TemperatureSingleDayRecordType structure in FRAM.
+* @sourceTemperature: type of temperature sensor used to comarison with tested structure.
+*
 *****************************************************************************************/
 static void initTemperatureBlock(TemperatureSingleDayRecordType *temperatureSingleDay, uint16_t *temperatureFramIndex, uint8_t sourceTemperature)
 {
 	//FRAM index should be initialized
-	if(*temperatureFramIndex != 0xFFFF)
+	if(*temperatureFramIndex != NOT_INITIALIZED_FRAM_INDEX_VALUE)
 	{
 		//load data from FRAM and validate structure
 		if(temperatureRecordLoader(convertFramIndexToAddress(*temperatureFramIndex), temperatureSingleDay, sourceTemperature))
@@ -136,11 +198,48 @@ static void initTemperatureBlock(TemperatureSingleDayRecordType *temperatureSing
 }
 
 /*****************************************************************************************
-* Function copied data from day buffer located in RAM memory to FRAM memory.
-* Write to FRAM memory is prformed only if recordTemperature flag is set to
+* lockSharedSpiPort() - check that SPI port shared between touchscreen and FRAM can be
+* used by FRAM transaction. FRAM is locked to perform appropriate operation when touch
+* screen isn't pressed(pin state which inform about touch state is checked) and other
+* FRAM transaction isn't processed.
+*
+* Parameters:
+* @selectedSpiType: type of SPI transaction which will be used as lock flag if lock
+*  operation will be possible.
+*
+* Return: true if lock operation can be possible othervise return false.
+*****************************************************************************************/
+static bool lockSharedSpiPort(SHARED_SPI_STATE_TYPE selectedSpiType)
+{
+	//check SPI availability and PENIRQ on lcd is on high state(screen wasn't pressed)
+	if( (ClockState.sharedSpiState == NOT_USED)
+		&& (GPIO_GetState(TOUCH_PANEL_PIN_PENIRQ_GPIO_PORT, TOUCH_PANEL_PIN_PENIRQ_GPIO_PIN) == true))
+	{
+		//lock SPI
+		ClockState.sharedSpiState = selectedSpiType;
+
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+/*****************************************************************************************
+* processWriteTemperature() - copied data from day buffer located in RAM memory to FRAM
+* memory. Write to FRAM memory is prformed only if recordTemperature flag is set to
 * true. Multiply temperature source can have this flag set as true and parallel
-* temperature store in FRAM will be performed(when first store will be finished
-* then next temperature store will be performed).
+* temperature store in FRAM will be performed(when first store will be finished then next
+* temperature store process will be performed). This function is non blocking and mus be
+* call cyclically.
+*
+* Parameters:
+* @temperatureFramTransaction: pointer to structure with variable necessary for perform
+*  copy to FRAM process. All temperature sensor must have separate structure. This
+*  structure hold few temperature measurements which will be used to calculate average
+*  value.
+*
 *****************************************************************************************/
 static void processWriteTemperature(TemperatureFramWriteTransactionPackageType *temperatureFramTransaction)
 {
@@ -198,12 +297,8 @@ static void processWriteTemperature(TemperatureFramWriteTransactionPackageType *
 		}
 	}/* if(ClockState.TemperatureSensorTable[temperatureFramTransaction->source].recordTemperature == true) */
 
-	//check SPI availability and PENIRQ on lcd is on high state(screen wasn't pressed)
-	if( temperatureFramTransaction->startTemperatureTransaction && (ClockState.sharedSpiState == NOT_USED)
-		&& (GPIO_GetState(TOUCH_PANEL_PIN_PENIRQ_GPIO_PORT, TOUCH_PANEL_PIN_PENIRQ_GPIO_PIN) == true))
+	if(temperatureFramTransaction->startTemperatureTransaction && lockSharedSpiPort(FRAM_USAGE))
 	{
-		//lock SPI
-		ClockState.sharedSpiState = FRAM_USAGE;
 		ClockState.FramTransactionIdentifier = temperatureFramTransaction->transactionId;
 
 		//copy to local buffer and calculate CRC
@@ -244,10 +339,25 @@ static void processWriteTemperature(TemperatureFramWriteTransactionPackageType *
 }
 
 /*****************************************************************************************
-* Function copied data from FRAN memory to RAM buffer. Function is used to gather data
-* from FRAM which will be used to draw graph. Function in one cycle operate on one sensor
-* data source. TemperatureFramReadTransactionPackageType structure used as input parameter
-* is initialized when window with temperature visualization(temperatureWindow) is opended.
+* processReadTemperature() - copied data from FRAN memory to RAM buffer. Function is used
+* to gather data from FRAM which will be used to draw graph. Function in one cycle operate
+* on one sensor data source. TemperatureFramReadTransactionPackageType structure used as
+* input parameter is initialized when window with temperature visualization
+* (temperatureWindow) is opended. Global BufferCursor structure is trigered from GUI level
+* and contain cotrol data for this function. RAM buffer used to load temperature structures
+* contain previous buffer, next buffer and current pointed structure. All RAM buffer
+* objects is organized as table with ReadFramTempBufferType structures where appropriate
+* pointers hold address of next and previous element of table. Overall size of table
+* describe define READ_TEMP_FRAM_BUFFER_SIZE which is calculated from two defines with size
+* of previous buffer and next buffer. Those defines are READ_TEMP_FRAM_BUFFER_PREVIOUS and
+* READ_TEMP_FRAM_BUFFER_NEXT. This function is non blocking and mus be call cyclically.
+*
+* Parameters:
+* @temperatureFramTransaction: pointer to structure with data which decide about load
+*  process. Structure under pointer memory contain temporary data like day measueremnt
+*  structure and FRAM index which will be assigned to RAM buffer object if searched data
+*  will match.
+*
 *****************************************************************************************/
 static void processReadTemperature(TemperatureFramReadTransactionPackageType *temperatureFramTransaction)
 {
@@ -334,7 +444,6 @@ static void processReadTemperature(TemperatureFramReadTransactionPackageType *te
 					if( (framIndexFromCurrentStructure > framIndexFromNextStructure)
 						|| ( (framIndexFromCurrentStructure < SEARCH_RADIUS)
 							&& (framIndexFromNextStructure > (MAX_RECORD_IN_FRAM - SEARCH_RADIUS)) ) )
-
 					{
 						//exception of rule - correct occurence
 						if((framIndexFromCurrentStructure > (MAX_RECORD_IN_FRAM - SEARCH_RADIUS))
@@ -364,12 +473,8 @@ endCheck:
 		}
 		else//if forward load is necessary
 		{
-			//check SPI availability and PENIRQ on lcd is on high state(screen wasn't pressed)
-			if( (ClockState.sharedSpiState == NOT_USED)
-				&& (GPIO_GetState(TOUCH_PANEL_PIN_PENIRQ_GPIO_PORT, TOUCH_PANEL_PIN_PENIRQ_GPIO_PIN) == true))
+			if(lockSharedSpiPort(FRAM_USAGE))
 			{
-				//lock SPI
-				ClockState.sharedSpiState = FRAM_USAGE;
 				ClockState.FramTransactionIdentifier = FRAM_ID_READ_TEMPERATURE;
 
 				//start searchin place pointed by index searchFramIndexPosition
@@ -420,6 +525,26 @@ endCheck:
 	}/* if(BufferCursor.loadDataFlag == true || temperatureFramTransaction->startReadTransaction == true) */
 }
 
+/*****************************************************************************************
+* wifiProcessFramSearchRequest() - search FRAM if appropriate request from WIFI module
+* will be send. About search decide searchState variable in WifiStateType structure
+* passed to function by pointer. This function work different then processReadTemperature
+* because it don't search radius from previous element but search all FRAM memory. During
+* search process is only loaded four first bytes of day measurement structure. Those bytes
+* contain day, month, year and temperature source. If bytes will be the same like begining
+* of searched structure then rest of data will be loaded. When complete day measurement
+* structure will be loaded then it will be verified by checing checksum that data is
+* correct. If new search request will be send function will check previous loaded structure.
+* When structure will be same like searched then FRAM will not be searched. Function on
+* final step generate SOME/IP response payload. This function is non blocking and must be
+* call cyclically.
+*
+* Parameters:
+* @wifiStateStructure: pointer to WifiStateType structure with data for handle all WIFI
+*  module. This function use only part of fields from this structure(parts necessary
+*  for load data from FRAM and data to asembly TX message).
+*
+*****************************************************************************************/
 static void wifiProcessFramSearchRequest(WifiStateType* wifiStateStructure)
 {
 	switch(wifiStateStructure->searchState)
@@ -428,11 +553,8 @@ static void wifiProcessFramSearchRequest(WifiStateType* wifiStateStructure)
 		break;
 
 	case SEARCH_REQUESTED:
-		if((ClockState.sharedSpiState == NOT_USED)
-			&& (GPIO_GetState(TOUCH_PANEL_PIN_PENIRQ_GPIO_PORT, TOUCH_PANEL_PIN_PENIRQ_GPIO_PIN) == true))
+		if(lockSharedSpiPort(FRAM_USAGE))
 		{
-			//lock SPI
-			ClockState.sharedSpiState = FRAM_USAGE;
 			ClockState.FramTransactionIdentifier = FRAM_ID_SEARCH_TEMPERATURE;
 
 			//initialize variable in structure necessary for search
@@ -556,6 +678,13 @@ static void wifiProcessFramSearchRequest(WifiStateType* wifiStateStructure)
 	}/* switch(wifiStateStructure->searchState) */
 }
 
+/*****************************************************************************************
+* calculateFurnaceTemperature() - calculate furnace temperature by add to temperature from
+* sensor temperature offset set by GUI interface. If temperature will be invalid
+* calculation will not be performed.
+*
+* Return: calculating temperature
+*****************************************************************************************/
 static uint16_t calculateFurnaceTemperature(void)
 {
 	if(ClockState.TemperatureSensorTable[FURNACE_TEMPERATURE].temperatureValid)
@@ -571,6 +700,11 @@ static uint16_t calculateFurnaceTemperature(void)
 	}
 }
 
+/*****************************************************************************************
+* processAlarm() - function decide about raising alarm by checking three possible source
+* of alarm condition. If alarm is raised then also PWM for buzzer is activated. Buzzer
+* melody is controlled by this function.
+*****************************************************************************************/
 static void processAlarm(void)
 {
 	if(gui.active_window != &clockSettingsWindow)
@@ -662,11 +796,9 @@ static void processAlarm(void)
 	}
 }
 
-
-
 /*****************************************************************************************
-* Function initiate data for single Thread responsible for many thing like handle FRAM.
-* In initialization process is set timer(responsible for cyclic call Thread), FRAM
+* Thread_Init() - initiate data for single Thread responsible for many thing like handle
+* FRAM. In initialization process is set timer(responsible for cyclic call Thread), FRAM
 * temperature measurement block and I2C bus expander.
 *****************************************************************************************/
 void Thread_Init(void)
@@ -766,8 +898,8 @@ void Thread_Init(void)
 }
 
 /*****************************************************************************************
-* Function is call every 20 ms. All things inside is asynchronous executed(taks isn't
-* block execution for longer period).
+* Thread_Call() - function is call every 20 ms. All things inside is asynchronous
+* executed(task isn't block execution for longer period).
 *****************************************************************************************/
 void Thread_Call(void)
 {
@@ -778,11 +910,11 @@ void Thread_Call(void)
 		static uint16_t* tempValuePointer = &ClockState.TemperatureSensorTable[INSIDE_TEMPERATURE].temperatureValue;
 		static bool* tempValueValidFlagPointer = &ClockState.TemperatureSensorTable[INSIDE_TEMPERATURE].temperatureValid;
 		static uint8_t nextTempSensor = 1;
-		static uint16_t refreshGuiCounter = 0;
+		static uint16_t refreshGuiCounter = (3*ONE_SECONDS);
 
 		TemperatureSensor_Process();
 
-		if(TemperatureSensor_CheckMeasurementStatus() == I2C_DataIsReady)
+		if(TemperatureSensor_CheckMeasurementStatus() == I2C_DATA_IS_READY)
 		{
 			*tempValuePointer = TemperatureSensor_ReturnTemperature();
 
@@ -796,7 +928,7 @@ void Thread_Call(void)
 				*tempValuePointer = calculateFurnaceTemperature();
 		}
 
-		if (TemperatureSensor_CheckMeasurementStatus() == I2C_WaitingForRequest)
+		if (TemperatureSensor_CheckMeasurementStatus() == I2C_WAITING_FOR_REQUEST)
 		{
 			nextTempSensor++;
 			if(nextTempSensor == 4)
@@ -830,8 +962,8 @@ void Thread_Call(void)
 			TemperatureSensor_StartMeasurement();
 		}
 
-		//refresh GUI temp values every 20s
-		if(refreshGuiCounter >= (20*ONE_SECONDS))
+		//refresh GUI temp values every 5s
+		if(refreshGuiCounter >= (5*ONE_SECONDS))
 		{
 			if(ClockState.refreshTemperatureValues == WAITING_FOR_REQUEST)
 			{
@@ -872,11 +1004,8 @@ void Thread_Call(void)
 			framClearCounter = 0;
 
 		if( ((framClearCounter >= (ONE_SECONDS*3)) || (ClockState.factoryResetViaGui == true))
-				&& (ClockState.sharedSpiState == NOT_USED) &&
-			(GPIO_GetState(TOUCH_PANEL_PIN_PENIRQ_GPIO_PORT, TOUCH_PANEL_PIN_PENIRQ_GPIO_PIN) == true))
+			&& lockSharedSpiPort(FRAM_USAGE))
 		{
-			//lock SPI
-			ClockState.sharedSpiState = FRAM_USAGE;
 			ClockState.FramTransactionIdentifier = FRAM_ID_FACTORY_RESET;
 
 			framClearFlag = true;
@@ -915,12 +1044,8 @@ void Thread_Call(void)
 
 		if((clockStateToFramCounter >= ONE_SECONDS) && (framClearFlag == false))
 		{
-			//check SPI availability and PENIRQ on lcd is on high state(screen wasn't pressed)
-			if( (ClockState.sharedSpiState == NOT_USED)
-				&& (GPIO_GetState(TOUCH_PANEL_PIN_PENIRQ_GPIO_PORT, TOUCH_PANEL_PIN_PENIRQ_GPIO_PIN) == true))
+			if(lockSharedSpiPort(FRAM_USAGE))
 			{
-				//lock SPI
-				ClockState.sharedSpiState = FRAM_USAGE;
 				ClockState.FramTransactionIdentifier = FRAM_ID_CLOCKSTATE;
 
 				//copy clockState to local buffer
@@ -995,6 +1120,9 @@ void Thread_Call(void)
 	}
 }
 
+/*****************************************************************************************
+* TIMER16_0_IRQHandler() - function for handle microcontroller interuption from timer,
+*****************************************************************************************/
 void TIMER16_0_IRQHandler(void)
 {
 	Thread_Call();
