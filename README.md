@@ -53,16 +53,23 @@ Second release of code.
 9) Added support to monochrome bitmap in uGui. Added monochrome bitmap 
 in GUI code. Added Options fields in bitmap.
 
-Third release of code.
+Release of code with additional GUI thing.
 First official release of HW.
 
 10) Code refactoring is necessary to delete thing which isn't necessary 
 and improve code readability.
 
-Fourth release of code.
+Third release of code.
 
-11) Prepare android application to control clock via Wifi.
-12) Prepare document with clock specification.
+    -current place in project status-
+
+11) Prepare housing for clock.
+12) Prepare android application to control clock via Wifi.
+13) Prepare document with clock specification.
+14) Fix known issues:
+	-change day should cause change data in time structure
+	-fast switch between two temperature window cause issue with FRAM loading
+	-load display temperature should load temperature even if gap will detected
 
 License of code project:
   Below drivers is licensed under BSD 3-claus license:
