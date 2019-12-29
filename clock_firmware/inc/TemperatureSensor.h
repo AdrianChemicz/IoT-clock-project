@@ -85,9 +85,9 @@ extern "C" {
 #endif
 	typedef enum TempStatus
 	{
-		I2C_WaitingForRequest = 	0,
-		I2C_RequestExecuting = 		1,
-		I2C_DataIsReady = 			2,
+		I2C_WAITING_FOR_REQUEST,
+		I2C_REQUEST_EXECUTING,
+		I2C_DATA_IS_READY,
 	}TempStatus;
 
 	void TemperatureSensor_Init(void);

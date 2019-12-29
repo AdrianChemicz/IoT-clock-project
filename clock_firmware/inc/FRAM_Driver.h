@@ -69,12 +69,12 @@
 
 typedef enum OperationType
 {
-	None = 							0,
-	PrepareMemoryWrite = 			1,
-	MemoryWrite = 					2,
-	PrepareMemoryRead = 			3,
-	MemoryRead = 					4,
-	FinalizeMemoryTransaction = 	5,
+	NONE,
+	PREPARE_MEMORY_WRITE,
+	MEMORY_WRITE,
+	PREPARE_MEMORY_READ,
+	MEMORY_READ,
+	FINALIZE_MEMORY_TRANSACTION,
 }OperationType;
 
 void FRAM_Init(uint8_t port);

@@ -66,9 +66,9 @@ extern "C" {
 
 typedef enum I2C_Status
 {
-	I2C_WaitingForData = 	0,
-	I2C_WaitingForSend = 	1,
-	I2C_Sending = 			2,
+	I2C_WAITING_FOR_DATA,
+	I2C_WAITING_FOR_SEND,
+	I2C_SENDING,
 }I2C_Status;
 
 typedef struct

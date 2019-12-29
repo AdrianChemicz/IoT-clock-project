@@ -20,9 +20,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>. */
 #define _GUI_CLOCK_H_
 
 /*
- * This module is responsible for clock GUI. Initialize all windows, call execution
- * appropriate operation triggered from GUI button and register SPI drivers in uGui
- * library. Only this module use direcly uGui library.
+ * This module is responsible for clock GUI. Initialize all windows, call appropriate
+ * operation triggered from GUI button and register SPI drivers in uGui library.
+ * Only this module use direcly uGui library.
  */
 
 #include <stdbool.h>
@@ -32,165 +32,165 @@ along with this program. If not, see <http://www.gnu.org/licenses/>. */
 #include "image.h"
 #include "ESP_Layer.h"
 
-#define MAX_OBJECTS 18
-#define MAX_OBJECTS_SETTINGS 23
-#define MAX_OBJECTS_TEMPERATURE_WINDOW 23
-#define MAX_OBJECTS_WIFI_SETTINGS 20
-#define MAX_OBJECTS_KEYBOARD_WINDOW 47
+#define MAX_OBJECTS 					18
+#define MAX_OBJECTS_SETTINGS 			23
+#define MAX_OBJECTS_TEMPERATURE_WINDOW 	23
+#define MAX_OBJECTS_WIFI_SETTINGS 		20
+#define MAX_OBJECTS_KEYBOARD_WINDOW 	47
 
-#define	OPTIONS_CLOSE_BUTTON_X_START_POSITION 291
-#define	OPTIONS_CLOSE_BUTTON_Y_START_POSITION 0
-#define	OPTIONS_CLOSE_BUTTON_X_END_POSITION 313
-#define	OPTIONS_CLOSE_BUTTON_Y_END_POSITION 20
+#define	OPTIONS_CLOSE_BUTTON_X_START_POSITION 	291
+#define	OPTIONS_CLOSE_BUTTON_Y_START_POSITION 	0
+#define	OPTIONS_CLOSE_BUTTON_X_END_POSITION 	313
+#define	OPTIONS_CLOSE_BUTTON_Y_END_POSITION 	20
 
-#define DEFAULT_GUI_BACKGROUND_COLOR C_WHITE_SMOKE
+#define DEFAULT_GUI_BACKGROUND_COLOR 	C_WHITE_SMOKE
 
-#define INVALID_READ_SENSOR_VALUE 0xFFFF
+#define INVALID_READ_SENSOR_VALUE 	0xFFFF
 
 //main window
-#define PICTURE_HEIGHT 66
-#define PICTURE_LENGTH 70
-#define ALARM_BUTTON_BORDER_DISTANCE 6
-#define LABEL_LENGTH 71
-#define ALARM_BUTTON_LENGTH_MW 27
-#define ALARM_BUTTON_HEIGH_MW 25
+#define PICTURE_HEIGHT 					66
+#define PICTURE_LENGTH 					70
+#define ALARM_BUTTON_BORDER_DISTANCE 	6
+#define LABEL_LENGTH 					71
+#define ALARM_BUTTON_LENGTH_MW 			27
+#define ALARM_BUTTON_HEIGH_MW 			25
 
 //grid parameter for main window
-#define GRID_X1_MW 3
-#define GRID_X2_MW 76
-#define GRID_X3_MW 155
-#define GRID_X4_MW 230
-#define GRID_Y1_MW 10
-#define GRID_Y2_MW 93
-#define GRID_Y3_MW 164
-#define GRID_Y1_SECOND_BUTTON_MW 37
-#define GRID_Y1_THIRD_BUTTON_MW 64
-#define LABEL_LENGTH 71
-#define ALARM_BUTTON_LENGTH_MW 27
-#define ALARM_BUTTON_HEIGH_MW 25
+#define GRID_X1_MW 					3
+#define GRID_X2_MW 					76
+#define GRID_X3_MW 					155
+#define GRID_X4_MW 					230
+#define GRID_Y1_MW 					10
+#define GRID_Y2_MW 					93
+#define GRID_Y3_MW 					164
+#define GRID_Y1_SECOND_BUTTON_MW 	37
+#define GRID_Y1_THIRD_BUTTON_MW 	64
+#define LABEL_LENGTH 				71
+#define ALARM_BUTTON_LENGTH_MW 		27
+#define ALARM_BUTTON_HEIGH_MW 		25
 
 //clock settings window
-#define SET_TIME_BUTTON_HEIGHT 30
-#define SET_TIME_BUTTON_LENGTH 50
+#define SET_TIME_BUTTON_HEIGHT 	30
+#define SET_TIME_BUTTON_LENGTH 	50
 
 //grid parameters for clock settings window
-#define GRID_X1_CSW 50
-#define GRID_X2_CSW 211
-#define GRID_Y1_CSW 30
-#define GRID_Y2_CSW 123
+#define GRID_X1_CSW 		50
+#define GRID_X2_CSW 		211
+#define GRID_Y1_CSW 		30
+#define GRID_Y2_CSW 		123
 
-#define INC_DEC_X_PICTURE_OFFSET_CSW 8
-#define INCREMENT_Y_PICTURE_OFFSET_CSW 5
-#define DECREMENT_Y_PICTURE_OFFSET_CSW 7
+#define INC_DEC_X_PICTURE_OFFSET_CSW 	8
+#define INCREMENT_Y_PICTURE_OFFSET_CSW 	5
+#define DECREMENT_Y_PICTURE_OFFSET_CSW 	7
 
 //parameters for temperature window
-#define GRID_X1_TW 118
-#define GRID_X2_TW 262
-#define GRID_Y1_TW 165
-#define GRID_Y2_TW 185
-#define GRID_Y3_TW 201
+#define GRID_X1_TW 	118
+#define GRID_X2_TW 	262
+#define GRID_Y1_TW 	165
+#define GRID_Y2_TW 	185
+#define GRID_Y3_TW 	201
 								  
-#define INC_DEC_X_PICTURE_OFFSET_TW 5
-#define INCREMENT_Y_PICTURE_OFFSET_TW 3
-#define DECREMENT_Y_PICTURE_OFFSET_TW 4
+#define INC_DEC_X_PICTURE_OFFSET_TW 	5
+#define INCREMENT_Y_PICTURE_OFFSET_TW 	3
+#define DECREMENT_Y_PICTURE_OFFSET_TW 	4
 
-#define MOVE_GRAPH_BUTTON_LEFT_X 5
-#define MOVE_GRAPH_BUTTON_RIGHT_X 280
-#define MOVE_GRAPH_BUTTON_Y 40
-#define MOVE_GRAPH_BUTTON_HEIGHT 100
-#define MOVE_GRAPH_BUTTON_LENGTH 25
-#define MOVE_GRAPH_LEFT_PICTURE_X_OFFSET 3
-#define MOVE_GRAPH_RIGHT_PICTURE_X_OFFSET 5
-#define MOVE_GRAPH_Y_PICTURE_OFFSET 30
+#define MOVE_GRAPH_BUTTON_LEFT_X 			5
+#define MOVE_GRAPH_BUTTON_RIGHT_X 			280
+#define MOVE_GRAPH_BUTTON_Y 				40
+#define MOVE_GRAPH_BUTTON_HEIGHT 			100
+#define MOVE_GRAPH_BUTTON_LENGTH 			25
+#define MOVE_GRAPH_LEFT_PICTURE_X_OFFSET 	3
+#define MOVE_GRAPH_RIGHT_PICTURE_X_OFFSET 	5
+#define MOVE_GRAPH_Y_PICTURE_OFFSET 		30
 
-#define SET_TEMPERATURE_BUTTON_HEIGHT 14
-#define SET_TEMPERATURE_BUTTON_LENGTH 22
+#define SET_TEMPERATURE_BUTTON_HEIGHT 		14
+#define SET_TEMPERATURE_BUTTON_LENGTH 		22
 
-#define TEMPERATURE_GRAPH_X_START 35
-#define TEMPERATURE_GRAPH_Y_START 40
-#define TEMPERATURE_GRAPH_WIDH 240
-#define TEMPERATURE_GRAPH_HEIGH 100
+#define TEMPERATURE_GRAPH_X_START 	35
+#define TEMPERATURE_GRAPH_Y_START 	40
+#define TEMPERATURE_GRAPH_WIDH 		240
+#define TEMPERATURE_GRAPH_HEIGH 	100
 
-#define MAX_STEP_ON_GRAPH 15
+#define MAX_STEP_ON_GRAPH 			15
 
-#define NUM_OF_MEASUREMENTS_ON_LEFT_SIDE 40
-#define NUM_OF_MEASUREMENTS_ON_RIGHT_SIDE 40
-#define CURSOR_POSITION_ON_X_AXIS (NUM_OF_MEASUREMENTS_ON_LEFT_SIDE)
-#define NUM_OF_MEASUREMENTS_IN_X_AXIS (NUM_OF_MEASUREMENTS_ON_LEFT_SIDE + 1 + NUM_OF_MEASUREMENTS_ON_RIGHT_SIDE)
-#define NUM_OF_FRAM_BLOCK_IN_TABLE 3
-#define X_AXIS_DISTANCE_FROM_FRAME 2
-#define X_AXIS_ENTRIES_LENGTH 3
-#define DRAW_THRESHOLD_TIMESTAMP 28
-#define INVALID_INIT_TEMPERTAURE 0xFFF0
-#define NUMBER_OF_MEASUREMENTS_IN_FILTER_TABLE 6
+#define NUM_OF_MEASUREMENTS_ON_LEFT_SIDE 		40
+#define NUM_OF_MEASUREMENTS_ON_RIGHT_SIDE 		40
+#define CURSOR_POSITION_ON_X_AXIS 			(NUM_OF_MEASUREMENTS_ON_LEFT_SIDE)
+#define NUM_OF_MEASUREMENTS_IN_X_AXIS 		(NUM_OF_MEASUREMENTS_ON_LEFT_SIDE + 1 + NUM_OF_MEASUREMENTS_ON_RIGHT_SIDE)
+#define NUM_OF_FRAM_BLOCK_IN_TABLE 				3
+#define X_AXIS_DISTANCE_FROM_FRAME 				2
+#define X_AXIS_ENTRIES_LENGTH 					3
+#define DRAW_THRESHOLD_TIMESTAMP 				28
+#define INVALID_INIT_TEMPERTAURE 			0xFFF0
+#define NUMBER_OF_MEASUREMENTS_IN_FILTER_TABLE 	6
 
 //parameters for settings window
-#define LINE_HEIGH_SW 20
-#define FIRST_LINE_BEGIN_SW 1
-#define SECOND_LINE_BEGIN_SW 26
-#define THIRD_LINE_BEGIN_SW 51
-#define FOURTH_LINE_BEGIN_SW 76
+#define LINE_HEIGH_SW 				20
+#define FIRST_LINE_BEGIN_SW 		1
+#define SECOND_LINE_BEGIN_SW 		26
+#define THIRD_LINE_BEGIN_SW 		51
+#define FOURTH_LINE_BEGIN_SW 		76
 
-#define CALENDAR_GRID_X1_SW 2
-#define CALENDAR_GRID_X2_SW 42
-#define CALENDAR_GRID_X3_SW 90
-#define CALENDAR_GRID_Y1_SW 165
-#define CALENDAR_GRID_Y2_SW 180
-#define CALENDAR_GRID_Y3_SW 200
-#define CALENDAR_SWITCH_LENGTH_SW 16
-#define CALENDAR_SWITCH_HEIGH_SW 10
-#define INVALID_CALENDAR_DATE 255
+#define CALENDAR_GRID_X1_SW 		2
+#define CALENDAR_GRID_X2_SW 		42
+#define CALENDAR_GRID_X3_SW 		90
+#define CALENDAR_GRID_Y1_SW 		165
+#define CALENDAR_GRID_Y2_SW 		180
+#define CALENDAR_GRID_Y3_SW 		200
+#define CALENDAR_SWITCH_LENGTH_SW 	16
+#define CALENDAR_SWITCH_HEIGH_SW 	10
+#define INVALID_CALENDAR_DATE 		255
 
 //parameters for WiFi settings window
-#define FIRST_LINE_OF_APN_BEGIN_WSW 75
-#define SECOND_LINE_OF_APN_BEGIN_WSW 100
-#define THIRD_LINE_OF_APN_BEGIN_WSW 125
-#define FOURTH_LINE_OF_APN_BEGIN_WSW 150
-#define FIVETH_LINE_OF_APN_BEGIN_WSW 175
-#define APN_LIST_LINE_HEIGH_WSW 20
-#define APN_NAME_BEGIN 1
-#define APN_NAME_END 190
-#define APN_CONNECT_BUTTON_BEGIN 195
-#define APN_CONNECT_BUTTON_END 290
-#define APN_SLIDER_BEGIN 295
-#define APN_SLIDER_END 310
-#define NUMBER_OF_WIFI_DISPLAY_NETWORKS 5
-#define TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN TXB_ID_3
-#define BUTTON_WIFI_DISPLAY_NETWORK_BEGIN BTN_ID_2
+#define FIRST_LINE_OF_APN_BEGIN_WSW 				75
+#define SECOND_LINE_OF_APN_BEGIN_WSW 				100
+#define THIRD_LINE_OF_APN_BEGIN_WSW 				125
+#define FOURTH_LINE_OF_APN_BEGIN_WSW 				150
+#define FIVETH_LINE_OF_APN_BEGIN_WSW 				175
+#define APN_LIST_LINE_HEIGH_WSW 					20
+#define APN_NAME_BEGIN 								1
+#define APN_NAME_END 								190
+#define APN_CONNECT_BUTTON_BEGIN 					195
+#define APN_CONNECT_BUTTON_END 						290
+#define APN_SLIDER_BEGIN 							295
+#define APN_SLIDER_END 								310
+#define NUMBER_OF_WIFI_DISPLAY_NETWORKS 			5
+#define TEXTBOX_WIFI_DISPLAY_NETWORK_BEGIN 		TXB_ID_3
+#define BUTTON_WIFI_DISPLAY_NETWORK_BEGIN 		BTN_ID_2
 
 //parameters for WiFi keyboard window
-#define ROW_HEIGH_WKW 37
-#define BUTTON_HEIGH_WKW 30
-#define FIRST_ROW_OF_BUTTONS_BEGIN_WKW 65
-#define SECOND_ROW_OF_BUTTONS_BEGIN_WKW (FIRST_ROW_OF_BUTTONS_BEGIN_WKW + (ROW_HEIGH_WKW * 1))
-#define THIRD_ROW_OF_BUTTONS_BEGIN_WKW (FIRST_ROW_OF_BUTTONS_BEGIN_WKW + (ROW_HEIGH_WKW * 2))
-#define FOURTH_ROW_OF_BUTTONS_BEGIN_WKW (FIRST_ROW_OF_BUTTONS_BEGIN_WKW + (ROW_HEIGH_WKW * 3))
+#define ROW_HEIGH_WKW 						37
+#define BUTTON_HEIGH_WKW 					30
+#define FIRST_ROW_OF_BUTTONS_BEGIN_WKW 		65
+#define SECOND_ROW_OF_BUTTONS_BEGIN_WKW 	(FIRST_ROW_OF_BUTTONS_BEGIN_WKW + (ROW_HEIGH_WKW * 1))
+#define THIRD_ROW_OF_BUTTONS_BEGIN_WKW 		(FIRST_ROW_OF_BUTTONS_BEGIN_WKW + (ROW_HEIGH_WKW * 2))
+#define FOURTH_ROW_OF_BUTTONS_BEGIN_WKW 	(FIRST_ROW_OF_BUTTONS_BEGIN_WKW + (ROW_HEIGH_WKW * 3))
 
-#define BUTTON_COLUMN_BEGIN_WKW 7
-#define BUTTON_DISTANCE_BETWEEN_COLUMN_WKW 27
-#define BUTTON_COLUMN_NR1_WKW 20
-#define BUTTON_COLUMN_NR2_WKW (BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*1))
-#define BUTTON_COLUMN_NR3_WKW (BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*1))
-#define BUTTON_COLUMN_NR4_WKW (BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*2))
-#define BUTTON_COLUMN_NR5_WKW (BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*2))
-#define BUTTON_COLUMN_NR6_WKW (BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*3))
-#define BUTTON_COLUMN_NR7_WKW (BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*3))
-#define BUTTON_COLUMN_NR8_WKW (BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*4))
-#define BUTTON_COLUMN_NR9_WKW (BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*4))
-#define BUTTON_COLUMN_NR10_WKW (BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*5))
-#define BUTTON_COLUMN_NR11_WKW (BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*5))
-#define BUTTON_COLUMN_NR12_WKW (BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*6))
-#define BUTTON_COLUMN_NR13_WKW (BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*6))
-#define BUTTON_COLUMN_NR14_WKW (BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*7))
-#define BUTTON_COLUMN_NR15_WKW (BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*7))
-#define BUTTON_COLUMN_NR16_WKW (BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*8))
-#define BUTTON_COLUMN_NR17_WKW (BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*8))
-#define BUTTON_COLUMN_NR18_WKW (BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*9))
-#define BUTTON_COLUMN_NR19_WKW (BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*9))
-#define BUTTON_COLUMN_NR20_WKW (BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*10))
-#define BUTTON_COLUMN_NR21_WKW (BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*10))
-#define BUTTON_COLUMN_END_WKW 300
-#define BUTTON_LENGTH_WKW 22
+#define BUTTON_COLUMN_BEGIN_WKW 				7
+#define BUTTON_DISTANCE_BETWEEN_COLUMN_WKW 		27
+#define BUTTON_COLUMN_NR1_WKW 					20
+#define BUTTON_COLUMN_NR2_WKW 		(BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*1))
+#define BUTTON_COLUMN_NR3_WKW 		(BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*1))
+#define BUTTON_COLUMN_NR4_WKW 		(BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*2))
+#define BUTTON_COLUMN_NR5_WKW 		(BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*2))
+#define BUTTON_COLUMN_NR6_WKW 		(BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*3))
+#define BUTTON_COLUMN_NR7_WKW 		(BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*3))
+#define BUTTON_COLUMN_NR8_WKW 		(BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*4))
+#define BUTTON_COLUMN_NR9_WKW 		(BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*4))
+#define BUTTON_COLUMN_NR10_WKW 		(BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*5))
+#define BUTTON_COLUMN_NR11_WKW 		(BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*5))
+#define BUTTON_COLUMN_NR12_WKW 		(BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*6))
+#define BUTTON_COLUMN_NR13_WKW 		(BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*6))
+#define BUTTON_COLUMN_NR14_WKW 		(BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*7))
+#define BUTTON_COLUMN_NR15_WKW 		(BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*7))
+#define BUTTON_COLUMN_NR16_WKW 		(BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*8))
+#define BUTTON_COLUMN_NR17_WKW 		(BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*8))
+#define BUTTON_COLUMN_NR18_WKW 		(BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*9))
+#define BUTTON_COLUMN_NR19_WKW 		(BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*9))
+#define BUTTON_COLUMN_NR20_WKW 		(BUTTON_COLUMN_BEGIN_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*10))
+#define BUTTON_COLUMN_NR21_WKW 		(BUTTON_COLUMN_NR1_WKW + (BUTTON_DISTANCE_BETWEEN_COLUMN_WKW*10))
+#define BUTTON_COLUMN_END_WKW 		300
+#define BUTTON_LENGTH_WKW 			22
 
 #define BUTTON_WIFI_KEYBOARD_BEGIN 				BTN_ID_1
 #define SHIFT_KEY_OFFSET_WKW 					21
@@ -200,67 +200,70 @@ along with this program. If not, see <http://www.gnu.org/licenses/>. */
 #define NUMBER_OF_KEY_ON_KEYBOARD 				39
 #define MAX_APN_PASSWORD_LENGTH 				64
 
-//FRAM unique ID names
-#define FRAM_ID_NOP 						0
-#define FRAM_ID_CLOCKSTATE 					1
-#define FRAM_ID_FACTORY_RESET 				2
-#define FRAM_ID_MOVE_TEMPERATURE_OUTSIDE 	3
-#define FRAM_ID_MOVE_TEMPERATURE_INSIDE 	4
-#define FRAM_ID_MOVE_TEMPERATURE_FURNACE 	5
-#define FRAM_ID_READ_TEMPERATURE 			6
-#define FRAM_ID_SEARCH_TEMPERATURE 			7
+#define MAX_TEMP_RECORD_PER_DAY 		96
+#define MAX_RECORD_IN_FRAM 		((0x7FFF - FRAM_MEASUREMENT_DATA_BEGIN)/(sizeof(TemperatureSingleDayRecordType)))
+#define NOT_INITIALIZED_FRAM_INDEX_VALUE 	0xFFFF
 
-#define MAX_TEMP_RECORD_PER_DAY 96
-#define MAX_RECORD_IN_FRAM ((0x7FFF - FRAM_MEASUREMENT_DATA_BEGIN)/(sizeof(TemperatureSingleDayRecordType)))
-
-#define READ_TEMP_FRAM_BUFFER_PREVIOUS 2
-#define READ_TEMP_FRAM_BUFFER_NEXT 1
-#define READ_TEMP_FRAM_BUFFER_SIZE (READ_TEMP_FRAM_BUFFER_NEXT + 1 + READ_TEMP_FRAM_BUFFER_PREVIOUS)
+#define READ_TEMP_FRAM_BUFFER_PREVIOUS 		2
+#define READ_TEMP_FRAM_BUFFER_NEXT 			1
+#define READ_TEMP_FRAM_BUFFER_SIZE 		(READ_TEMP_FRAM_BUFFER_NEXT + 1 + READ_TEMP_FRAM_BUFFER_PREVIOUS)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+	typedef enum FRAM_ID_OPERATIONS
+	{
+		FRAM_ID_NOP,
+		FRAM_ID_CLOCKSTATE,
+		FRAM_ID_FACTORY_RESET,
+		FRAM_ID_MOVE_TEMPERATURE_OUTSIDE,
+		FRAM_ID_MOVE_TEMPERATURE_INSIDE,
+		FRAM_ID_MOVE_TEMPERATURE_FURNACE,
+		FRAM_ID_READ_TEMPERATURE,
+		FRAM_ID_SEARCH_TEMPERATURE
+	}FRAM_ID_OPERATIONS;
+
 	typedef enum ACTIVE_TIME_SETTINGS
 	{
-		CURRENT_TIME = 0,
-		FIRST_ALARM = 1,
-		SECOND_ALARM = 2
+		CURRENT_TIME,
+		FIRST_ALARM,
+		SECOND_ALARM
 	}ACTIVE_TIME_SETTINGS;
 
 	typedef enum TEMPERATURE_TYPE
 	{
-		OUTSIDE_TEMPERATURE = 0,
-		INSIDE_TEMPERATURE = 1,
-		FURNACE_TEMPERATURE = 2,
+		OUTSIDE_TEMPERATURE,
+		INSIDE_TEMPERATURE,
+		FURNACE_TEMPERATURE,
 		NUM_OF_TEMPERATURE_SOURCE
 	}TEMPERATURE_TYPE;
 
 	typedef enum TYPE_OF_OPERATION
 	{
-		INCREMENT = 0,
-		DECREMENT = 1
+		INCREMENT,
+		DECREMENT
 	}TYPE_OF_OPERATION;
 
 	typedef enum SHARED_SPI_STATE_TYPE
 	{
-		NOT_USED = 0,
-		FRAM_USAGE = 1,
-		TOUCH_SCREEN_USAGE = 2
+		NOT_USED,
+		FRAM_USAGE,
+		TOUCH_SCREEN_USAGE
 	}SHARED_SPI_STATE_TYPE;
 
 	typedef enum REFRESH_GUI_TYPE
 	{
-		WAITING_FOR_REQUEST = 0,
-		REFRESH = 1,
-		REFRESH_PERFORMED = 2
+		WAITING_FOR_REQUEST,
+		REFRESH,
+		REFRESH_PERFORMED
 	}REFRESH_GUI;
 
-	typedef enum WIFI_GUI_STATUS_TYPE//connected to: , active, inactive, WiFi damaged
+	typedef enum WIFI_GUI_STATUS_TYPE
 	{
-		WIFI_INACTIVE = 0,
-		WIFI_ACTIVE = 1,
-		WIFI_CONNECTED = 2
+		WIFI_INACTIVE,
+		WIFI_ACTIVE,
+		WIFI_CONNECTED
 	}WIFI_GUI_STATUS;
 
 	typedef enum KEYBOARD_SIGNS_TYPE
@@ -406,27 +409,40 @@ extern "C" {
 		uint16_t framIndex; //index in FRAM where singleRecord occur
 		bool availabilityFlag; //flag is set when data will be loaded
 		bool notExistFlag; //flag is set when data will be not find in FRAM
-		void *pointerToNextElement;
-		void *pointerToPreviousElement;
+		void *pointerToNextElement; //pointer to next element with the same type as this structure
+		void *pointerToPreviousElement; //pointer to next element with the same type as this structure
 	}ReadFramTempBufferType;
 
 	typedef struct
 	{
-		TemperatureSingleDayRecordType temperatureSingleDayTmp;
-		uint16_t searchFramIndexPosition;
-		bool startReadTransaction;
-		bool moveBackward;
-		uint8_t searchCounter;
-		uint8_t dayTmp;
-		uint8_t monthTmp;
-		uint8_t yearTmp;
-		ReadFramTempBufferType *pointerToStructureTmp;
+		TemperatureSingleDayRecordType temperatureSingleDayTmp; /*day measurement temporary buffer.
+		 	If data will be correct and timestamp as searched then will be assigned to
+		 	ReadFramTempBufferType structure available under pointerToStructureTmp pointer*/
+		uint16_t searchFramIndexPosition; /*this value contain current FRAM index during search
+			day measurement*/
+		bool startReadTransaction; /*flag is set when in measurement buffers data is missing. Parallel
+		 	with flag set is calculated searched day, month and year value(which also exist in this
+		 	structure). When flag is set then is performed search of missing block in FRAM memory*/
+		bool moveBackward; /*flag which describe direction of search. Set mean backward(day earlier),
+		 	 not set mean forward(day later)*/
+		uint8_t searchCounter; /*counter which count number of searched FRAM day measurement during
+			search missing measurement. Value of searched FRAM day measurement is limited by
+			define SEARCH_RADIUS. When search radius will be reached missing FRAM day measurement
+			will be marked as missing (flag notExistFlag in structure ReadFramTempBufferType will
+			be set)*/
+		uint8_t dayTmp; //searched day value
+		uint8_t monthTmp; //searched month value
+		uint8_t yearTmp; //searched year value
+		ReadFramTempBufferType *pointerToStructureTmp; /*pointer to one of ReadFramTempBufferType
+			structures which is organize as table. If expected data will be find then data is
+			assigned to day measurtement under this pointer*/
 	}TemperatureFramReadTransactionPackageType;
 
 	typedef struct
 	{
-		ReadFramTempBufferType *structPointer;
-		uint8_t structIndex; //Index of temperature value inside single index
+		ReadFramTempBufferType *structPointer; /*pointer to single element in ReadFramTempBufferType
+		structure table on which graph cursor inidicate*/
+		uint8_t structIndex; //Index of temperature value inside single day measureme structure
 		uint8_t source; //the same value like in TemperatureSingleDayRecordType
 		bool lockMoveFlag; //lock cursor when new data isn't available
 		bool loadDataFlag; //flag for code inside thread which will start load data from FRAM
